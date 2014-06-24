@@ -5,10 +5,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.HashMap;
 
-import com.tiny_schemer.parser.token.Token;
-import com.tiny_schemer.parser.token.TokenKind;
 import com.tiny_schemer.scheme_ast.*;
-
+import com.tiny_schemer.parser.token.*;
 
 public class Parser {
     
@@ -19,6 +17,9 @@ public class Parser {
     }
     
     private static Expression parseExpression(Iterator<Token> iter, Token nextToken) {
+        // Returns parsed Expression if given valid list of tokens
+        // Otherwise currently returns null
+        
         // Outer expression parse called with nextToken = null
         // Other expressions called with nextToken = <next Token to be used>
         Expression toReturn;
@@ -41,7 +42,7 @@ public class Parser {
                 return null;
         }
         if (iter.hasNext() && nextToken == null) { // if more comes after RPAREN in outer expression...
-            System.out.println("Invalid tokens after expression");
+            System.out.println("Invalid token " + iter.next() + " after expression");
             return null;
         }
         return toReturn;
@@ -52,6 +53,8 @@ public class Parser {
         // Returns the parsed expression that was wrapped in parentheses
         Token token = iter.next();
         TokenKind kind = token.getKind();
+        Expression body;
+        
         switch (kind) {
             case ID:
                 IdExpression operator = new IdExpression(token.toString());
@@ -66,11 +69,27 @@ public class Parser {
                     return null;
                 }
                 return new IfExpression(condition, thenBranch, elseBranch);
-            case LAMBDA:
-                return null; // temp
+            case LAMBDA: ;
+                if (! iter.next().getKind().equals(TokenKind.LPAREN)) {
+                    System.out.println("Expected '(' after 'lambda', received " + token + " instead.");
+                    return null;
+                }
+                ArrayList<String> parameters = new ArrayList<String>();
+                while (! (token = iter.next()).getKind().equals(TokenKind.RPAREN)) // while next token doesn't close list of params
+                    parameters.add(token.toString());
+                body = parseExpression(iter, iter.next());
+                if (! (token = iter.next()).getKind().equals(TokenKind.RPAREN)) {
+                    System.out.println("Expected end of lambda call, received " + token + " instead.");
+                    return null;
+                }
+                return new LambdaExpression(parameters, body);
             case LET:
                 HashMap<String,Expression> bindings = parseBindings(iter);
-                Expression body = parseExpression(iter, iter.next());
+                body = parseExpression(iter, iter.next());
+                if (! (token = iter.next()).getKind().equals(TokenKind.RPAREN)) {
+                    System.out.println("Expected end of let call, received " + token + " instead.");
+                    return null;
+                }
                 return new LetExpression(bindings, body);
             default:
                 return null;
@@ -78,6 +97,7 @@ public class Parser {
     }
     
     private static List<Expression> parseOperands(Iterator<Token> iter) {
+        // Parse operands of a function call
         List<Expression> expressions = new ArrayList<Expression>();
         Token token;
         while (! (token = iter.next()).getKind().equals(TokenKind.RPAREN)) // token = iter.next()... while token != ')'
@@ -86,16 +106,17 @@ public class Parser {
     }
     
     private static HashMap<String,Expression> parseBindings(Iterator<Token> iter) {
+        // Parse bindings of a let call
         HashMap<String,Expression> map = new HashMap<String,Expression>();
         iter.next(); // = LPAREN starting list of bindings
         String key;
         Expression value;
         Token paren;
-        while ((paren = iter.next()).getKind().equals(TokenKind.LPAREN)) { // while next token is a '(' that starts a new binding
+        while ((paren = iter.next()).getKind().equals(TokenKind.LPAREN)) { // while next token is a '(' (which starts a new binding)
             key = iter.next().toString();
             value = parseExpression(iter, iter.next());
             map.put(key, value);
-            iter.next(); // = remove RPAREN ending the single binding
+            iter.next(); // = iterate over the RPAREN that ends the single binding
         }
         // paren should now be the RPAREN ending the list of bindings
         if (! paren.getKind().equals(TokenKind.RPAREN)) {
