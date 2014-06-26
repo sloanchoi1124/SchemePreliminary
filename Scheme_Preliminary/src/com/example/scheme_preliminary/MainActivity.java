@@ -35,7 +35,7 @@ public class MainActivity extends Activity implements OnClickListener{
 			s="(if (< 3 4) (* 5 6) (- 18 7))";
 			break;
 		case R.id.button3:
-			s="(if (< 3 4) (* 5 6) (- 18 7))";
+			s="(if (< 3 4) (let ((a 1) (b 2) (c 3)) (+ a b c)) (let ((x (lambda (a b c) (* a b c)))) (x 1 2 3)))";
 			break;
 		default:
 			s="(if (< 3 4) (* 5 6) (- 18 7))";

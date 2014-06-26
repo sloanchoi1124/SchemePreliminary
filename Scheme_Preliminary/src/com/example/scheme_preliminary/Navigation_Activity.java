@@ -1,77 +1,79 @@
 package com.example.scheme_preliminary;
 
 import java.util.LinkedList;
+import java.util.List;
+
+import com.tiny_schemer.parser.*;
+import com.tiny_schemer.parser.token.*;
+import com.tiny_schemer.scheme_ast.*;
 
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.util.Pair;
 import android.widget.TextView;
 
 public class Navigation_Activity extends Activity implements Navigation_Fragment.MyListFragmentCommunicator {
 
-	final String ROOT_TEXT = "ROOT";
+	private String ROOT_TEXT;
 	private TextView titleView; 
-	private LinkedList<Object> listSourceList;
+	private LinkedList<Pair<String,Expression>> listSourceList;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_navigation_);
 		Bundle b = getIntent().getExtras();
-		String json;
-//		if (b != null) {
-//			json = b.getString("JSON_A3");
-//		} else {
-//			return;
-//		}
-//
-//        this.listSourceList = new LinkedList<Object>();
-//        
-//        Object obj;
-//        JSONParser parser = new JSONParser();
-//        try {
-//	        obj = parser.parse(json);
-//        }
-//        catch (ParseException e) {
-//        	e.printStackTrace();
-//        	obj = null;
-//        }
-//
-//        if (obj != null) {
-//        	newFragment(obj, savedInstanceState);
-//        	
-//            // Set the title (path)
-//            this.titleView = (TextView) findViewById(R.id.listTitle);
-//            this.titleView.setText(ROOT_TEXT);
-//        }
+		String schemeText;
+		if (b != null) {
+			schemeText = b.getString("schemeText");
+		} else {
+			return;
+		}
+
+		// create singleton Expression list if possible
+        this.listSourceList = new LinkedList<Pair<String,Expression>>();
+        
+        Expression exp;
+        if ((exp = Parser.parse(Lexer.lex(schemeText))) != null) {
+            // Set the title (path)
+        	this.ROOT_TEXT = SchemeExpressionsAdapter.pairFormat(exp).first;
+            this.titleView = (TextView) findViewById(R.id.listTitle);
+            this.titleView.setText(ROOT_TEXT);
+            newFragment(new Pair<String, Expression>(null, exp), savedInstanceState);
+        }
+        else {
+        	System.out.println("Parsing returned null");
+        	return;
+        }
+        
         
 //        System.out.println("Activity created");
 	}
 
-	@Override
 	public void onBackPressed() {
-		System.out.println(this.titleView.getText());
+//		System.out.println(this.titleView.getText());
 		super.onBackPressed();
-//		if (((String) this.titleView.getText()).equals(ROOT_TEXT) == false) {
-//			popFromPath();
-//			this.listSourceList.removeLast();
-//		}
-//		else finish();
+		if (((String) this.titleView.getText()).equals(ROOT_TEXT) == false) {
+			popFromPath();
+			this.listSourceList.removeLast();
+		}
+		else finish();
 	}
 	
-	public void newFragment(Object obj, Bundle savedInstanceState) {
+	public void newFragment(Pair<String, Expression> pair, Bundle savedInstanceState) {
 		if (findViewById(R.id.fragment_container) != null) {
 			// If we're being restored from a previous state,
             // then we don't need to do anything and should return or else
             // we could end up with overlapping fragments.
             if (savedInstanceState != null) return;
-            else newFragment(obj, true);
+            else newFragment(pair, true);
 		}
 		else System.out.println("Can't find fragment_container");
 	}
 	
-	public void newFragment(Object obj, boolean firstFragment) {
-		this.listSourceList.add(obj);
+	public void newFragment(Pair<String, Expression> pair, boolean firstFragment) {
+		this.listSourceList.add(pair);
 		Navigation_Fragment fragment = new Navigation_Fragment();
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 		if (firstFragment)
@@ -85,28 +87,18 @@ public class Navigation_Activity extends Activity implements Navigation_Fragment
 		transaction.commit();
 	}
 	
-	public Object getListSource() {
+	public Pair<String, Expression> getListSource() {
 		return this.listSourceList.getLast();
 	}
 	
 	// Called when item in object is touched
-	public void onItemTouch(Object obj, String key) {
-		addToPath(key);
-		newFragment(obj, false);
+	public void onItemTouch(Pair<String, Expression> pair) {
+		addToPath(pair.first);
+		newFragment(pair, false);
 	}
-	// Called when item in list is touched
-	public void onItemTouch(Object obj, int position) {
-		addToPath(position);
-		newFragment(obj, false);
-	}
-    
 	private void addToPath(String key) {
 		TextView title = ((TextView) findViewById(R.id.listTitle));
 		title.setText(title.getText() + "/" + key);
-	}
-	private void addToPath(int index) {
-		TextView title = ((TextView) findViewById(R.id.listTitle));
-		title.setText(title.getText() + "[" + index + "]");
 	}
 	private void popFromPath() {
 		TextView title = ((TextView) findViewById(R.id.listTitle));
