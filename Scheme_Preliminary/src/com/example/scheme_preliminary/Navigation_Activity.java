@@ -16,7 +16,8 @@ import android.widget.TextView;
 public class Navigation_Activity extends Activity implements Navigation_Fragment.MyListFragmentCommunicator {
 
 	private String ROOT_TEXT;
-	private TextView titleView; 
+	private TextView navPath;
+	private TextView expressionType;
 	private LinkedList<Pair<String,Expression>> listSourceList;
 	
 	@Override
@@ -37,9 +38,11 @@ public class Navigation_Activity extends Activity implements Navigation_Fragment
         Expression exp;
         if ((exp = Parser.parse(Lexer.lex(schemeText))) != null) {
             // Set the title (path)
-        	this.ROOT_TEXT = SchemeExpressionsAdapter.pairFormat(exp).first;
-            this.titleView = (TextView) findViewById(R.id.listTitle);
-            this.titleView.setText(ROOT_TEXT);
+        	this.ROOT_TEXT = "/" + SchemeExpressionsAdapter.pairFormat(exp).first;
+            this.navPath = (TextView) findViewById(R.id.nav_path);
+            this.navPath.setText(ROOT_TEXT);
+            this.expressionType = (TextView) findViewById(R.id.expression_type);
+            this.expressionType.setText(SchemeExpressionsAdapter.expressionType(exp));
             newFragment(new Pair<String, Expression>(null, exp), savedInstanceState);
         }
         else {
@@ -54,9 +57,10 @@ public class Navigation_Activity extends Activity implements Navigation_Fragment
 	public void onBackPressed() {
 //		System.out.println(this.titleView.getText());
 		super.onBackPressed();
-		if (((String) this.titleView.getText()).equals(ROOT_TEXT) == false) {
+		if (((String) this.navPath.getText()).equals(ROOT_TEXT) == false) {
 			popFromPath();
 			this.listSourceList.removeLast();
+			this.expressionType.setText(SchemeExpressionsAdapter.expressionType(this.getListSource().second));
 		}
 		else finish();
 	}
@@ -78,10 +82,10 @@ public class Navigation_Activity extends Activity implements Navigation_Fragment
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 		if (firstFragment)
 			transaction.add(R.id.fragment_container, fragment,
-					(String) ((TextView)findViewById(R.id.listTitle)).getText());
+					(String) this.navPath.getText());
 		else {
 			transaction.replace(R.id.fragment_container, fragment,
-					(String) ((TextView)findViewById(R.id.listTitle)).getText());
+					(String) this.navPath.getText());
 			transaction.addToBackStack(null);
 		}
 		transaction.commit();
@@ -93,25 +97,30 @@ public class Navigation_Activity extends Activity implements Navigation_Fragment
 	
 	// Called when item in object is touched
 	public void onItemTouch(Pair<String, Expression> pair) {
-		addToPath(pair.first);
+		addToPath(pair);
+		this.expressionType.setText(SchemeExpressionsAdapter.expressionType(pair.second));
 		newFragment(pair, false);
 	}
-	private void addToPath(String key) {
-		TextView title = ((TextView) findViewById(R.id.listTitle));
-		title.setText(title.getText() + "/" + key);
+	private void addToPath(Pair<String, Expression> pair) {
+		String text = (String) this.navPath.getText();
+		if (text.endsWith("/"))
+			this.navPath.setText(text + this.expressionType.getText() + "." + pair.first + "/");
+		else
+			this.navPath.setText(text + "." + pair.first + "/");
 	}
 	private void popFromPath() {
-		TextView title = ((TextView) findViewById(R.id.listTitle));
-		String s = (String) title.getText();
-		int pos;
-		if (s.endsWith("]")) pos = s.lastIndexOf("["); // was a list item
-		else pos = s.lastIndexOf("/"); // was an object item
-		if (pos == -1) {
-			System.out.println("Why is this still being called?");
-			return;
-		}
-		s = s.substring(0, pos);
-		title.setText(s);
+		String s = (String) this.navPath.getText();
+		int pos = s.lastIndexOf("/", s.length()-2);
+			if (pos == 0 || pos == -1) {
+				pos = s.lastIndexOf(".");
+				if (pos == -1) {
+					System.out.println("Why is this still being called?");
+					return;
+				}
+			}
+		s = s.substring(0, pos+1);
+		if (s.endsWith(".")) s = s.substring(0, s.length()-1);
+		this.navPath.setText(s);
 	}
 	
 
@@ -127,7 +136,7 @@ public class Navigation_Activity extends Activity implements Navigation_Fragment
 //  	public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
 //
 //			Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//			String title = (String) ((TextView) findViewById(R.id.listTitle)).getText();
+//			String title = (String) ((TextView) findViewById(R.id.nav_path)).getText();
 //			Object item = parent.getItemAtPosition(position);
 //  		if (item instanceof JSONPair) {
 //  			JSONPair pair = (JSONPair) item;
