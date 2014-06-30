@@ -353,6 +353,7 @@ public class Navigation_Box_Activity extends Activity {
 		
     	return toReturn;
     }
+    //----------------------------------------
     //bindingsBox is a helper method for letBox
     private RelativeLayout bindingsBox(HashMap<String,Expression> bindings)
     {
