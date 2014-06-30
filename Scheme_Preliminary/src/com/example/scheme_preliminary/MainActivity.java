@@ -24,24 +24,29 @@ public class MainActivity extends Activity implements OnClickListener{
 	@Override
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
-		Intent i=new Intent(this,Activity_Selector.class);
+		Intent i;
 		String s;
 		switch(v.getId())
 		{
 		case R.id.button1:
-			s="(if (< 3 4) (* 5 6) (- 18 7))";
+			i=new Intent(this,Activity_Selector.class);
+			s="(if (< 3 4) (if (< 3 4) (if (< 3 4) (* 5 6) (- 18 7)) (- 18 7)) (- 18 7))";
+			i.putExtra("schemeText",s);
 			break;
 		case R.id.button2:
+			i=new Intent(this,Activity_Selector.class);
 			s="(if (< 3 4) (* 5 6) (- 18 7))";
+			i.putExtra("schemeText",s);
 			break;
 		case R.id.button3:
-			s="(if (< 3 4) (* 5 6) (- 18 7))";
+			i=new Intent(this,String_Creator.class);
 			break;
 		default:
+			i=new Intent(this,Activity_Selector.class);
 			s="(if (< 3 4) (* 5 6) (- 18 7))";
+			i.putExtra("schemeText",s);
 			break;
 		}
-		i.putExtra("schemeText",s);
 		startActivity(i);
 	}
 

@@ -8,5 +8,8 @@
     <string name="title_activity_activity__selector">Activity_Selector</string>
     <string name="title_activity_evaluation_">Evaluation_Activity</string>
     <string name="title_activity_viewing_">Viewing_Activity</string>
+    <string name="title_activity_scheme__creator">Scheme_Creator</string>
+    <string name="title_activity_string__creator">String_Creator</string>
+    <string name="title_activity_navigation__box_">Navigation_Box_Activity</string>
 
 </resources>

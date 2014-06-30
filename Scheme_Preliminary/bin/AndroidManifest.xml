@@ -38,6 +38,18 @@
             android:name="com.example.scheme_preliminary.Viewing_Activity"
             android:label="@string/title_activity_viewing_" >
         </activity>
+        <activity
+            android:name="com.example.scheme_preliminary.Scheme_Creator"
+            android:label="@string/title_activity_scheme__creator" >
+        </activity>
+        <activity
+            android:name="com.example.scheme_preliminary.String_Creator"
+            android:label="@string/title_activity_string__creator" >
+        </activity>
+        <activity
+            android:name="com.example.scheme_preliminary.Navigation_Box_Activity"
+            android:label="@string/title_activity_navigation__box_" >
+        </activity>
     </application>
 
 </manifest>

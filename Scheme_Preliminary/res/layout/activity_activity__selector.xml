@@ -27,6 +27,6 @@
         android:id="@+id/button4_activity_selector"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="" />
+        android:text="BOX" />
 
 </LinearLayout>
