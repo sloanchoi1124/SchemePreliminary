@@ -40,6 +40,9 @@ public class MainActivity extends Activity implements OnClickListener{
 			break;
 		case R.id.button3:
 			i=new Intent(this,String_Creator.class);
+			/*
+			s="(if (< 3 4) (let ((a 1) (b 2) (c 3)) (+ a b c)) (let ((x (lambda (a b c) (* a b c)))) (x 1 2 3)))";
+			*/
 			break;
 		default:
 			i=new Intent(this,Activity_Selector.class);

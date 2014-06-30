@@ -23,7 +23,7 @@ public class Lexer {
         
         
         Scanner in = new Scanner(source);
-        String token = in.findInLine(pattern);
+        String token = in.findWithinHorizon(pattern, 0);
         while (token != null) {
             MatchResult result = in.match();
             if (result.group(1) != null)
@@ -42,7 +42,8 @@ public class Lexer {
                 else
                     list.add(new IdToken(token));
             }
-            token = in.findInLine(pattern);
+            else System.out.println("No match for " + token);
+            token = in.findWithinHorizon(pattern, 0);
         }
         in.close();
         return list;
