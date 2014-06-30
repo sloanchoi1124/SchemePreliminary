@@ -50,6 +50,7 @@
             android:name="com.example.scheme_preliminary.Navigation_Box_Activity"
             android:label="@string/title_activity_navigation__box_" >
         </activity>
+        <activity android:name="Calculator_Activity"></activity>
     </application>
 
 </manifest>
