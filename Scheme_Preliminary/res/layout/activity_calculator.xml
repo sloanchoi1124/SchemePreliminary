@@ -31,19 +31,20 @@
             android:weightSum="3" >
 
             <Button
-                android:id="@+id/UnusedButton"
+                android:id="@+id/IfButton"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="@string/unused" />
+                android:onClick="onButtonClick"
+                android:text="@string/If" />
 
             <Button
                 android:id="@+id/Plus"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_alignBottom="@+id/UnusedButton"
+                android:layout_alignBottom="@+id/IfButton"
                 android:layout_gravity="center"
-                android:layout_toRightOf="@+id/UnusedButton"
+                android:layout_toRightOf="@+id/IfButton"
                 android:layout_weight="1"
                 android:onClick="onButtonClick"
                 android:text="@string/Plus" />
@@ -52,7 +53,7 @@
                 android:id="@+id/Times"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_alignBottom="@+id/UnusedButton"
+                android:layout_alignBottom="@+id/IfButton"
                 android:layout_gravity="center"
                 android:layout_toRightOf="@+id/Plus"
                 android:layout_weight="1"
