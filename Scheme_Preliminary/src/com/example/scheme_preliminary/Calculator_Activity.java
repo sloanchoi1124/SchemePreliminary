@@ -101,7 +101,7 @@ public class Calculator_Activity extends Activity {
     	
     	
     	
-    	if (this.fullExpression != null) text += ("\n=\n" + Evaluator.evaluate(this.fullExpression));
+    	if (this.fullExpression != null) text += ("\n=\n" + Evaluator.evaluate(this.fullExpression).getValue());
 //    	if (this.fullExpression != null) text = Unparser.unparse(this.fullExpression) + "\n=\n" + Evaluator.evaluate(this.fullExpression);
     	this.textView.setText(text);
     }

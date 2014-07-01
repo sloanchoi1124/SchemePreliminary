@@ -31,7 +31,7 @@ public class Evaluation_Activity extends Activity {
 			if(ast!= null) 
 			{
 				result=Evaluator.evaluate(ast);
-				tv.setText(result.toString());
+				tv.setText("" + result.getValue());
 			}
 			
 		}
