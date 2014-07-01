@@ -126,10 +126,24 @@ public class SchemeExpressionsAdapter extends ArrayAdapter<Pair<String,Expressio
 	
 	public static String expressionType(Expression exp) {
 		if (exp == null) return "Param";
-		else if (exp instanceof CallExpression) return "Call";
+		else if (exp instanceof CallExpression) {
+			return "Call(" + ((IdExpression) ((CallExpression) exp).getOperator()).getId() + ")";
+		}
 		else if (exp instanceof IfExpression) return "If";
-		else if (exp instanceof LetExpression) return "Let";
-		else if (exp instanceof LambdaExpression) return "Lambda";
+		else if (exp instanceof LetExpression) {
+			String s = "Let(";
+			for (String id : ((LetExpression) exp).getBindings().keySet()) {
+				s += id + ", ";
+			}
+			return s.substring(0, s.length()-2) + ")";
+		}
+		else if (exp instanceof LambdaExpression) {
+			String s = "Lambda(";
+			for (String param : ((LambdaExpression) exp).getParameters()) {
+				s += param + ", ";
+			}
+			return s.substring(0, s.length()-2) + ")";
+		}
 		else if (exp instanceof IdExpression) return "Id";
 		else if (exp instanceof IntExpression) return "Int";
 		else {
