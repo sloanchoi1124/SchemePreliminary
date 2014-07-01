@@ -78,6 +78,7 @@ public class Navigation_Box_Activity extends Activity {
 		else
 			return blankBox();
 	}	
+	
 	private RelativeLayout intBox(Expression ast)
 	{
 		RelativeLayout toReturn=new RelativeLayout(this);
