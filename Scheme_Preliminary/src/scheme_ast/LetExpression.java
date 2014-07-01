@@ -1,4 +1,4 @@
-package com.tiny_schemer.scheme_ast;
+package scheme_ast;
 
 import java.util.HashMap;
 
@@ -8,6 +8,7 @@ public class LetExpression extends Expression {
 	private Expression mBody;
 	
 	public LetExpression(HashMap<String, Expression> bindings, Expression body) {
+		super();
 		mBindings = bindings;
 		mBody = body;
 	}

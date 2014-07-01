@@ -1,12 +1,10 @@
 package com.example.scheme_preliminary;
 
 import java.util.LinkedList;
-import java.util.List;
 
-import com.tiny_schemer.parser.*;
-import com.tiny_schemer.parser.token.*;
-import com.tiny_schemer.scheme_ast.*;
-
+import parser.Lexer;
+import parser.Parser;
+import scheme_ast.Expression;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.os.Bundle;

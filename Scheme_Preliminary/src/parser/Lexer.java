@@ -1,19 +1,18 @@
-package com.tiny_schemer.parser;
+package parser;
 
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.util.regex.MatchResult;
-
-import com.tiny_schemer.parser.token.*;
+import parser.token.*;
 
 public class Lexer {
     
     public static List<Token> lex(String source) {
         List<Token> list = new LinkedList<Token>();
         
-        String rVar = "\\p{Alpha}[\\p{Alpha}\\d]*";
+        String rVar = "\\p{Alpha}[\\p{Alpha}\\d\\?]*"; //subset of legal identifiers
         String rOp  = "[<>=*/+\\-]";
         String rLP  = "(\\()";  // group 1
         String rRP  = "(\\))";  // group 2

@@ -1,8 +1,7 @@
-package com.tiny_schemer.unparser;
+package unparser;
 
+import scheme_ast.*;
 import java.util.*;
-
-import com.tiny_schemer.scheme_ast.*;
 
 public class Unparser {
   

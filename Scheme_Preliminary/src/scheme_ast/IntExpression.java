@@ -1,9 +1,10 @@
-package com.tiny_schemer.scheme_ast;
+package scheme_ast;
 
 public class IntExpression extends Expression {
 	private int mValue;
 	
 	public IntExpression(int value) {
+		super();
 		mValue = value;
 	}
 	

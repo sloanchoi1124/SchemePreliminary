@@ -4,6 +4,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
+import scheme_ast.CallExpression;
+import scheme_ast.Expression;
+import scheme_ast.IdExpression;
+import scheme_ast.IntExpression;
 import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -12,16 +16,7 @@ import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
-import com.example.scheme_preliminary.R;
-import com.example.scheme_preliminary.R.id;
-import com.example.scheme_preliminary.R.layout;
-import com.tiny_schemer.evaluator.Evaluator;
-import com.tiny_schemer.scheme_ast.CallExpression;
-import com.tiny_schemer.scheme_ast.Expression;
-import com.tiny_schemer.scheme_ast.IdExpression;
-import com.tiny_schemer.scheme_ast.IntExpression;
-import com.tiny_schemer.unparser.Unparser;
+import evaluator.Evaluator;
 
 public class Calculator_Activity extends Activity {
 	

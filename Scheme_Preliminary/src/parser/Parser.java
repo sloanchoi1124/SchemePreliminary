@@ -1,12 +1,12 @@
-package com.tiny_schemer.parser;
+package parser;
 
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.HashMap;
 
-import com.tiny_schemer.scheme_ast.*;
-import com.tiny_schemer.parser.token.*;
+import parser.token.*;
+import scheme_ast.*;
 
 public class Parser {
     

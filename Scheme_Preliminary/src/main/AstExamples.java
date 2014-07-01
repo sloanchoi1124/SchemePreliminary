@@ -1,12 +1,11 @@
-package com.tiny_schemer.main;
+package main;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import com.tiny_schemer.scheme_ast.*;
-
+import scheme_ast.*;
 
 public class AstExamples {
 	
@@ -17,7 +16,7 @@ public class AstExamples {
 		Expression x1 = new IntExpression(1);
 		Expression x3 = new IntExpression(3);
 		Expression x4 = new IntExpression(4);
-		Expression x5 = new IntExpression(5);
+		Expression x5 = new IntExpression(7);
 		Expression x10 = new IntExpression(10);
 		
 		Expression xEq = new IdExpression("=");
@@ -53,10 +52,12 @@ public class AstExamples {
 							new ArrayList<Expression>(Arrays.asList(xX, xY))));
 
 		
-		Expression simpleLambda = new LambdaExpression(
+		HashMap<String, Expression> bindings = new HashMap<String, Expression>();
+		bindings.put("f", (new LambdaExpression(
 				new ArrayList<String>(Arrays.asList("x")),
-				new CallExpression(xPlus,
-						new ArrayList<Expression>(Arrays.asList(xX, x1))));
+				new CallExpression(xPlus, new ArrayList<Expression>(Arrays.asList(xX, x1))))));
+		
+		Expression simpleLambda = new LetExpression(bindings, new CallExpression(new IdExpression("f"), new ArrayList<Expression>(Arrays.asList(x1))));
 		
 		Expression xFact = new IdExpression("fact");
 		Expression xFactMinus1 =

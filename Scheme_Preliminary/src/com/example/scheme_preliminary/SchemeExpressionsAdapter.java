@@ -3,6 +3,13 @@ package com.example.scheme_preliminary;
 import java.util.Iterator;
 import java.util.List;
 
+import scheme_ast.CallExpression;
+import scheme_ast.Expression;
+import scheme_ast.IdExpression;
+import scheme_ast.IfExpression;
+import scheme_ast.IntExpression;
+import scheme_ast.LambdaExpression;
+import scheme_ast.LetExpression;
 import android.content.Context;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -10,14 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
-import com.tiny_schemer.scheme_ast.CallExpression;
-import com.tiny_schemer.scheme_ast.Expression;
-import com.tiny_schemer.scheme_ast.IdExpression;
-import com.tiny_schemer.scheme_ast.IfExpression;
-import com.tiny_schemer.scheme_ast.IntExpression;
-import com.tiny_schemer.scheme_ast.LambdaExpression;
-import com.tiny_schemer.scheme_ast.LetExpression;
 
 public class SchemeExpressionsAdapter extends ArrayAdapter<Pair<String,Expression>> {
 

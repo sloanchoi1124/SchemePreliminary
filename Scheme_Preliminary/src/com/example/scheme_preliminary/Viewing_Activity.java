@@ -3,15 +3,14 @@ package com.example.scheme_preliminary;
 
 import java.util.List;
 
-import com.tiny_schemer.parser.Lexer;
-import com.tiny_schemer.parser.Parser;
-import com.tiny_schemer.parser.token.*;
-import com.tiny_schemer.scheme_ast.*;
-import com.tiny_schemer.unparser.Unparser;
-
+import parser.Lexer;
+import parser.Parser;
+import parser.token.Token;
+import scheme_ast.Expression;
+import unparser.Unparser;
+import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
-import android.app.Activity;
 
 public class Viewing_Activity extends Activity {
     TextView tv;

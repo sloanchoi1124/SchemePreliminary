@@ -1,4 +1,4 @@
-package com.tiny_schemer.scheme_ast;
+package scheme_ast;
 
 import java.util.ArrayList;
 
@@ -7,6 +7,7 @@ public class LambdaExpression extends Expression {
 	private Expression mBody;
 	
 	public LambdaExpression(ArrayList<String> parameters, Expression body) {
+		super();
 		mParameters = parameters;
 		mBody = body;
 	}

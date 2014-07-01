@@ -1,4 +1,4 @@
-package com.tiny_schemer.scheme_ast;
+package scheme_ast;
 
 import java.util.List;
 
@@ -7,6 +7,7 @@ public class CallExpression extends Expression {
 	private List<Expression> mOperands;
 	
 	public CallExpression(Expression operator, List<Expression> operands) {
+		super();
 		mOperator = operator;
 		mOperands = operands;
 	}

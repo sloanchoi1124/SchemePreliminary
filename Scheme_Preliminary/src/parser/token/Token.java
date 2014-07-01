@@ -1,4 +1,4 @@
-package com.tiny_schemer.parser.token;
+package parser.token;
 
 public class Token {
 	private TokenKind mKind;

@@ -1,9 +1,10 @@
-package com.tiny_schemer.scheme_ast;
+package scheme_ast;
 
 public class IfExpression extends Expression {
 	private Expression mCondition, mThen, mElse;
 	
 	public IfExpression(Expression condition, Expression thenBranch, Expression elseBranch) {
+		super();
 		mCondition = condition;
 		mThen = thenBranch;
 		mElse = elseBranch;
