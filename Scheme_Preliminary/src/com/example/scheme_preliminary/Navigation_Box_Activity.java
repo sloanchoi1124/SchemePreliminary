@@ -77,9 +77,18 @@ public class Navigation_Box_Activity extends Activity {
 		{
 			return ifBox(ast,depth);
 		}
+		else if(ast instanceof LetExpression)
+		{
+			return letBox(ast,depth);
+		}
+		else if(ast instanceof LambdaExpression)
+		{
+			return lambdaBox(ast,depth);
+		}
 		else
 			return blankBox();
 	}	
+	
 	private RelativeLayout intBox(Expression ast)
 	{
 		RelativeLayout toReturn=new RelativeLayout(this);
@@ -229,12 +238,9 @@ public class Navigation_Box_Activity extends Activity {
 		final RelativeLayout toReturnAbove=new RelativeLayout(this);
 		RelativeLayout.LayoutParams paramsAbove=new RelativeLayout.LayoutParams(
 				RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
-		//this is only for testing
-		paramsAbove.addRule(RelativeLayout.BELOW, head.getId());
-		//this is only for testing
+		
 		toReturnAbove.setLayoutParams(paramsAbove);
 		
-
 		RelativeLayout condition=createBox(((IfExpression)ast).getCondition(),depth+1);
 		RelativeLayout then=createBox(((IfExpression)ast).getThen(),depth+1);
 		RelativeLayout otherwise=createBox(((IfExpression)ast).getElse(),depth+1);
@@ -322,7 +328,7 @@ public class Navigation_Box_Activity extends Activity {
 		RelativeLayout bindings=bindingsBox(((LetExpression)ast).getBindings());
 		toReturnAbove.addView(bindings);
 		
-		RelativeLayout body=createBox(((LetExpression) ast).getBody());
+		RelativeLayout body=createBox(((LetExpression) ast).getBody(),depth+1);
 		RelativeLayout.LayoutParams paramsBody=(RelativeLayout.LayoutParams) body.getLayoutParams();
 		paramsBody.addRule(RelativeLayout.BELOW, bindings.getId());
 		toReturnAbove.addView(body);
@@ -363,50 +369,107 @@ public class Navigation_Box_Activity extends Activity {
 		
     	return toReturn;
     }
-    //bindingsBox is a helper method for letBox
+    //----------------------------------------
+    //bindingsBox is a helper method for letBox to generate a relativelayout for bindings
     private RelativeLayout bindingsBox(HashMap<String,Expression> bindings)
     {
     	RelativeLayout toReturn=new RelativeLayout(this);
+    	RelativeLayout.LayoutParams paramsReturn=new RelativeLayout.LayoutParams(
+				RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+    	paramsReturn.setMargins(10, 0, 0, 0);
     	//set the layout here
+    	LinearLayout keys=new LinearLayout(this);
+    	LinearLayout values=new LinearLayout(this);
+    	
+    	LinearLayout.LayoutParams paramsKeys=(LinearLayout.LayoutParams)keys.getLayoutParams();
+    	paramsKeys.weight=1;
+    	keys.setLayoutParams(paramsKeys);
+    	keys.setOrientation(LinearLayout.VERTICAL);
+    	
+    	LinearLayout.LayoutParams paramsValues=(LinearLayout.LayoutParams) values.getLayoutParams();
+    	paramsValues.weight=2;
+    	values.setLayoutParams(paramsValues);
+    	values.setOrientation(LinearLayout.VERTICAL);
+    	
+    	for(String s:bindings.keySet())
+    	{
+    		TextView tv=new TextView(this);
+    		tv.setText(s);
+    		keys.addView(tv);
+    	}
+    	
+    	for(Expression expression:bindings.values())
+    	{
+    		values.addView(createBox(expression));
+    	}
+    	
+    	LinearLayout toReturnAbove=new LinearLayout(this);
+    	LinearLayout.LayoutParams paramsAbove=new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT);
+    	paramsAbove.weight=3;
+    	toReturnAbove.setLayoutParams(paramsAbove);
+    	toReturnAbove.setOrientation(LinearLayout.HORIZONTAL);
+    	toReturnAbove.addView(keys);
+    	toReturnAbove.addView(values);
+    	toReturn.addView(toReturnAbove);
     	toReturn.setId(idGenerator);
     	idGenerator++;
     	return toReturn;
     }
- 
-	public LinearLayout lambdaBox(Expression ast)
-	{
-		final LinearLayout toReturn=new LinearLayout(this);
-		toReturn.setBackgroundColor(Color.YELLOW);
-		toReturn.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
-		toReturn.setOrientation(LinearLayout.VERTICAL);
-		
-		final LinearLayout toReturn_above=new LinearLayout(this);
-		toReturn_above.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT,LayoutParams.WRAP_CONTENT));
-		toReturn_above.setOrientation(LinearLayout.VERTICAL);
-		
-		final TextView head=new TextView(this);
-		head.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
+    public RelativeLayout lambdaBox(Expression ast,int depth)
+    {
+    	//--------------BASE----------------
+    	final RelativeLayout toReturn=new RelativeLayout(this);
+    	RelativeLayout.LayoutParams paramsReturn=new RelativeLayout.LayoutParams(
+				RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+    	paramsReturn.setMargins(10*depth, 20, 20, 20);
+    	toReturn.setLayoutParams(paramsReturn);
+    	//--------------BASE----------------
+    	
+    	//--------------HEAD----------------
+    	final TextView head=new TextView(this);
+    	RelativeLayout.LayoutParams headParams=new RelativeLayout.LayoutParams(
+				RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+		head.setLayoutParams(headParams);
 		head.setTextColor(Color.RED);
-		head.setText("lambda");
+		head.setText("let");
+		head.setId(idGenerator);
+		idGenerator++;
+		//-------------HEAD-----------------
 		
-		String paraString="";
-		for(String parameter:((LambdaExpression) ast).getParameters())
+		//-------------TORETURNABOVE
+		final RelativeLayout toReturnAbove=new RelativeLayout(this);
+		RelativeLayout.LayoutParams paramsAbove=new RelativeLayout.LayoutParams(
+				RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+		paramsAbove.addRule(RelativeLayout.BELOW, head.getId());
+		toReturnAbove.setLayoutParams(paramsAbove);
+		
+		LinearLayout parameters=new LinearLayout(this);
+		parameters.setId(idGenerator);
+		idGenerator++;
+		parameters.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
+		parameters.setOrientation(LinearLayout.VERTICAL);
+		
+		for(String s:((LambdaExpression)ast).getParameters())
 		{
-			paraString+=parameter+"\n";
+			TextView tv=new TextView(this);
+			tv.setText(s);
+			parameters.addView(tv);
 		}
-		TextView parameters=new TextView(this);
-	    parameters.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
-		parameters.setTextColor(Color.GREEN);
-		parameters.setText(paraString);
 		
-		toReturn_above.addView(parameters);
-		toReturn_above.addView(createBox(((LambdaExpression) ast).getBody()));
+		RelativeLayout body=createBox(((LambdaExpression)ast).getBody(),depth+1);
+		RelativeLayout.LayoutParams paramsBody=(RelativeLayout.LayoutParams) body.getLayoutParams();
+		paramsBody.addRule(RelativeLayout.BELOW, parameters.getId());
+		body.setLayoutParams(paramsBody);
+		
+		toReturnAbove.addView(parameters);
+		toReturnAbove.addView(body);
 		
 		toReturn.addView(head);
-		toReturn.addView(toReturn_above);
+		toReturn.addView(toReturnAbove);
 		
 		final TextView dotdotdot=new TextView(this);
-		dotdotdot.setText("lambda(...)");
+		dotdotdot.setText("lambda...");
+		
 		toReturn.setOnClickListener(new OnClickListener()
 		{
 			@Override
@@ -415,7 +478,7 @@ public class Navigation_Box_Activity extends Activity {
 				if(toReturn.getChildCount()>1)
 				{
 					toReturn.removeAllViews();
-					toReturn.addView(dotdotdot);
+					toReturn.addView(dotdotdot);	
 				}
 				else
 				{
@@ -425,18 +488,19 @@ public class Navigation_Box_Activity extends Activity {
 						public void onClick(View v) {
 							// TODO Auto-generated method stub
 							toReturn.addView(head);
-							toReturn.addView(toReturn_above);
+							toReturn.addView(toReturnAbove);
 							toReturn.removeView(dotdotdot);
-						}	
+						}
 					});
 				}
 			}	
 		});
-		return toReturn;
-	}
+		toReturn.setId(idGenerator);
+		idGenerator++;
+    	return toReturn;
+    }
 
-	
-	
+
 	public RelativeLayout blankBox()
 	{
 		RelativeLayout toReturn=new RelativeLayout(this);

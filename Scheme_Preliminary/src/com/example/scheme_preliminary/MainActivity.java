@@ -37,7 +37,8 @@ public class MainActivity extends Activity implements OnClickListener{
 			break;
 		case R.id.button2:
 			i=new Intent(this,Activity_Selector.class);
-			s="(if (< 3 4) (* 5 6) (- 18 7))";
+			//s="(if (< 3 4) (* 5 6) (- 18 7))";
+			s="(if (< 3 4) (let ((a 1) (b 2) (c 3)) (+ a b c)) (let ((x (lambda (a b c) (* a b c)))) (x 1 2 3)))";
 			i.putExtra("schemeText",s);
 			break;
 		case R.id.button3:
