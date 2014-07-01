@@ -16,9 +16,11 @@ public class MainActivity extends Activity implements OnClickListener{
 		Button button1=(Button) findViewById(R.id.button1);
 		Button button2=(Button) findViewById(R.id.button2);
 		Button button3=(Button) findViewById(R.id.button3);
+		Button button4=(Button) findViewById(R.id.button4);
 		button1.setOnClickListener(this);
 		button2.setOnClickListener(this);
 		button3.setOnClickListener(this);
+		button4.setOnClickListener(this);
 	}
 
 	@Override
@@ -43,6 +45,9 @@ public class MainActivity extends Activity implements OnClickListener{
 			/*
 			s="(if (< 3 4) (let ((a 1) (b 2) (c 3)) (+ a b c)) (let ((x (lambda (a b c) (* a b c)))) (x 1 2 3)))";
 			*/
+			break;
+		case R.id.button4:
+			i=new Intent(this,Calculator_Activity.class);
 			break;
 		default:
 			i=new Intent(this,Activity_Selector.class);

@@ -1,19 +1,29 @@
 package com.example.scheme_preliminary;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
 
-import com.tiny_schemer.parser.*;
-import com.tiny_schemer.parser.token.Token;
-import com.tiny_schemer.scheme_ast.*;
-import com.tiny_schemer.unparser.Unparser;
-
+import parser.Lexer;
+import parser.Parser;
+import parser.token.Token;
+import scheme_ast.CallExpression;
+import scheme_ast.Expression;
+import scheme_ast.IdExpression;
+import scheme_ast.IfExpression;
+import scheme_ast.IntExpression;
+import scheme_ast.LambdaExpression;
+import scheme_ast.LetExpression;
+import unparser.Unparser;
+import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.*;
+import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
-import android.app.Activity;
-import android.graphics.Color;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 public class Navigation_Box_Activity extends Activity {
     LinearLayout base;

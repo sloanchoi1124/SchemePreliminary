@@ -25,37 +25,60 @@ public final class R {
         public static final int ic_launcher=0x7f020001;
     }
     public static final class id {
-        public static final int action_settings=0x7f080013;
-        public static final int activity_evaluation=0x7f080004;
-        public static final int activity_viewing=0x7f080012;
-        public static final int args=0x7f08000f;
-        public static final int button1=0x7f080005;
+        public static final int Button0=0x7f080017;
+        public static final int Button1=0x7f080013;
+        public static final int Button2=0x7f080014;
+        public static final int Button3=0x7f080015;
+        public static final int Button4=0x7f08000f;
+        public static final int Button5=0x7f080010;
+        public static final int Button6=0x7f080011;
+        public static final int Button7=0x7f08000b;
+        public static final int Button8=0x7f08000c;
+        public static final int Button9=0x7f08000d;
+        public static final int EnterButton=0x7f080018;
+        public static final int LinearLayout1=0x7f080004;
+        public static final int Plus=0x7f080008;
+        public static final int Times=0x7f080009;
+        public static final int UnusedButton=0x7f080007;
+        public static final int action_settings=0x7f080029;
+        public static final int activity_evaluation=0x7f080019;
+        public static final int activity_viewing=0x7f080028;
+        public static final int args=0x7f080025;
+        public static final int button1=0x7f08001a;
         public static final int button1_activity_selector=0x7f080000;
-        public static final int button2=0x7f080006;
+        public static final int button2=0x7f08001b;
         public static final int button2_activity_selector=0x7f080001;
-        public static final int button3=0x7f080007;
+        public static final int button3=0x7f08001c;
         public static final int button3_activity_selector=0x7f080002;
+        public static final int button4=0x7f08001d;
         public static final int button4_activity_selector=0x7f080003;
-        public static final int call=0x7f08000e;
-        public static final int editText1=0x7f080010;
-        public static final int expression_type=0x7f08000a;
-        public static final int fragment_container=0x7f080009;
-        public static final int ll_base=0x7f08000c;
-        public static final int nav_path=0x7f080008;
-        public static final int part=0x7f08000d;
-        public static final int scrollView1=0x7f08000b;
-        public static final int string_creator_done=0x7f080011;
+        public static final int call=0x7f080024;
+        public static final int editText1=0x7f080026;
+        public static final int expression_type=0x7f080020;
+        public static final int fragment_container=0x7f08001f;
+        public static final int keyrow1=0x7f080006;
+        public static final int keyrow2=0x7f08000a;
+        public static final int keyrow3=0x7f08000e;
+        public static final int keyrow4=0x7f080012;
+        public static final int keyrow5=0x7f080016;
+        public static final int ll_base=0x7f080022;
+        public static final int nav_path=0x7f08001e;
+        public static final int part=0x7f080023;
+        public static final int scrollView1=0x7f080021;
+        public static final int string_creator_done=0x7f080027;
+        public static final int textView1=0x7f080005;
     }
     public static final class layout {
         public static final int activity_activity__selector=0x7f030000;
-        public static final int activity_evaluation_=0x7f030001;
-        public static final int activity_main=0x7f030002;
-        public static final int activity_navigation_=0x7f030003;
-        public static final int activity_navigation__box_=0x7f030004;
-        public static final int activity_navigation_fragment=0x7f030005;
-        public static final int activity_navigation_row_layout=0x7f030006;
-        public static final int activity_string__creator=0x7f030007;
-        public static final int activity_viewing_=0x7f030008;
+        public static final int activity_calculator=0x7f030001;
+        public static final int activity_evaluation_=0x7f030002;
+        public static final int activity_main=0x7f030003;
+        public static final int activity_navigation_=0x7f030004;
+        public static final int activity_navigation__box_=0x7f030005;
+        public static final int activity_navigation_fragment=0x7f030006;
+        public static final int activity_navigation_row_layout=0x7f030007;
+        public static final int activity_string__creator=0x7f030008;
+        public static final int activity_viewing_=0x7f030009;
     }
     public static final class menu {
         public static final int activity__selector=0x7f070000;
@@ -68,6 +91,28 @@ public final class R {
         public static final int viewing_=0x7f070007;
     }
     public static final class string {
+        public static final int Clear=0x7f05001c;
+        public static final int CloseParenthesis=0x7f05001b;
+        public static final int DividedBy=0x7f050018;
+        public static final int Enter=0x7f05001f;
+        public static final int Equals=0x7f05001d;
+        public static final int Eval=0x7f050019;
+        public static final int Minus=0x7f050016;
+        public static final int Number0=0x7f050013;
+        public static final int Number1=0x7f050012;
+        public static final int Number2=0x7f050011;
+        public static final int Number3=0x7f050010;
+        public static final int Number4=0x7f05000f;
+        public static final int Number5=0x7f05000e;
+        public static final int Number6=0x7f05000d;
+        public static final int Number7=0x7f05000c;
+        public static final int Number8=0x7f05000b;
+        public static final int Number9=0x7f05000a;
+        public static final int OpenParenthesis=0x7f05001a;
+        public static final int Plus=0x7f050015;
+        public static final int Semicolon=0x7f05001e;
+        public static final int Times=0x7f050017;
+        public static final int Unknown=0x7f050014;
         public static final int action_settings=0x7f050001;
         public static final int app_name=0x7f050000;
         public static final int hello_world=0x7f050002;
@@ -78,6 +123,7 @@ public final class R {
         public static final int title_activity_scheme__creator=0x7f050007;
         public static final int title_activity_string__creator=0x7f050008;
         public static final int title_activity_viewing_=0x7f050006;
+        public static final int unused=0x7f050020;
     }
     public static final class style {
         /** 

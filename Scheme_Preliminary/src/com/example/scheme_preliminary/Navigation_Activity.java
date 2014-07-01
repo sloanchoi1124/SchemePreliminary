@@ -1,12 +1,10 @@
 package com.example.scheme_preliminary;
 
 import java.util.LinkedList;
-import java.util.List;
 
-import com.tiny_schemer.parser.*;
-import com.tiny_schemer.parser.token.*;
-import com.tiny_schemer.scheme_ast.*;
-
+import parser.Lexer;
+import parser.Parser;
+import scheme_ast.Expression;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
@@ -38,7 +36,7 @@ public class Navigation_Activity extends Activity implements Navigation_Fragment
         Expression exp;
         if ((exp = Parser.parse(Lexer.lex(schemeText))) != null) {
             // Set the title (path)
-        	this.ROOT_TEXT = "/" + SchemeExpressionsAdapter.pairFormat(exp).first;
+        	this.ROOT_TEXT = "/" + SchemeExpressionsAdapter.expressionType(exp);
             this.navPath = (TextView) findViewById(R.id.nav_path);
             this.navPath.setText(ROOT_TEXT);
             this.expressionType = (TextView) findViewById(R.id.expression_type);

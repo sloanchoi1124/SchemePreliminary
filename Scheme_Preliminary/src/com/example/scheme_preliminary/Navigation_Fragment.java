@@ -4,6 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import scheme_ast.CallExpression;
+import scheme_ast.Expression;
+import scheme_ast.IdExpression;
+import scheme_ast.IfExpression;
+import scheme_ast.IntExpression;
+import scheme_ast.LambdaExpression;
+import scheme_ast.LetExpression;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Bundle;
@@ -13,8 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.tiny_schemer.scheme_ast.*;
 
 public class Navigation_Fragment extends ListFragment {
 	

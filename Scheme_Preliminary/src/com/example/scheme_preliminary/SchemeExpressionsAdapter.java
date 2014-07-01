@@ -3,6 +3,13 @@ package com.example.scheme_preliminary;
 import java.util.Iterator;
 import java.util.List;
 
+import scheme_ast.CallExpression;
+import scheme_ast.Expression;
+import scheme_ast.IdExpression;
+import scheme_ast.IfExpression;
+import scheme_ast.IntExpression;
+import scheme_ast.LambdaExpression;
+import scheme_ast.LetExpression;
 import android.content.Context;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -10,14 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-
-import com.tiny_schemer.scheme_ast.CallExpression;
-import com.tiny_schemer.scheme_ast.Expression;
-import com.tiny_schemer.scheme_ast.IdExpression;
-import com.tiny_schemer.scheme_ast.IfExpression;
-import com.tiny_schemer.scheme_ast.IntExpression;
-import com.tiny_schemer.scheme_ast.LambdaExpression;
-import com.tiny_schemer.scheme_ast.LetExpression;
 
 public class SchemeExpressionsAdapter extends ArrayAdapter<Pair<String,Expression>> {
 
@@ -127,10 +126,24 @@ public class SchemeExpressionsAdapter extends ArrayAdapter<Pair<String,Expressio
 	
 	public static String expressionType(Expression exp) {
 		if (exp == null) return "Param";
-		else if (exp instanceof CallExpression) return "Call";
+		else if (exp instanceof CallExpression) {
+			return "Call(" + ((IdExpression) ((CallExpression) exp).getOperator()).getId() + ")";
+		}
 		else if (exp instanceof IfExpression) return "If";
-		else if (exp instanceof LetExpression) return "Let";
-		else if (exp instanceof LambdaExpression) return "Lambda";
+		else if (exp instanceof LetExpression) {
+			String s = "Let(";
+			for (String id : ((LetExpression) exp).getBindings().keySet()) {
+				s += id + ", ";
+			}
+			return s.substring(0, s.length()-2) + ")";
+		}
+		else if (exp instanceof LambdaExpression) {
+			String s = "Lambda(";
+			for (String param : ((LambdaExpression) exp).getParameters()) {
+				s += param + ", ";
+			}
+			return s.substring(0, s.length()-2) + ")";
+		}
 		else if (exp instanceof IdExpression) return "Id";
 		else if (exp instanceof IntExpression) return "Int";
 		else {
