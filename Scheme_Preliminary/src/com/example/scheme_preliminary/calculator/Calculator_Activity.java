@@ -11,6 +11,8 @@ import scheme_ast.IdExpression;
 import scheme_ast.IfExpression;
 import scheme_ast.IntExpression;
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Pair;
@@ -20,10 +22,13 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.example.scheme_preliminary.R;
+import com.example.scheme_preliminary.calculator.Id_Creation_Fragment.IdCreator;
+import com.example.scheme_preliminary.calculator.Id_Selection_Fragment.IdSelector;
+import com.example.scheme_preliminary.calculator.Keypad_Fragment.KeypadCreator;
 
 import evaluator.Evaluator;
 
-public class Calculator_Activity extends Activity {
+public class Calculator_Activity extends Activity implements KeypadCreator, IdCreator, IdSelector {
 	
 	private enum Mode {
 		WAITING, INTEGER, OTHER;
@@ -44,6 +49,7 @@ public class Calculator_Activity extends Activity {
 	    setContentView(R.layout.activity_calculator);
 	    
 	    this.fragFrame = (FrameLayout) findViewById(R.id.FrameLayout1);
+	    this.fragFrame.setBackgroundColor(Color.argb(255, 200, 200, 200));
 	    
 	    Keypad_Fragment keypadFragment = new Keypad_Fragment();
         getFragmentManager().beginTransaction()
@@ -51,22 +57,54 @@ public class Calculator_Activity extends Activity {
         					.commit();
 	    
 	    this.textView = (TextView) findViewById(R.id.textView1);
-	    
-	    setMode(Mode.WAITING); // this.mode = Mode.WAITING
+
 	    this.currentInt = null;
 	    this.stack = new Stack<Pair<Expression, List<Expression>>>();
 	    this.fullExpression = null;
 	}
+	
+	@Override
+	public void onKeypadCreated() {
+    	setMode(Mode.WAITING);
+	}
+	@Override
+	public void onIdSelected(String id) {
+		getFragmentManager().popBackStackImmediate();
+		handleToken(id, true);
+	}
+	@Override
+	public List<String> getListSource() {
+//		return new LinkedList<String>(); // temporary
+		return Arrays.asList(new String[] { "var_1", "var_2", "some_other_variable", "etc..." });
+	}
+	@Override
+	public void onIdCreated(String id) {
+		getFragmentManager().popBackStackImmediate();
+		if (!id.equals(""))
+			handleToken(id, true);
+	}
+	
+	private void createFragmentOfType(Class c) {
+		Fragment frag;
+		if (c.equals(Id_Selection_Fragment.class))
+			frag = new Id_Selection_Fragment();
+		else if (c.equals(Id_Creation_Fragment.class))
+			frag = new Id_Creation_Fragment();
+		else return;
+		FragmentTransaction transaction = getFragmentManager().beginTransaction();
+		transaction.replace(R.id.FrameLayout1, frag);
+		transaction.addToBackStack(null);
+		transaction.commit();
+	}
 			
     public void onButtonClick(View v) {
     	String token = ((Button) v).getText().toString();
+    	handleToken(token, false);
+    }
+    
+    public void handleToken(String token, boolean isId) {
     	String text = this.textView.getText().toString();
 
-		if (this.fullExpression != null) {
-			text = "";
-			this.fullExpression = null;
-		}
-    	
     	if (this.mode.equals(Mode.INTEGER)) {
     		if (token.equals("Enter")) {
     			IntExpression num = new IntExpression(this.currentInt);
@@ -94,6 +132,10 @@ public class Calculator_Activity extends Activity {
     	}
     	else if (this.mode.equals(Mode.WAITING)) {
     		if (OPLIST.contains(token)) { // if it's an operator
+    			if (this.fullExpression != null) {
+    				text = "";
+    				this.fullExpression = null;
+    			}
     			if (token.equals("if"))
     				this.stack.push(new Pair<Expression, List<Expression>>(new IfExpression(null, null, null), new LinkedList<Expression>()));
     			else
@@ -102,27 +144,64 @@ public class Calculator_Activity extends Activity {
     			text += "(" + token;
     		}
     		else if (getString(R.string.varCreate).equals(token)) {
-    			// start creation fragment
+    			createFragmentOfType(Id_Creation_Fragment.class);
     			return;
-    			// (either the callback method onCreateVar will handle the next segment
+    			// (either the callback method onIdCreated will handle the next segment
     			// or the user will press back and need to enter new input)
     		}
     		else if (getString(R.string.varSelect).equals(token)) {
-    			// start selection fragment
+    			createFragmentOfType(Id_Selection_Fragment.class);
     			return;
-    			// (either the callback method onSelectVar will handle the next segment
+    			// (either the callback method onIdSelected will handle the next segment
     			// or the user will press back and need to enter new input)
     		}
     		else { // it's the start of a number
+    			if (this.fullExpression != null) {
+    				text = "";
+    				this.fullExpression = null;
+    			}
     			if (! text.equals(""))
     				text += " ";
     			text += token;
-    			this.currentInt = Integer.parseInt(token);
-    			setMode(Mode.INTEGER);
+    			if (isId) {
+    				System.out.println("THE ID WE'RE INSERTING IS " + token);
+        			IdExpression id = new IdExpression(token);
+        			if (this.stack.isEmpty())
+        				this.fullExpression = id;
+        			else {
+        				this.stack.peek().second.add(id);
+        			}
+        			
+        			while (! this.stack.isEmpty() && topExpressionComplete()) {
+        				Expression exp = popTopExpression();
+        				text += ")";
+        				
+        				if (this.stack.isEmpty())
+        					this.fullExpression = exp;
+        				else
+        					this.stack.peek().second.add(exp);
+        			}
+    			}
+    			else {
+	    			this.currentInt = Integer.parseInt(token);
+	    			setMode(Mode.INTEGER);
+    			}
     		}
     	}
     	
-    	if (this.fullExpression != null) text += ("\n=\n" + Evaluator.evaluate(this.fullExpression).getValue());
+    	if (this.fullExpression != null) {
+    		if (this.fullExpression instanceof IdExpression) 
+    			text = ("ID: " + ((IdExpression) this.fullExpression).getId());
+    		else {
+    			try {
+    				text += ("\n=\n" + Evaluator.evaluate(this.fullExpression).getValue());
+    			}
+    			catch (Exception e) {
+    				text += ("\n\nCannot be evaluated");
+    			}
+    		}
+    					
+    	}
 //    	if (this.fullExpression != null) text = Unparser.unparse(this.fullExpression) + "\n=\n" + Evaluator.evaluate(this.fullExpression);
     	this.textView.setText(text);
     }
@@ -146,8 +225,6 @@ public class Calculator_Activity extends Activity {
 		return exp;
     }
     
-
-    
 	private void setMode(Mode mode) {
     	this.mode = mode;
     	if (mode.equals(Mode.WAITING)) {
@@ -169,7 +246,7 @@ public class Calculator_Activity extends Activity {
     }
 	
     private void activateButton(int id) {
-    	View v = findViewById(id);
+    	View v = this.fragFrame.findViewById(id);
     	Button b;
     	if (v != null)
     		b = (Button) v;
@@ -181,7 +258,7 @@ public class Calculator_Activity extends Activity {
     	b.setClickable(true);
     }
     private void disactivateButton(int id) {
-    	View v = findViewById(id);
+    	View v = this.fragFrame.findViewById(id);
     	Button b;
     	if (v != null)
     		b = (Button) v;
@@ -192,5 +269,5 @@ public class Calculator_Activity extends Activity {
     	b.setBackgroundColor(Color.TRANSPARENT);
     	b.setClickable(false);
     }
-	
+
 }
