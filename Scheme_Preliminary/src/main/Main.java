@@ -48,14 +48,12 @@ public class Main {
 		String unparsed = Unparser.unparse(e);
 		System.out.println(unparsed + "\n");
 		IntExpression v = Evaluator.evaluate(e);
-		Mapper test = new Mapper();
-		test.evaluate(e);
-		HashMap<String, Expression> map = test.getMap();
+		HashMap<Uid, HashSet<String>> map = Mapper.getMap(e);
 		if (map != null) {
 			System.out.printf("size of the map is : %d \n", map.size());
-			for (Entry<String, Expression> item : map.entrySet()) {
+			for (Entry<Uid, HashSet<String>> item : map.entrySet()) {
 				System.out.printf("this is the key: %s \n", item.getKey());
-				System.out.printf("this is the mother function: %s \n", Unparser.unparse(item.getValue()));
+				System.out.printf("this is the string set: %s \n", item.getValue());
 			}
 		}
 			
