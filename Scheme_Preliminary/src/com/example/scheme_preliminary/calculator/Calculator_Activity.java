@@ -1,4 +1,4 @@
-package com.example.scheme_preliminary;
+package com.example.scheme_preliminary.calculator;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -12,12 +12,15 @@ import scheme_ast.IfExpression;
 import scheme_ast.IntExpression;
 import android.app.Activity;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.TextView;
+
+import com.example.scheme_preliminary.R;
+
 import evaluator.Evaluator;
 
 public class Calculator_Activity extends Activity {
@@ -25,19 +28,28 @@ public class Calculator_Activity extends Activity {
 	private enum Mode {
 		WAITING, INTEGER, OTHER;
 	}
-	private final List OPLIST = Arrays.asList(new String[] { "+", "*", "if" });
+	private final List<String> OPLIST = Arrays.asList(new String[] { "+", "*", "if" });
 	
 	private Mode mode;
 	private Integer currentInt;
 	private Stack<Pair<Expression, List<Expression>>> stack;
 	private Expression fullExpression;
 	
+	private FrameLayout fragFrame;
 	private TextView textView;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 	    setContentView(R.layout.activity_calculator);
+	    
+	    this.fragFrame = (FrameLayout) findViewById(R.id.FrameLayout1);
+	    
+	    Keypad_Fragment keypadFragment = new Keypad_Fragment();
+        getFragmentManager().beginTransaction()
+        					.add(R.id.FrameLayout1, keypadFragment, "keypad")
+        					.commit();
+	    
 	    this.textView = (TextView) findViewById(R.id.textView1);
 	    
 	    setMode(Mode.WAITING); // this.mode = Mode.WAITING
@@ -89,6 +101,18 @@ public class Calculator_Activity extends Activity {
     			if (text != "") text += " ";
     			text += "(" + token;
     		}
+    		else if (getString(R.string.varCreate).equals(token)) {
+    			// start creation fragment
+    			return;
+    			// (either the callback method onCreateVar will handle the next segment
+    			// or the user will press back and need to enter new input)
+    		}
+    		else if (getString(R.string.varSelect).equals(token)) {
+    			// start selection fragment
+    			return;
+    			// (either the callback method onSelectVar will handle the next segment
+    			// or the user will press back and need to enter new input)
+    		}
     		else { // it's the start of a number
     			if (! text.equals(""))
     				text += " ";
@@ -128,25 +152,43 @@ public class Calculator_Activity extends Activity {
     	this.mode = mode;
     	if (mode.equals(Mode.WAITING)) {
     		disactivateButton(R.id.EnterButton);
-    		activateButton(R.id.Plus);
-    		activateButton(R.id.Times);
+    		activateButton(R.id.PlusButton);
+    		activateButton(R.id.TimesButton);
     		activateButton(R.id.IfButton);
+    		activateButton(R.id.varCreateButton);
+    		activateButton(R.id.varSelectButton);
     	}
     	else if (mode.equals(Mode.INTEGER)) {
     		activateButton(R.id.EnterButton);
-    		disactivateButton(R.id.Plus);
-    		disactivateButton(R.id.Times);
+    		disactivateButton(R.id.PlusButton);
+    		disactivateButton(R.id.TimesButton);
     		disactivateButton(R.id.IfButton);
+    		disactivateButton(R.id.varCreateButton);
+    		disactivateButton(R.id.varSelectButton);
     	}
     }
 	
     private void activateButton(int id) {
-    	Button b = (Button) findViewById(id);
+    	View v = findViewById(id);
+    	Button b;
+    	if (v != null)
+    		b = (Button) v;
+    	else {
+    		System.out.print("Can't find view with id " + id);
+    		return;
+    	}
     	b.setBackgroundResource(android.R.drawable.btn_default);
     	b.setClickable(true);
     }
     private void disactivateButton(int id) {
-    	Button b = (Button) findViewById(id);
+    	View v = findViewById(id);
+    	Button b;
+    	if (v != null)
+    		b = (Button) v;
+    	else {
+    		System.out.print("Can't find view with id " + id);
+    		return;
+    	}
     	b.setBackgroundColor(Color.TRANSPARENT);
     	b.setClickable(false);
     }

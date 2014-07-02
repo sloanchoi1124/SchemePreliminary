@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/LinearLayout1"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/RelativeLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -9,190 +9,28 @@
     <TextView
         android:id="@+id/textView1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/view1"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:gravity="center"
         android:textSize="32sp" />
 
-    <LinearLayout
-        android:id="@+id/LinearLayout1"
-        android:layout_width="fill_parent"
+    <View
+        android:id="@+id/view1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_centerVertical="true" />
+
+    <FrameLayout
+        android:id="@+id/FrameLayout1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:background="#193222"
-        android:orientation="vertical"
-        android:weightSum="5" >
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/view1"
+        android:background="#193222" >
 
-        <LinearLayout
-            android:id="@+id/keyrow1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:weightSum="3" >
+    </FrameLayout>
 
-            <Button
-                android:id="@+id/IfButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:onClick="onButtonClick"
-                android:text="@string/If" />
-
-            <Button
-                android:id="@+id/Plus"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignBottom="@+id/IfButton"
-                android:layout_gravity="center"
-                android:layout_toRightOf="@+id/IfButton"
-                android:layout_weight="1"
-                android:onClick="onButtonClick"
-                android:text="@string/Plus" />
-
-            <Button
-                android:id="@+id/Times"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignBottom="@+id/IfButton"
-                android:layout_gravity="center"
-                android:layout_toRightOf="@+id/Plus"
-                android:layout_weight="1"
-                android:onClick="onButtonClick"
-                android:text="@string/Times" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/keyrow2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:weightSum="3" >
-
-            <Button
-                android:id="@+id/Button7"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:onClick="onButtonClick"
-                android:text="@string/Number7" />
-
-            <Button
-                android:id="@+id/Button8"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:onClick="onButtonClick"
-                android:text="@string/Number8" />
-
-            <Button
-                android:id="@+id/Button9"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignBottom="@+id/Button7"
-                android:layout_toRightOf="@+id/Button8"
-                android:layout_weight="1"
-                android:onClick="onButtonClick"
-                android:text="@string/Number9" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/keyrow3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:weightSum="3" >
-
-            <Button
-                android:id="@+id/Button4"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:onClick="onButtonClick"
-                android:text="@string/Number4" />
-
-            <Button
-                android:id="@+id/Button5"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:onClick="onButtonClick"
-                android:text="@string/Number5" />
-
-            <Button
-                android:id="@+id/Button6"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignBottom="@+id/Button4"
-                android:layout_toRightOf="@+id/Button5"
-                android:layout_weight="1"
-                android:onClick="onButtonClick"
-                android:text="@string/Number6" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/keyrow4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:weightSum="3" >
-
-            <Button
-                android:id="@+id/Button1"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:onClick="onButtonClick"
-                android:text="@string/Number1" />
-
-            <Button
-                android:id="@+id/Button2"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignBottom="@+id/Button1"
-                android:layout_toRightOf="@+id/Button1"
-                android:layout_weight="1"
-                android:onClick="onButtonClick"
-                android:text="@string/Number2" />
-
-            <Button
-                android:id="@+id/Button3"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignBottom="@+id/Button1"
-                android:layout_toRightOf="@+id/Button2"
-                android:layout_weight="1"
-                android:onClick="onButtonClick"
-                android:text="@string/Number3" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/keyrow5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:weightSum="2" >
-
-            <Button
-                android:id="@+id/Button0"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                android:layout_alignRight="@+id/Button2"
-                android:layout_below="@+id/Button2"
-                android:layout_weight="1"
-                android:onClick="onButtonClick"
-                android:text="@string/Number0"
-                android:textSize="16sp" />
-
-            <Button
-                android:id="@+id/EnterButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:onClick="onButtonClick"
-                android:text="@string/Enter"
-                android:textSize="16sp" />
-        </LinearLayout>
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

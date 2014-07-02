@@ -35,5 +35,8 @@
     <string name="Enter">Enter</string>
     <string name="unused"></string>
     <string name="If">if</string>
+    <string name="newVar">New Variable</string>
+    <string name="varCreate">Create Var</string>
+    <string name="varSelect">Select Var</string>
 
 </resources>
