@@ -108,7 +108,7 @@ public class Evaluator {
 
 		Expression v = evaluate(e.getCondition(), maps);
 		if (v instanceof IntExpression) {
-			if (((IntExpression) v).getValue() == 1) {
+			if (((IntExpression) v).getValue() != 0) {
 				System.out.println("evaluate the body of if: \n");
 				Expression then = e.getThen();
 				return evaluate(then, maps);

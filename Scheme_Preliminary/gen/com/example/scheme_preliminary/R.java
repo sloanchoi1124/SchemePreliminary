@@ -36,10 +36,10 @@ public final class R {
         public static final int Button8=0x7f08000c;
         public static final int Button9=0x7f08000d;
         public static final int EnterButton=0x7f080018;
+        public static final int IfButton=0x7f080007;
         public static final int LinearLayout1=0x7f080004;
         public static final int Plus=0x7f080008;
         public static final int Times=0x7f080009;
-        public static final int UnusedButton=0x7f080007;
         public static final int action_settings=0x7f080029;
         public static final int activity_evaluation=0x7f080019;
         public static final int activity_viewing=0x7f080028;
@@ -97,6 +97,7 @@ public final class R {
         public static final int Enter=0x7f05001f;
         public static final int Equals=0x7f05001d;
         public static final int Eval=0x7f050019;
+        public static final int If=0x7f050021;
         public static final int Minus=0x7f050016;
         public static final int Number0=0x7f050013;
         public static final int Number1=0x7f050012;
