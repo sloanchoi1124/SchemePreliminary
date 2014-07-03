@@ -4,9 +4,11 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import parser.token.*;
 import scheme_ast.*;
+import util.Pair;
 
 public class Parser {
     
@@ -84,12 +86,12 @@ public class Parser {
                 }
                 return new LambdaExpression(parameters, body);
             case LET:
-                HashMap<String,Expression> bindings = parseBindings(iter);
+            	List<Pair<String, Expression>> bindings = parseBindings(iter);
                 body = parseExpression(iter, iter.next());
                 if (! (token = iter.next()).getKind().equals(TokenKind.RPAREN)) {
                     System.out.println("Expected end of let call, received " + token + " instead.");
                     return null;
-                }
+                }               
                 return new LetExpression(bindings, body);
             default:
                 return null;
@@ -105,9 +107,9 @@ public class Parser {
         return expressions;
     }
     
-    private static HashMap<String,Expression> parseBindings(Iterator<Token> iter) {
+    private static List<Pair<String, Expression>> parseBindings(Iterator<Token> iter) {
         // Parse bindings of a let call
-        HashMap<String,Expression> map = new HashMap<String,Expression>();
+    	List<Pair<String, Expression>> map = new ArrayList<Pair<String,Expression>>();
         iter.next(); // = LPAREN starting list of bindings
         String key;
         Expression value;
@@ -115,7 +117,7 @@ public class Parser {
         while ((paren = iter.next()).getKind().equals(TokenKind.LPAREN)) { // while next token is a '(' (which starts a new binding)
             key = iter.next().toString();
             value = parseExpression(iter, iter.next());
-            map.put(key, value);
+            map.add(new Pair<String, Expression>(key, value));
             iter.next(); // = iterate over the RPAREN that ends the single binding
         }
         // paren should now be the RPAREN ending the list of bindings
