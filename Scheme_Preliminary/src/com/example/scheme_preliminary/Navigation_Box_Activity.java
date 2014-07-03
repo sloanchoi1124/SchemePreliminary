@@ -14,6 +14,7 @@ import scheme_ast.IntExpression;
 import scheme_ast.LambdaExpression;
 import scheme_ast.LetExpression;
 import unparser.Unparser;
+import util.Pair;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -364,7 +365,7 @@ public class Navigation_Box_Activity extends Activity {
     	return toReturn;
     }
     //bindingsBox is a helper method for letBox
-    private RelativeLayout bindingsBox(HashMap<String,Expression> bindings)
+    private RelativeLayout bindingsBox(List<Pair<String, Expression>> bindings)
     {
     	RelativeLayout toReturn=new RelativeLayout(this);
     	//set the layout here

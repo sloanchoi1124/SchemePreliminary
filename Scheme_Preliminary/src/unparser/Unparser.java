@@ -1,6 +1,8 @@
 package unparser;
 
 import scheme_ast.*;
+import util.Pair;
+
 import java.util.*;
 
 public class Unparser {
@@ -88,10 +90,11 @@ public class Unparser {
        indent_space+=" ";
      
      result+="(let (\n";
-     for(String key:((LetExpression)ast).getBindings().keySet())
+     
+     for(Pair<String, Expression> i :((LetExpression)ast).getBindings())
      {
-       result+=indent_space+" ( "+key+" ";
-       result+=unparse(((LetExpression)ast).getBindings().get(key),indent_length)+" )\n";
+       result+=indent_space+" ( " + i.first +" ";
+       result+=unparse(i.second,indent_length)+" )\n";
      }
      
      result+=indent_space+")\n"+indent_space+unparse(((LetExpression)ast).getBody(),indent_length)+" )";
