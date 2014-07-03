@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Stack;
 
 import scheme_ast.*;
+import util.Pair;
 
 public class Evaluator {
 
@@ -80,19 +81,13 @@ public class Evaluator {
 	
 	private static Expression letEval(LetExpression e,
 			Stack<HashMap<String, Expression>> maps) {
-		HashMap<String, Expression> temp = e.getBindings();
 		HashMap<String, Expression> bindings = new HashMap<String, Expression>();
-		for (Entry<String, Expression> i : temp.entrySet()) {
-			if (i.getValue() instanceof LambdaExpression) {
-				bindings.put(i.getKey(), i.getValue());
-			} else {
-				Expression value = evaluate(i.getValue(), maps);
-				bindings.put(i.getKey(), value);
-			}
+		for (Pair<String, Expression> i : e.getBindings()) {
+			Expression value = evaluate(i.second, maps);
+			bindings.put(i.first, value);			
 		}
 		maps.push(bindings);
-		Expression body = e.getBody();
-		Expression result = evaluate(body, maps);
+		Expression result = evaluate(e.getBody(), maps);
 		maps.pop();
 		return result;
 	}
