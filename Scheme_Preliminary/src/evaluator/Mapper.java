@@ -19,6 +19,7 @@ import scheme_ast.IntExpression;
 import scheme_ast.LambdaExpression;
 import scheme_ast.LetExpression;
 import scheme_ast.OperatorExpression;
+import util.Pair;
 import util.Uid;
 
 public class Mapper {
@@ -47,12 +48,12 @@ public class Mapper {
 	}
 
 	private static void letCheck(LetExpression e, HashSet<String> workingSet) {
-		HashMap<String, Expression> temp = e.getBindings();
+		List<Pair<String, Expression>> temp = e.getBindings();
 		HashSet<String> copy = new HashSet<String>(workingSet);
-		for (Entry<String, Expression> i : temp.entrySet())	{
-			String variable = i.getKey();
+		for (Pair<String, Expression> i : temp)	{
+			String variable = i.first;
 			copy.add(variable);
-			evaluate(i.getValue(), copy);
+			evaluate(i.second, copy);
 		}
 		evaluate(e.getBody(), copy);
 	}
