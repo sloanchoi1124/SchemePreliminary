@@ -11,68 +11,44 @@
         android:weightSum="6" >
 
         <LinearLayout
-            android:id="@+id/keyrow0"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:weightSum="2" >
-
-            <Button
-                android:id="@+id/varCreateButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:onClick="onButtonClick"
-                android:text="@string/varCreate" />
-
-            <Button
-                android:id="@+id/varSelectButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignBottom="@+id/IfButton"
-                android:layout_gravity="center"
-                android:layout_toRightOf="@+id/IfButton"
-                android:layout_weight="1"
-                android:onClick="onButtonClick"
-                android:text="@string/varSelect" />
-        </LinearLayout>
-
-        <LinearLayout
             android:id="@+id/keyrow1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:weightSum="3" >
+            android:layout_weight="2"
+            android:gravity="center"
+            android:weightSum="2" >
 
-            <Button
-                android:id="@+id/IfButton"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/varOps"
+                android:layout_width="fill_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:onClick="onButtonClick"
-                android:text="@string/If" />
+                android:orientation="vertical" >
+
+                <Button
+                    android:id="@+id/varCreateButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:onClick="onNewFragmentNeeded"
+                    android:text="@string/varCreate" />
+
+                <Button
+                    android:id="@+id/varSelectButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:onClick="onNewFragmentNeeded"
+                    android:text="@string/varSelect" />
+            </LinearLayout>
 
             <Button
-                android:id="@+id/PlusButton"
-                android:layout_width="wrap_content"
+                android:id="@+id/opSelectButton"
+                android:layout_width="fill_parent"
                 android:layout_height="match_parent"
-                android:layout_alignBottom="@+id/IfButton"
-                android:layout_gravity="center"
-                android:layout_toRightOf="@+id/IfButton"
                 android:layout_weight="1"
-                android:onClick="onButtonClick"
-                android:text="@string/Plus" />
-
-            <Button
-                android:id="@+id/TimesButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignBottom="@+id/IfButton"
-                android:layout_gravity="center"
-                android:layout_toRightOf="@+id/PlusButton"
-                android:layout_weight="1"
-                android:onClick="onButtonClick"
-                android:text="@string/Times" />
+                android:onClick="onNewFragmentNeeded"
+                android:text="@string/opSelect" />
         </LinearLayout>
 
         <LinearLayout

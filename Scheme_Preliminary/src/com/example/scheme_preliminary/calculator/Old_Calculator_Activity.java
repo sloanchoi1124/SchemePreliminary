@@ -25,17 +25,15 @@ import com.example.scheme_preliminary.R;
 import com.example.scheme_preliminary.calculator.Id_Creation_Fragment.IdCreator;
 import com.example.scheme_preliminary.calculator.Id_Selection_Fragment.IdSelector;
 import com.example.scheme_preliminary.calculator.Keypad_Fragment.KeypadCreator;
-import com.example.scheme_preliminary.calculator.Op_Selection_Fragment.OpSelector;
 
 import evaluator.Evaluator;
 
-public class Calculator_Activity extends Activity implements KeypadCreator, IdCreator, IdSelector, OpSelector {
+public class Old_Calculator_Activity extends Activity implements KeypadCreator, IdCreator, IdSelector {
 	
 	private enum Mode {
-		WAITING, INT_OR_ID, BIND_ID, OTHER;
+		WAITING, INTEGER, OTHER;
 	}
-	private final List<String> OPLIST = Arrays.asList(new String[] { "+", "*", "-", "quotient", "if", "let", "lambda" });
-	private int[] numberButtonIds;
+	private final List<String> OPLIST = Arrays.asList(new String[] { "+", "*", "-", "/", "if", "let", "lambda" });
 	
 	private Mode mode;
 	private Integer currentInt;
@@ -58,11 +56,6 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
         					.add(R.id.FrameLayout1, keypadFragment, "keypad")
         					.commit();
 	    
-        
-        this.numberButtonIds = new int[] { R.id.Button0, R.id.Button1, R.id.Button2,
-        								   R.id.Button3, R.id.Button4, R.id.Button5,
-        								   R.id.Button6, R.id.Button7, R.id.Button8, R.id.Button9 };
-        
 	    this.textView = (TextView) findViewById(R.id.textView1);
 
 	    this.currentInt = null;
@@ -73,10 +66,6 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
 	@Override
 	public void onKeypadCreated() {
     	setMode(Mode.WAITING);
-	}
-	@Override
-	public void onOpSelected(View v) {
-		onButtonClick(v);
 	}
 	@Override
 	public void onIdSelected(String id) {
@@ -101,8 +90,6 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
 			frag = new Id_Selection_Fragment();
 		else if (c.equals(Id_Creation_Fragment.class))
 			frag = new Id_Creation_Fragment();
-		else if (c.equals(Op_Selection_Fragment.class))
-			frag = new Op_Selection_Fragment();
 		else return;
 		FragmentTransaction transaction = getFragmentManager().beginTransaction();
 		transaction.replace(R.id.FrameLayout1, frag);
@@ -110,16 +97,6 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
 		transaction.commit();
 	}
 			
-	public void onNewFragmentNeeded(View v) {
-		String token = ((Button) v).getText().toString();
-		if (getString(R.string.varCreate).equals(token))
-			createFragmentOfType(Id_Creation_Fragment.class);
-		else if (getString(R.string.varSelect).equals(token))
-			createFragmentOfType(Id_Selection_Fragment.class);
-		else if (getString(R.string.opSelect).equals(token))
-			createFragmentOfType(Op_Selection_Fragment.class);
-	}
-	
     public void onButtonClick(View v) {
     	String token = ((Button) v).getText().toString();
     	handleToken(token, false);
@@ -127,10 +104,8 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
     
     public void handleToken(String token, boolean isId) {
     	String text = this.textView.getText().toString();
-    	token = visualRepresentation(token);
-    	System.out.println(token);
 
-    	if (this.mode.equals(Mode.INT_OR_ID)) {
+    	if (this.mode.equals(Mode.INTEGER)) {
     		if (token.equals("Enter")) {
     			IntExpression num = new IntExpression(this.currentInt);
     			if (this.stack.isEmpty())
@@ -161,14 +136,26 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
     				text = "";
     				this.fullExpression = null;
     			}
-    			if (text != "") text += " ";
-    			text += "(" + token;
     			if (token.equals("if"))
     				this.stack.push(new Pair<Expression, List<Expression>>(new IfExpression(null, null, null), new LinkedList<Expression>()));
     			else
     				this.stack.push(new Pair<Expression, List<Expression>>(new IdExpression(token), new LinkedList<Expression>()));
+    			if (text != "") text += " ";
+    			text += "(" + token;
     		}
-    		else { // it's the start of a number or variable ID
+    		else if (getString(R.string.varCreate).equals(token)) {
+    			createFragmentOfType(Id_Creation_Fragment.class);
+    			return;
+    			// (either the callback method onIdCreated will handle the next segment
+    			// or the user will press back and need to enter new input)
+    		}
+    		else if (getString(R.string.varSelect).equals(token)) {
+    			createFragmentOfType(Id_Selection_Fragment.class);
+    			return;
+    			// (either the callback method onIdSelected will handle the next segment
+    			// or the user will press back and need to enter new input)
+    		}
+    		else { // it's the start of a number
     			if (this.fullExpression != null) {
     				text = "";
     				this.fullExpression = null;
@@ -197,7 +184,7 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
     			}
     			else {
 	    			this.currentInt = Integer.parseInt(token);
-	    			setMode(Mode.INT_OR_ID);
+	    			setMode(Mode.INTEGER);
     			}
     		}
     	}
@@ -211,24 +198,12 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
     			}
     			catch (Exception e) {
     				text += ("\n\nCannot be evaluated");
-    				System.out.println(e);
     			}
     		}
     					
     	}
 //    	if (this.fullExpression != null) text = Unparser.unparse(this.fullExpression) + "\n=\n" + Evaluator.evaluate(this.fullExpression);
     	this.textView.setText(text);
-    }
-    
-    private String visualRepresentation(String token) {
-    	System.out.println(getString(R.string.DividedBy));
-//    	if (getString(R.string.DividedBy).equals(token))
-    	if (token.equals("/"))
-    		return "quotient";
-    	else if (getString(R.string.lambda).equals(token))
-    		return "lambda";
-    	else return token;
-    	
     }
 	
     private boolean topExpressionComplete() {
@@ -254,30 +229,19 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
     	this.mode = mode;
     	if (mode.equals(Mode.WAITING)) {
     		disactivateButton(R.id.EnterButton);
-    		activateButton(R.id.opSelectButton);
+    		activateButton(R.id.PlusButton);
+    		activateButton(R.id.TimesButton);
     		activateButton(R.id.IfButton);
     		activateButton(R.id.varCreateButton);
     		activateButton(R.id.varSelectButton);
-    		for (int number : this.numberButtonIds)
-    			activateButton(number); // activate number buttons
     	}
-    	else if (mode.equals(Mode.INT_OR_ID)) {
+    	else if (mode.equals(Mode.INTEGER)) {
     		activateButton(R.id.EnterButton);
-    		disactivateButton(R.id.opSelectButton);
+    		disactivateButton(R.id.PlusButton);
+    		disactivateButton(R.id.TimesButton);
     		disactivateButton(R.id.IfButton);
     		disactivateButton(R.id.varCreateButton);
     		disactivateButton(R.id.varSelectButton);
-    		for (int number : this.numberButtonIds)
-    			activateButton(number);
-    	}
-    	else if (mode.equals(Mode.BIND_ID)) {
-    		disactivateButton(R.id.EnterButton);
-    		disactivateButton(R.id.opSelectButton);
-    		disactivateButton(R.id.IfButton);
-    		activateButton(R.id.varCreateButton);
-    		activateButton(R.id.varSelectButton);
-    		for (int number : this.numberButtonIds) 
-    			disactivateButton(number);
     	}
     }
 	

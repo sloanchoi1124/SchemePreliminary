@@ -16,8 +16,8 @@ public class MainActivity extends Activity implements OnClickListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		Button button0=(Button) findViewById(R.id.button0);
-		Button button1=(Button) findViewById(R.id.button1);
-		Button button2=(Button) findViewById(R.id.button2);
+		Button button1=(Button) findViewById(R.id.LambdaButton);
+		Button button2=(Button) findViewById(R.id.DividedByButton);
 		Button button3=(Button) findViewById(R.id.button3);
 		Button button4=(Button) findViewById(R.id.button4);
 		button0.setOnClickListener(this);
@@ -56,12 +56,12 @@ public class MainActivity extends Activity implements OnClickListener{
 				    	  "(modExp 2 100 101))";
 			i.putExtra("schemeText",s);
 			break;
-		case R.id.button1:
+		case R.id.LambdaButton:
 			i=new Intent(this,Activity_Selector.class);
 			s="(if (< 3 4) (if (< 3 4) (if (< 3 4) (* 5 6) (- 18 7)) (- 18 7)) (- 18 7))";
 			i.putExtra("schemeText",s);
 			break;
-		case R.id.button2:
+		case R.id.DividedByButton:
 			i=new Intent(this,Activity_Selector.class);
 			s="(if (< 3 4) (* 5 6) (- 18 7))";
 			i.putExtra("schemeText",s);

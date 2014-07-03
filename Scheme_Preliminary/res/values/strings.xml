@@ -38,5 +38,8 @@
     <string name="newVar">New Variable</string>
     <string name="varCreate">Create Var</string>
     <string name="varSelect">Select Var</string>
+    <string name="opSelect">Operators</string>
+    <string name="lambda">λ</string>
+    <string name="let">let</string>
 
 </resources>

@@ -12,14 +12,14 @@
         android:text="Example0" />
 
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/LambdaButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:text="Example1" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/DividedByButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
