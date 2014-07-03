@@ -1,6 +1,9 @@
 package com.example.scheme_preliminary;
 
+import util.Pair;
+
 import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,7 +17,6 @@ import scheme_ast.LetExpression;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Bundle;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,9 +94,9 @@ public class Navigation_Fragment extends ListFragment {
 			list.add(new Pair<String, Expression>("body", ((LambdaExpression) sourceExpression).getBody()));
 		}
 		else if (sourceExpression instanceof LetExpression) {
-			HashMap<String,Expression> bindings = ((LetExpression) sourceExpression).getBindings();
-			for (String key : bindings.keySet()) {
-				list.add(new Pair<String, Expression>("bind " + key, bindings.get(key)));
+			List<Pair<String, Expression>> bindings = ((LetExpression) sourceExpression).getBindings();
+			for (Pair<String, Expression> i: bindings) {
+				list.add(new Pair<String, Expression>("bind " + i.first, i.second));
 			}
 			list.add(new Pair<String, Expression>("body", ((LetExpression) sourceExpression).getBody()));
 		}

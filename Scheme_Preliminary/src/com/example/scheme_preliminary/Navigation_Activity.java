@@ -1,6 +1,7 @@
 package com.example.scheme_preliminary;
 
 import java.util.LinkedList;
+import util.Pair;
 
 import parser.Lexer;
 import parser.Parser;
@@ -8,7 +9,6 @@ import scheme_ast.Expression;
 import android.app.Activity;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.util.Pair;
 import android.widget.TextView;
 
 public class Navigation_Activity extends Activity implements Navigation_Fragment.MyListFragmentCommunicator {
