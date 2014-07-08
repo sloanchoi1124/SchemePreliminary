@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.scheme_preliminary.R;
-import com.example.scheme_preliminary.calculator.Id_Selection_Fragment.IdSelector;
 
 public class Keypad_Fragment extends Fragment {
 	

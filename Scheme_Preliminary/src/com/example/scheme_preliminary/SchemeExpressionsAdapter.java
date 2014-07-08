@@ -1,8 +1,6 @@
 package com.example.scheme_preliminary;
 
-import util.Pair;
 import java.util.Iterator;
-
 import java.util.List;
 
 import scheme_ast.CallExpression;
@@ -12,6 +10,7 @@ import scheme_ast.IfExpression;
 import scheme_ast.IntExpression;
 import scheme_ast.LambdaExpression;
 import scheme_ast.LetExpression;
+import util.Pair;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,7 +30,6 @@ public class SchemeExpressionsAdapter extends ArrayAdapter<Pair<String,Expressio
 		this.context = activity;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public View getView(int position, View convertView, ViewGroup parent) {	    
 	    // First let's verify the convertView is not null
 	    if (convertView == null) {

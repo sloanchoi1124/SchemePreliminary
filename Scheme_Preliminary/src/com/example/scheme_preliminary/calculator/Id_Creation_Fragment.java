@@ -14,12 +14,11 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.scheme_preliminary.R;
-import com.example.scheme_preliminary.calculator.Id_Selection_Fragment.IdSelector;
 
 public class Id_Creation_Fragment extends Fragment implements OnClickListener {
 	
 	public interface IdCreator {
-		public void onIdCreated(String id);
+		public void onStringCreated(String id);
 		public Object getSystemService(String name);
 	}
 	
@@ -68,7 +67,7 @@ public class Id_Creation_Fragment extends Fragment implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		this.imm.toggleSoftInput(0, InputMethodManager.HIDE_IMPLICIT_ONLY);
-		this.mCallback.onIdCreated(this.editText.getText().toString());
+		this.mCallback.onStringCreated(this.editText.getText().toString());
 	}
 
 }

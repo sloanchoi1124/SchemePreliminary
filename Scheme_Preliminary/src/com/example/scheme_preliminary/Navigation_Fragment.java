@@ -1,10 +1,6 @@
 package com.example.scheme_preliminary;
 
-import util.Pair;
-
 import java.util.ArrayList;
-
-import java.util.HashMap;
 import java.util.List;
 
 import scheme_ast.CallExpression;
@@ -14,6 +10,7 @@ import scheme_ast.IfExpression;
 import scheme_ast.IntExpression;
 import scheme_ast.LambdaExpression;
 import scheme_ast.LetExpression;
+import util.Pair;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.os.Bundle;
