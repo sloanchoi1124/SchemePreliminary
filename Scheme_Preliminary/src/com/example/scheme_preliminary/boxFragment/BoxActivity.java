@@ -1,26 +1,18 @@
 package com.example.scheme_preliminary.boxFragment;
 
-import java.util.HashMap;
 import java.util.List;
 
 import com.example.scheme_preliminary.ActivityCommunicator;
 import com.example.scheme_preliminary.R;
-import com.example.scheme_preliminary.R.id;
-import com.example.scheme_preliminary.R.layout;
-
 import parser.Lexer;
 import parser.Parser;
 import parser.token.Token;
 import scheme_ast.*;
-import unparser.ShallowUnparser;
 import util.Pair;
 import android.os.Bundle;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.app.Activity;
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 
 public class BoxActivity extends Activity implements ActivityCommunicator{
