@@ -1,5 +1,6 @@
 package com.example.scheme_preliminary.boxFragment;
 
+import java.util.HashMap;
 import java.util.List;
 
 import com.example.scheme_preliminary.ActivityCommunicator;
@@ -7,6 +8,7 @@ import com.example.scheme_preliminary.R;
 import com.example.scheme_preliminary.R.id;
 import com.example.scheme_preliminary.R.layout;
 
+import scheme_ast.Expression;
 import scheme_ast.LetExpression;
 import unparser.ShallowUnparser;
 import android.os.Bundle;
@@ -40,7 +42,7 @@ public class LetBox_Fragment extends Fragment {
 		View v = inflater.inflate(R.layout.activity_let_box__fragment, container, false);
 		bindings=(TextView) v.findViewById(R.id.bindings);
 		body=(TextView) v.findViewById(R.id.body_let);
-		bindings.setText(ShallowUnparser.shallowBindings(ast.getBindings(), 0));
+		bindings.setText(ShallowUnparser.shallowBindings((HashMap<String, Expression>) ast.getBindings(), 0));
 		bindings.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -48,7 +50,7 @@ public class LetBox_Fragment extends Fragment {
 				// TODO Auto-generated method stub
 				System.out.println("gotta pass bindings to activity");
 				
-				myActivityCommunicator.passBindingsToActivity(ast.getBindings());
+				myActivityCommunicator.passBindingsToActivity((HashMap<String, Expression>) ast.getBindings());
 			}
 		});
 		

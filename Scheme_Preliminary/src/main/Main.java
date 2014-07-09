@@ -1,18 +1,19 @@
 package main;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 
-import evaluator.Evaluator;
-import evaluator.Mapper;
 import parser.Lexer;
 import parser.Parser;
 import parser.token.Token;
-import scheme_ast.*;
+import scheme_ast.Expression;
+import scheme_ast.IntExpression;
 import unparser.Unparser;
+import util.Uid;
+import evaluator.Evaluator;
+import evaluator.Mapper;
 
 public class Main {
 	
@@ -48,14 +49,12 @@ public class Main {
 		String unparsed = Unparser.unparse(e);
 		System.out.println(unparsed + "\n");
 		IntExpression v = Evaluator.evaluate(e);
-		Mapper test = new Mapper();
-		test.evaluate(e);
-		HashMap<String, Expression> map = test.getMap();
+		HashMap<Uid, HashSet<String>> map = Mapper.getMap(e);
 		if (map != null) {
 			System.out.printf("size of the map is : %d \n", map.size());
-			for (Entry<String, Expression> item : map.entrySet()) {
+			for (Entry<Uid, HashSet<String>> item : map.entrySet()) {
 				System.out.printf("this is the key: %s \n", item.getKey());
-				System.out.printf("this is the mother function: %s \n", Unparser.unparse(item.getValue()));
+				System.out.printf("this is the string set: %s \n", item.getValue());
 			}
 		}
 			

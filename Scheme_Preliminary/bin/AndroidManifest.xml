@@ -50,6 +50,7 @@
             android:name="com.example.scheme_preliminary.Navigation_Box_Activity"
             android:label="@string/title_activity_navigation__box_" >
         </activity>
+
         <activity android:name="com.example.scheme_preliminary.Calculator_Activity" >
         </activity>
         <activity
@@ -92,6 +93,7 @@
             android:name="com.example.scheme_preliminary.boxFragment.IntIdBox_Fragment"
             android:label="@string/title_activity_int_id_box__fragment" >
         </activity>
+        <activity android:name=".calculator.Calculator_Activity"></activity>
     </application>
 
 </manifest>

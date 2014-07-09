@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentLeft="true"
+    android:layout_below="@+id/view1"
+    android:background="#193222"
+    android:orientation="vertical"
+    android:weightSum="3" >
+
+    <LinearLayout
+        android:id="@+id/keyrow1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:weightSum="3" >
+
+        <Button
+            android:id="@+id/IfButton"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="onOpSelected"
+            android:text="@string/If"
+            android:textSize="30sp" />
+
+        <Button
+            android:id="@+id/LetButton"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="onOpSelected"
+            android:text="@string/let"
+            android:textSize="30sp" />
+
+        <Button
+            android:id="@+id/LambdaButton"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="onOpSelected"
+            android:text="@string/lambda"
+            android:textSize="30sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/keyrow2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:weightSum="2" >
+
+        <Button
+            android:id="@+id/PlusButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="onOpSelected"
+            android:text="@string/Plus"
+            android:textSize="40sp" />
+
+        <Button
+            android:id="@+id/TimesButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="onOpSelected"
+            android:text="@string/Times"
+            android:textSize="40sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/keyRow3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:weightSum="2" >
+
+        <Button
+            android:id="@+id/MinusButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1.00"
+            android:onClick="onOpSelected"
+            android:text="@string/Minus"
+            android:textSize="40sp" />
+
+        <Button
+            android:id="@+id/DividedByButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1.00"
+            android:onClick="onOpSelected"
+            android:text="@string/DividedBy"
+            android:textSize="40sp" />
+    </LinearLayout>
+
+</LinearLayout>

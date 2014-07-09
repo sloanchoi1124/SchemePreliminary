@@ -64,7 +64,7 @@ public class ShallowUnparser {
 	        else
 	        {
 	        	result+="(";
-	            result+=shallowBindings(((LetExpression)ast).getBindings(),depth-1)+" ";
+	            result+=shallowBindings((HashMap<String, Expression>) ((LetExpression)ast).getBindings(),depth-1)+" ";
 	            result+=shallowUnparse(((LetExpression)ast).getBody(),depth-1);
 	            result+=")";
 	        }

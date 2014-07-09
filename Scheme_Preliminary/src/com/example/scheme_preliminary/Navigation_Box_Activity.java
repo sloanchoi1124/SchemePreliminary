@@ -16,6 +16,7 @@ import scheme_ast.IntExpression;
 import scheme_ast.LambdaExpression;
 import scheme_ast.LetExpression;
 import unparser.Unparser;
+import util.Pair;
 import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -682,7 +683,7 @@ public class Navigation_Box_Activity extends Activity {
 					@Override
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
-						bindingsReturn.addView(bindingsBox(ast.getBindings(),depth+1));
+						bindingsReturn.addView(bindingsBox((HashMap<String, Expression>) ast.getBindings(),depth+1));
 						bindingsReturn.removeView(dotdotdot_bindings);
 					}	
 				});
@@ -783,7 +784,8 @@ public class Navigation_Box_Activity extends Activity {
     //bindingsBox is a helper method for letBox to generate a relativelayout for bindings
     //STILL NEED TO SET AN ONCLICK LISTENER TO BINDINGS!
     */
-    private RelativeLayout bindingsBox(HashMap<String,Expression> bindings,int depth)
+    //bindingsBox is a helper method for letBox
+    private RelativeLayout bindingsBox(HashMap<String, Expression> bindings,int depth)
     {
     	final RelativeLayout toReturn=new RelativeLayout(this);
     	RelativeLayout.LayoutParams paramsReturn=new RelativeLayout.LayoutParams(

@@ -10,8 +10,8 @@ import scheme_ast.IfExpression;
 import scheme_ast.IntExpression;
 import scheme_ast.LambdaExpression;
 import scheme_ast.LetExpression;
+import util.Pair;
 import android.content.Context;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +30,6 @@ public class SchemeExpressionsAdapter extends ArrayAdapter<Pair<String,Expressio
 		this.context = activity;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public View getView(int position, View convertView, ViewGroup parent) {	    
 	    // First let's verify the convertView is not null
 	    if (convertView == null) {
@@ -93,13 +92,15 @@ public class SchemeExpressionsAdapter extends ArrayAdapter<Pair<String,Expressio
         	LetExpression letExp = (LetExpression) expression;
         	String s = "(";
         	int args = 0;
-        	Iterator<String> iter = letExp.getBindings().keySet().iterator();
+        	Iterator<Pair<String, Expression>> iter = letExp.getBindings().iterator();
+        	Pair<String, Expression> pair;
         	String key;
         	Expression value;
         	while (iter.hasNext() && args < 4) {
-        		key = iter.next();
+        		pair = iter.next();
+        		key = pair.first;
         		s += "(" + key;
-        		value = letExp.getBindings().get(key);
+        		value = pair.second;
         		if (value instanceof IdExpression || value instanceof IntExpression)
         			s += " " + pairFormat(value).second + ")";
         		else
@@ -132,8 +133,8 @@ public class SchemeExpressionsAdapter extends ArrayAdapter<Pair<String,Expressio
 		else if (exp instanceof IfExpression) return "If";
 		else if (exp instanceof LetExpression) {
 			String s = "Let(";
-			for (String id : ((LetExpression) exp).getBindings().keySet()) {
-				s += id + ", ";
+			for (Pair<String, Expression> id : ((LetExpression) exp).getBindings()) {
+				s += id.first + ", ";
 			}
 			return s.substring(0, s.length()-2) + ")";
 		}

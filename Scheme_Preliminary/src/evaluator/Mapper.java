@@ -5,7 +5,9 @@ package evaluator;
  * 
  */
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
 import java.util.Map.Entry;
 
@@ -17,51 +19,64 @@ import scheme_ast.IntExpression;
 import scheme_ast.LambdaExpression;
 import scheme_ast.LetExpression;
 import scheme_ast.OperatorExpression;
+import util.Pair;
+import util.Uid;
 
 public class Mapper {
-	private static HashMap<String, Expression> memo;
-
-	public Mapper() {
-		memo = new HashMap<String, Expression>();
-	}
-
-	public HashMap<String, Expression> getMap() {
+	
+	private static HashMap<Uid, HashSet<String>> memo;
+	
+	public static HashMap<Uid, HashSet<String>> getMap(Expression e) {
+		memo = new HashMap<Uid, HashSet<String>>();
+		HashSet<String> workingSet = new HashSet<String>();
+		evaluate(e, workingSet);		
 		return memo;
 	}
 
-	public void evaluate(Expression e) {
+	public static void evaluate(Expression e, HashSet<String> workingSet) {
+		memo.put(e.getUid(), workingSet);
+		System.out.println("putting ");
 		if (e instanceof IfExpression) {
-			ifEval((IfExpression) e);
+			ifCheck((IfExpression) e, workingSet);
 		} else if (e instanceof CallExpression) {
-			callEval((CallExpression) e);
+			callCheck((CallExpression) e, workingSet);
 		} else if (e instanceof LetExpression) {
-			letEval((LetExpression) e);
-		} else {
-
-		}
+			letCheck((LetExpression) e, workingSet);
+		} else if (e instanceof LambdaExpression) {
+			lambdaCheck((LambdaExpression) e, workingSet);
+		} else {}
 	}
 
-	private void ifEval(IfExpression e) {
-		if (e.getThen() instanceof LetExpression) {
-			letEval(((LetExpression) e.getThen()));
+	private static void letCheck(LetExpression e, HashSet<String> workingSet) {
+		List<Pair<String, Expression>> temp = e.getBindings();
+		HashSet<String> copy = new HashSet<String>(workingSet);
+		for (Pair<String, Expression> i : temp)	{
+			String variable = i.first;
+			copy.add(variable);
+			evaluate(i.second, copy);
 		}
-		if (e.getElse() instanceof LetExpression) {
-			letEval(((LetExpression) e.getThen()));
+		evaluate(e.getBody(), copy);
+	}
+	
+	private static void lambdaCheck(LambdaExpression e, HashSet<String> workingSet) {		
+		HashSet<String> copy = new HashSet<String>(workingSet);		
+		for (String paras : e.getParameters()) {
+			copy.add(paras);
 		}
+		evaluate(e.getBody(), copy);
 	}
 
-	private void letEval(LetExpression e) {
-		HashMap<String, Expression> temp = e.getBindings();
-		for (Entry<String, Expression> i : temp.entrySet()) {
-			System.out.println(i.getKey());
-			memo.put(i.getKey(), e);
-		}
+	private static void ifCheck(IfExpression e, HashSet<String> workingSet) {		
+		evaluate(e.getCondition(), workingSet);
+		evaluate(e.getElse(), workingSet);
+		evaluate(e.getThen(), workingSet);
 	}
-
-	private void callEval(CallExpression e) {
-		List<Expression> items = e.getOperands();
-		for (Expression item : items) {
-			evaluate(item);
+	
+	private static void callCheck(CallExpression e, HashSet<String> workingSet) {		
+		System.out.println("CallCheck");
+		evaluate(e.getOperator(), workingSet);
+		for (Expression i : e.getOperands()) {
+			evaluate(i, workingSet);
 		}
 	}
 }

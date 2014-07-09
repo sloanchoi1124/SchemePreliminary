@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Stack;
 
 import scheme_ast.*;
+import util.Pair;
 
 public class Evaluator {
 
@@ -56,10 +57,6 @@ public class Evaluator {
 		}
 	}
 	
-	//print debugging methods, incomplete 
-	private static void letPrint(LetExpression e) {
-		
-	}
 	
 	private static void callPrint(CallExpression e, Stack<HashMap<String, Expression>> maps) {
 		if (e.getOperator() instanceof  OperatorExpression) {
@@ -68,6 +65,7 @@ public class Evaluator {
 			System.out.printf("(%s ...)", getName(e.getOperator(), maps));
 		}
 	}
+	
 	
 	private static String getName(Expression e, Stack<HashMap<String, Expression>> maps) {
 		for (HashMap<String, Expression> map : maps) {
@@ -80,35 +78,27 @@ public class Evaluator {
 		return null;
 	}
 	
-	private static void ifPrint(CallExpression e) {
-		
-	}
-
+	
 	private static Expression letEval(LetExpression e,
 			Stack<HashMap<String, Expression>> maps) {
-		HashMap<String, Expression> temp = e.getBindings();
 		HashMap<String, Expression> bindings = new HashMap<String, Expression>();
-		for (Entry<String, Expression> i : temp.entrySet()) {
-			if (i.getValue() instanceof LambdaExpression) {
-				bindings.put(i.getKey(), i.getValue());
-			} else {
-				Expression value = evaluate(i.getValue(), maps);
-				bindings.put(i.getKey(), value);
-			}
+		for (Pair<String, Expression> i : e.getBindings()) {
+			Expression value = evaluate(i.second, maps);
+			bindings.put(i.first, value);			
 		}
 		maps.push(bindings);
-		Expression body = e.getBody();
-		Expression result = evaluate(body, maps);
+		Expression result = evaluate(e.getBody(), maps);
 		maps.pop();
 		return result;
 	}
 
+	
 	private static Expression ifEval(IfExpression e,
 			Stack<HashMap<String, Expression>> maps) {
 
 		Expression v = evaluate(e.getCondition(), maps);
 		if (v instanceof IntExpression) {
-			if (((IntExpression) v).getValue() == 1) {
+			if (((IntExpression) v).getValue() != 0) {
 				System.out.println("evaluate the body of if: \n");
 				Expression then = e.getThen();
 				return evaluate(then, maps);
@@ -122,6 +112,7 @@ public class Evaluator {
 		}
 	}
 
+	
 	private static Expression lambdaEval(CallExpression e,
 			Stack<HashMap<String, Expression>> maps) {
 		LambdaExpression lam = (LambdaExpression) e.getOperator();
@@ -144,13 +135,17 @@ public class Evaluator {
 		return result;
 	}
 
+	
 	private static Expression callEval(CallExpression e,
 			Stack<HashMap<String, Expression>> maps) {
 		Expression operator = evaluate(e.getOperator(), maps);
+		
 		if (operator instanceof LambdaExpression) {
 			CallExpression temp = new CallExpression(operator, e.getOperands());
 			return lambdaEval(temp, maps);
-		} else if (operator instanceof OperatorExpression) {
+		}
+		
+		else if (operator instanceof OperatorExpression) {
 			List<Expression> items = e.getOperands();
 			OperatorExpression oprt = (OperatorExpression) operator;
 			String id = oprt.getName();
@@ -161,10 +156,10 @@ public class Evaluator {
 			if ((oprt.acceptsLists()) && items.size() < oprt.getArity()) {
 				return null;
 			}
-			
+
 			IntExpression t = new IntExpression(1);
 			IntExpression f = new IntExpression(0);
-			
+
 			if (id.equals("odd?")) {
 				IntExpression i = (IntExpression) evaluate(items.get(0), maps);
 				int temp = i.getValue();
@@ -173,36 +168,36 @@ public class Evaluator {
 				} 
 				return t;
 			}
-			
+
 			Expression i1 = evaluate(items.get(0), maps);
 			Expression i2 = evaluate(items.get(1), maps);
 			int item1 = ((IntExpression) i1).getValue();
 			int item2 = ((IntExpression) i2).getValue();
-			
-			
-			
-			// operator: reminder		
-			if (id.equals("reminder")) {
-				IntExpression result = new IntExpression (item1 % item2);
-				return result;
+			int result = 0;
+
+			// operator: remainder		
+			if (id.equals("remainder")) {
+				return new IntExpression (item1 % item2);
 			}
-			
+
 			// operators: <, >, =, return 1 for true, 0 for false	
-			if (id.equals("=")) {
+			else if (id.equals("=")) {
 				if (item1 == item2) {
 					return t;
 				} else {
 					return f;
 				}
 			}
-			if (id.equals("<")) {
+
+			else if (id.equals("<")) {
 				if (item1 < item2) {
 					return t;
 				} else {
 					return f;
 				}
 			}
-			if (id.equals(">")) {
+			
+			else if (id.equals(">")) {
 				if (item1 > item2) {
 					return t;
 				} else {
@@ -211,14 +206,15 @@ public class Evaluator {
 			}
 
 			// operators: +, -, * /
-			int result = 0;
-			if (id.equals("+")) {
+
+			else if (id.equals("+")) {
 				for (Expression item : items) {
 					result = result
 							+ ((IntExpression) evaluate(item, maps)).getValue();
 				}
 			}
-			if (id.equals("-")) {
+
+			else if (id.equals("-")) {
 				result = ((IntExpression) evaluate(items.get(0), maps))
 						.getValue();
 				for (int i = 1; i < items.size(); i++) {
@@ -227,14 +223,16 @@ public class Evaluator {
 							- ((IntExpression) evaluate(item, maps)).getValue();
 				}
 			}
-			if (id.equals("*")) {
+
+			else if (id.equals("*")) {
 				result = 1;
 				for (Expression item : items) {
 					result = result
 							* ((IntExpression) evaluate(item, maps)).getValue();
 				}
 			}
-			if (id.equals("quotient")) {
+
+			else if (id.equals("quotient")) {
 				result = ((IntExpression) evaluate(items.get(0), maps))
 						.getValue();
 				for (int i = 1; i < items.size(); i++) {
@@ -243,12 +241,21 @@ public class Evaluator {
 							/ ((IntExpression) evaluate(item, maps)).getValue();
 				}
 			}
-			IntExpression out = new IntExpression(result);
-			return out;
-		} else {
+			
+			else {
+				// error: operator not defined;
+				return null;
+			}
+
+			return new IntExpression(result);
+		}
+		
+		else {
+			// error: operator neither Lambda nor Operator
 			return null;
 		}
 	}
+	
 
 	private static Expression findBinding(String key,
 			Stack<HashMap<String, Expression>> maps) {

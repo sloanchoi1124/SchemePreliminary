@@ -1,25 +1,12 @@
 package scheme_ast;
 
-import java.util.HashMap;
+import java.util.List;
 
-public class LetExpression extends Expression {
+import util.Pair;
+
+public class LetExpression extends AbstractLetExpression {
 	
-	private HashMap<String,Expression> mBindings; //TODO: this should be a list of pairs
-	private Expression mBody;
-	
-	public LetExpression(HashMap<String, Expression> bindings, Expression body) {
-		super();
-		mBindings = bindings;
-		mBody = body;
-	}
-	
-	public HashMap<String, Expression> getBindings() {
-		return mBindings;
-	}
-	
-	public Expression getBody() {
-		return mBody;
-	}
-	
-	
+	public LetExpression(List<Pair<String, Expression>> bindings, Expression body) {
+		super(bindings, body);		
+	}	
 }
