@@ -32,13 +32,37 @@ public class MainActivity extends Activity implements OnClickListener{
 		{
 		case R.id.button1:
 			i=new Intent(this,Activity_Selector.class);
-			s="(if (< 3 4) (if (< 3 4) (if (< 3 4) (* 5 6) (- 18 7)) (- 18 7)) (- 18 7))";
+			//s="(if (< 3 4) (if (< 3 4) (if (< 3 4) (* 5 6) (- 18 7)) (- 18 7)) (- 18 7))";
+			s="(let " +
+				    "((modExp " + 
+				    	      "(lambda (base exponent modulus) " +
+				    	        "(let " +
+				    	            "((modExpRec " +
+				    	              "(lambda (a sq x) " +
+				    	                "(if (= x 0) " +
+				    	                    "a " +
+				    	                    "(let " +
+				    	                        "((newA  " +
+				    	                          "(if (odd? x) " +
+				    	                              "(remainder (* a sq) modulus) " +
+				    	                              "a)) " +
+				    	                         "(newSq (remainder (* sq sq) modulus)) " +
+				    	                         "(newX (quotient x 2))) " +
+				    	                      "(modExpRec newA newSq newX)))))) " +
+				    	          "(modExpRec 1 (remainder base modulus) exponent))))) " +
+				    	  "(modExp 2 100 101))";
+			
 			i.putExtra("schemeText",s);
 			break;
 		case R.id.button2:
 			i=new Intent(this,Activity_Selector.class);
+			//s="(+ 1 2)";
 			//s="(if (< 3 4) (* 5 6) (- 18 7))";
-			s="(if (< 3 4) (let ((a 1) (b 2) (c 3)) (+ a b c)) (let ((x (lambda (a b c) (* a b c)))) (x 1 2 3)))";
+			//s="( let ( x 1 ) ( + x 1 ) )";
+			//s="(let ((a 1) (b 2) (c 3)) (+ a b c))";
+			//s="(lambda (a b c) (* a b c))";
+			//s="(< 3 (+ 1 3))";
+			s="(if (< (+ 1 2) 4) (let ((a 1) (b 2) (c 3)) (+ a b c)) (let ((x (lambda (a b c) (* a b c)))) (x 1 2 3)))";
 			i.putExtra("schemeText",s);
 			break;
 		case R.id.button3:

@@ -1,0 +1,53 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".BindingsBox_Fragment" 
+    android:id="@+id/bindingsbackground"
+    android:background="#dddddd">
+    
+    
+    <TextView
+        android:id="@+id/key"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="KEY->"
+        android:textAppearance="?android:attr/textAppearanceLarge" 
+        android:background="#cccccc" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/value"
+        android:layout_below="@+id/value"
+        android:orientation="vertical" 
+        android:id="@+id/valuesbackground">
+                
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/key"
+        android:layout_alignTop="@+id/valuesbackground"
+        android:orientation="vertical" 
+        android:id="@+id/keysbackground">
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/key"
+        android:layout_alignBottom="@+id/key"
+        android:layout_marginLeft="39dp"
+        android:layout_toRightOf="@+id/key"
+        android:background="#cccccc"
+        android:text="VALUE"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+</RelativeLayout>

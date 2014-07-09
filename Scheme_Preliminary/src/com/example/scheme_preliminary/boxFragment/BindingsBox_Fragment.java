@@ -1,0 +1,67 @@
+package com.example.scheme_preliminary.boxFragment;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.example.scheme_preliminary.ActivityCommunicator;
+import com.example.scheme_preliminary.R;
+import com.example.scheme_preliminary.R.id;
+import com.example.scheme_preliminary.R.layout;
+
+import scheme_ast.*;
+import unparser.ShallowUnparser;
+import android.os.Bundle;
+import android.app.Activity;
+import android.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
+import android.widget.TextView;
+
+public class BindingsBox_Fragment extends Fragment {
+	private HashMap<String,Expression> bindings;
+	private ActivityCommunicator myActivityCommunicator;
+	private int id=1000;
+	
+	@Override
+	public void onAttach(Activity activity) {
+		// TODO Auto-generated method stub
+		super.onAttach(activity);
+		myActivityCommunicator=(ActivityCommunicator) activity;
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		View v = inflater.inflate(R.layout.activity_bindings_box__fragment, container, false);
+		bindings=myActivityCommunicator.passBindingsToFragment();
+		LinearLayout valuesbackground=(LinearLayout) v.findViewById(R.id.valuesbackground);
+		LinearLayout keysbackground=(LinearLayout) v.findViewById(R.id.keysbackground);
+		for(final Map.Entry<String, Expression> entry: bindings.entrySet())
+		{
+			TextView valueTemp=new TextView(v.getContext());
+			valueTemp.setText(ShallowUnparser.shallowUnparse(entry.getValue(), 1));
+			valueTemp.setTextSize(20);
+			valueTemp.setOnClickListener(new View.OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					myActivityCommunicator.passExpressionToActivity(entry.getValue());
+				}
+			});
+			valuesbackground.addView(valueTemp);
+			
+			TextView keyTemp=new TextView(v.getContext());
+			keyTemp.setText(entry.getKey());
+			keyTemp.setTextSize(20);
+			keysbackground.addView(keyTemp);
+		}
+		return v;
+	}
+
+}

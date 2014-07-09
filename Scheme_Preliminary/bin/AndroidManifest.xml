@@ -50,7 +50,48 @@
             android:name="com.example.scheme_preliminary.Navigation_Box_Activity"
             android:label="@string/title_activity_navigation__box_" >
         </activity>
-        <activity android:name="Calculator_Activity"></activity>
+        <activity android:name="com.example.scheme_preliminary.Calculator_Activity" >
+        </activity>
+        <activity
+            android:name="com.example.scheme_preliminary.boxFragment.IfBox_Fragment"
+            android:label="@string/title_activity_if_box__fragment" >
+        </activity>
+        <activity
+            android:name="com.example.scheme_preliminary.boxFragment.LetBox_Fragment"
+            android:label="@string/title_activity_let_box__fragment" >
+        </activity>
+        <activity
+            android:name="com.example.scheme_preliminary.boxFragment.LambdaBox_Fragment"
+            android:label="@string/title_activity_lambda_box__fragment" >
+        </activity>
+        <activity
+            android:name="com.example.scheme_preliminary.boxFragment.CallBox_Fragment"
+            android:label="@string/title_activity_call_box__fragment" >
+        </activity>
+        <activity
+            android:name="com.example.scheme_preliminary.BoxActivity"
+            android:label="@string/title_activity_box" >
+        </activity>
+        <activity
+            android:name="com.example.scheme_preliminary.IfBox_Activity"
+            android:label="@string/title_activity_if_box_" >
+        </activity>
+        <activity
+            android:name="com.example.scheme_preliminary.IntBox_Fragment"
+            android:label="@string/title_activity_int_box__fragment" >
+        </activity>
+        <activity
+            android:name="com.example.scheme_preliminary.ParameterBox_Fragment"
+            android:label="@string/title_activity_parameter_box__fragment" >
+        </activity>
+        <activity
+            android:name="com.example.scheme_preliminary.boxFragment.BindingsBox_Fragment"
+            android:label="@string/title_activity_bindings_box__fragment" >
+        </activity>
+        <activity
+            android:name="com.example.scheme_preliminary.boxFragment.IntIdBox_Fragment"
+            android:label="@string/title_activity_int_id_box__fragment" >
+        </activity>
     </application>
 
 </manifest>

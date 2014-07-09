@@ -52,7 +52,7 @@ public class Activity_Selector extends Activity implements OnClickListener{
 			startActivity(navigate);
 			break;
 		case R.id.button4_activity_selector:
-			Intent box=new Intent(this,Navigation_Box_Activity.class);
+			Intent box=new Intent(this,BoxActivity.class);
 			if(extras!=null)
 				box.putExtra("schemeText",schemeText);
 			startActivity(box);

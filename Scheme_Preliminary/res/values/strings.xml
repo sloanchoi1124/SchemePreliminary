@@ -10,6 +10,39 @@
     <string name="title_activity_viewing_">Viewing_Activity</string>
     <string name="title_activity_scheme__creator">Scheme_Creator</string>
     <string name="title_activity_string__creator">String_Creator</string>
-    <string name="title_activity_navigation__box_">Navigation_Box_Activity</string><string name="Number9">9</string><string name="Number8">8</string><string name="Number7">7</string><string name="Number6">6</string><string name="Number5">5</string><string name="Number4">4</string><string name="Number3">3</string><string name="Number2">2</string><string name="Number1">1</string><string name="Number0">0</string><string name="Unknown">\?</string><string name="Plus">+</string><string name="Minus">-</string><string name="Times">*</string><string name="DividedBy">/</string><string name="Eval">eval</string><string name="OpenParenthesis">(</string><string name="CloseParenthesis">)</string><string name="Clear">C</string><string name="Equals">=</string><string name="Semicolon">;</string><string name="Enter">Enter</string><string name="unused"></string>
+    <string name="title_activity_navigation__box_">Navigation_Box_Activity</string>
+    <string name="Number9">9</string>
+    <string name="Number8">8</string>
+    <string name="Number7">7</string>
+    <string name="Number6">6</string>
+    <string name="Number5">5</string>
+    <string name="Number4">4</string>
+    <string name="Number3">3</string>
+    <string name="Number2">2</string>
+    <string name="Number1">1</string>
+    <string name="Number0">0</string>
+    <string name="Unknown">\?</string>
+    <string name="Plus">+</string>
+    <string name="Minus">-</string>
+    <string name="Times">*</string>
+    <string name="DividedBy">/</string>
+    <string name="Eval">eval</string>
+    <string name="OpenParenthesis">(</string>
+    <string name="CloseParenthesis">)</string>
+    <string name="Clear">C</string>
+    <string name="Equals">=</string>
+    <string name="Semicolon">;</string>
+    <string name="Enter">Enter</string>
+    <string name="unused"></string>
+    <string name="title_activity_if_box__fragment">IfBox_Fragment</string>
+    <string name="title_activity_let_box__fragment">LetBox_Fragment</string>
+    <string name="title_activity_lambda_box__fragment">LambdaBox_Fragment</string>
+    <string name="title_activity_call_box__fragment">CallBox_Fragment</string>
+    <string name="title_activity_box">BoxActivity</string>
+    <string name="title_activity_if_box_">IfBox_Activity</string>
+    <string name="title_activity_int_box__fragment">IntBox_Fragment</string>
+    <string name="title_activity_parameter_box__fragment">ParameterBox_Fragment</string>
+    <string name="title_activity_bindings_box__fragment">BindingsBox_Fragment</string>
+    <string name="title_activity_int_id_box__fragment">IntIdBox_Fragment</string>
 
 </resources>
