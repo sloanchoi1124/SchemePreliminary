@@ -47,7 +47,7 @@
             android:label="@string/title_activity_string__creator" >
         </activity>
         <activity
-            android:name="com.example.scheme_preliminary.Navigation_Box_Activity"
+            android:name="com.example.scheme_preliminary.boxFragment.Navigation_Box_Activity"
             android:label="@string/title_activity_navigation__box_" >
         </activity>
 
@@ -70,7 +70,7 @@
             android:label="@string/title_activity_call_box__fragment" >
         </activity>
         <activity
-            android:name="com.example.scheme_preliminary.BoxActivity"
+            android:name="com.example.scheme_preliminary.boxFragment.BoxActivity"
             android:label="@string/title_activity_box" >
         </activity>
         <activity

@@ -1,14 +1,12 @@
-package com.example.scheme_preliminary;
+package com.example.scheme_preliminary.boxFragment;
 
 import java.util.HashMap;
 import java.util.List;
 
-import com.example.scheme_preliminary.boxFragment.BindingsBox_Fragment;
-import com.example.scheme_preliminary.boxFragment.CallBox_Fragment;
-import com.example.scheme_preliminary.boxFragment.IfBox_Fragment;
-import com.example.scheme_preliminary.boxFragment.IntIdBox_Fragment;
-import com.example.scheme_preliminary.boxFragment.LambdaBox_Fragment;
-import com.example.scheme_preliminary.boxFragment.LetBox_Fragment;
+import com.example.scheme_preliminary.ActivityCommunicator;
+import com.example.scheme_preliminary.R;
+import com.example.scheme_preliminary.R.id;
+import com.example.scheme_preliminary.R.layout;
 
 import parser.Lexer;
 import parser.Parser;

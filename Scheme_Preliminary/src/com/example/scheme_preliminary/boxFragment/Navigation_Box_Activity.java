@@ -1,9 +1,13 @@
-package com.example.scheme_preliminary;
+package com.example.scheme_preliminary.boxFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.example.scheme_preliminary.R;
+import com.example.scheme_preliminary.R.id;
+import com.example.scheme_preliminary.R.layout;
 
 import parser.Lexer;
 import parser.Parser;
@@ -27,7 +31,8 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
+//THIS IS AN EXPERIMENTAL DYNAMIC BOX LAYOUT GENERATOR;
+//CURRENTLY IT IS ONLY KEPT FOR REFERENCE 
 public class Navigation_Box_Activity extends Activity {
     LinearLayout base;
     Expression ast;

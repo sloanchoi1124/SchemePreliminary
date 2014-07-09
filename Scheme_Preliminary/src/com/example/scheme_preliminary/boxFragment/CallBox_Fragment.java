@@ -66,7 +66,6 @@ public class CallBox_Fragment extends Fragment {
 		for(final Expression expression: ast.getOperands())
 		{
 			TextView temp=new TextView(v.getContext());
-			//temp.setTextAppearance(getApplicationContext(), android.R.style.TextAppearance_Large);
 			temp.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
 			temp.setText(ShallowUnparser.shallowUnparse(expression, 1));
 			operands.add(temp);
@@ -83,12 +82,4 @@ public class CallBox_Fragment extends Fragment {
 		}
 		return v;
 	}
-
-	private Context getApplicationContext() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-
-
 }

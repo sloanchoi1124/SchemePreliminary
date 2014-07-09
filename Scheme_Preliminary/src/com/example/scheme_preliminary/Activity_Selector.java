@@ -1,5 +1,7 @@
 package com.example.scheme_preliminary;
 
+import com.example.scheme_preliminary.boxFragment.BoxActivity;
+
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
