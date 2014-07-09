@@ -10,12 +10,8 @@ import android.view.ViewGroup;
 import com.example.scheme_preliminary.R;
 
 public class Keypad_Fragment extends Fragment {
-	
-	public interface KeypadCreator {
-		public void onKeypadCreated();
-	}
-	
-	KeypadCreator mCallback;
+
+	Calculator_Fragment_Listener mCallback;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -28,7 +24,7 @@ public class Keypad_Fragment extends Fragment {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);try {
-			this.mCallback = (KeypadCreator) activity;
+			this.mCallback = (Calculator_Fragment_Listener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement KeypadCreator");

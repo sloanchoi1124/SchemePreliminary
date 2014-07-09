@@ -11,11 +11,7 @@ import com.example.scheme_preliminary.R;
 
 public class Op_Selection_Fragment extends Fragment {
 	
-	public interface OpSelector {
-		public void onOpSelected(View v);
-	}
-	
-	OpSelector mCallback;
+	Calculator_Fragment_Listener mCallback;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -26,7 +22,7 @@ public class Op_Selection_Fragment extends Fragment {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		try {
-            this.mCallback = (OpSelector) activity;
+            this.mCallback = (Calculator_Fragment_Listener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement OpSelector");

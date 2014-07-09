@@ -15,12 +15,7 @@ import com.example.scheme_preliminary.R;
 
 public class Id_Selection_Fragment extends ListFragment {
 	
-	public interface IdSelector {
-		public List<String> getListSource();
-		public void onIdSelected(String id);
-	}
-	
-	IdSelector mCallback;
+	Calculator_Fragment_Listener mCallback;
 	List<String> listSource;
 	
 	@Override
@@ -37,7 +32,7 @@ public class Id_Selection_Fragment extends ListFragment {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		try {
-            this.mCallback = (IdSelector) activity;
+            this.mCallback = (Calculator_Fragment_Listener) activity;
             this.listSource = this.mCallback.getListSource();
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()

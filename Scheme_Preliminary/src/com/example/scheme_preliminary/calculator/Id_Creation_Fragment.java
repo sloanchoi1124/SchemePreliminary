@@ -17,12 +17,7 @@ import com.example.scheme_preliminary.R;
 
 public class Id_Creation_Fragment extends Fragment implements OnClickListener {
 	
-	public interface IdCreator {
-		public void onStringCreated(String id);
-		public Object getSystemService(String name);
-	}
-	
-	IdCreator mCallback;
+	Calculator_Fragment_Listener mCallback;
 	InputMethodManager imm;
 	EditText editText;
 	
@@ -38,7 +33,7 @@ public class Id_Creation_Fragment extends Fragment implements OnClickListener {
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 		try {
-            this.mCallback = (IdCreator) activity;
+            this.mCallback = (Calculator_Fragment_Listener) activity;
     		this.imm = (InputMethodManager) this.mCallback.getSystemService(Context.INPUT_METHOD_SERVICE);
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()

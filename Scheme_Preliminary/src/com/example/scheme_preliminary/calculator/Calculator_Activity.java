@@ -2,11 +2,18 @@ package com.example.scheme_preliminary.calculator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Stack;
 
-import scheme_ast.*;
+import scheme_ast.CallExpression;
+import scheme_ast.Expression;
+import scheme_ast.IdExpression;
+import scheme_ast.IfExpression;
+import scheme_ast.IntExpression;
+import scheme_ast.LambdaExpression;
+import scheme_ast.LetExpression;
 import unparser.Unparser;
 import util.Pair;
 import android.app.Activity;
@@ -14,26 +21,25 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.example.scheme_preliminary.R;
-import com.example.scheme_preliminary.calculator.Id_Creation_Fragment.IdCreator;
-import com.example.scheme_preliminary.calculator.Id_Selection_Fragment.IdSelector;
-import com.example.scheme_preliminary.calculator.Keypad_Fragment.KeypadCreator;
-import com.example.scheme_preliminary.calculator.Op_Selection_Fragment.OpSelector;
 
 import evaluator.Evaluator;
 
-public class Calculator_Activity extends Activity implements KeypadCreator, IdCreator, IdSelector, OpSelector {
+public class Calculator_Activity extends Activity implements Calculator_Fragment_Listener {
 	
 	private enum Mode {
 		WAITING, INTEGER, BINDING_STRING, OTHER;
 	}
-	private final List<String> OPLIST = Arrays.asList(new String[] { "+", "*", "-", "quotient", "if", "let", "lambda" });
-	private List<String> bindings;
+	private final Object doneMarker = Integer.valueOf(-42);
+	private LinkedList<String> OPLIST = new LinkedList<String>(Arrays.asList(new String[] { "+", "*", "-", "quotient", "if", "let", "lambda" }));
+	
+	private LinkedList<String> bindings;
 	private int[] numberButtonIds;
 	
 	private Mode mode;
@@ -57,14 +63,16 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
         					.add(R.id.FrameLayout1, keypadFragment, "keypad")
         					.commit();
 	    
-        this.bindings = new ArrayList<String>();
+        this.bindings = new LinkedList<String>();
         
         this.numberButtonIds = new int[] { R.id.Button0, R.id.Button1, R.id.Button2,
         								   R.id.Button3, R.id.Button4, R.id.Button5,
         								   R.id.Button6, R.id.Button7, R.id.Button8, R.id.Button9 };
         
 	    this.textView = (TextView) findViewById(R.id.textView1);
+	    this.textView.setMovementMethod(new ScrollingMovementMethod());
 
+	    this.mode = Mode.WAITING;
 	    this.currentInt = null;
 	    this.stack = new Stack<Pair<Expression, List<Object>>>();
 	    this.fullExpression = null;
@@ -72,7 +80,7 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
 	
 	@Override
 	public void onKeypadCreated() {
-    	if (this.mode == null) setMode(Mode.WAITING);
+    	setMode(this.mode);
 	}
 	@Override
 	public void onOpSelected(View v) {
@@ -86,7 +94,6 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
 	}
 	@Override
 	public List<String> getListSource() {
-//		return new LinkedList<String>(); // temporary
 		return this.bindings;
 	}
 	@Override
@@ -139,8 +146,8 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
     			IntExpression num = new IntExpression(this.currentInt);
     			this.currentInt = null;
     			handleExpressionEntered(num);
-    			condenseStackIfPossible();
-    			if (!this.stack.isEmpty() && this.stack.peek().first instanceof LetExpression)
+    			condenseStackWhilePossible();
+    			if (! this.stack.isEmpty() && this.stack.peek().first instanceof LetExpression)
     				setMode(Mode.BINDING_STRING);
     			else setMode(Mode.WAITING);
     		}
@@ -167,14 +174,16 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
     			}
     			else if (token.equals("lambda")) {
     				this.stack.push(new Pair<Expression, List<Object>>(new LambdaExpression(null, null), new ArrayList<Object>()));
+    				setMode(Mode.BINDING_STRING);
     			}
     			else
     				this.stack.push(new Pair<Expression, List<Object>>(new IdExpression(token), new ArrayList<Object>()));
     		}
     		else if (token.equals("Enter")) {
-    			this.stack.peek().second.add(Integer.valueOf(-1));
-    			condenseStackIfPossible();
-    			if (!this.stack.isEmpty() && this.stack.peek().first instanceof LetExpression)
+    			this.stack.peek().second.add(doneMarker);
+    			condenseStackWhilePossible();
+    			// if you land on an uncondensed LetExpression, it's waiting for more bindings
+    			if (! this.stack.isEmpty() && this.stack.peek().first instanceof LetExpression)
     				setMode(Mode.BINDING_STRING);
     			else setMode(Mode.WAITING);
     		}
@@ -185,10 +194,7 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
         			IdExpression id = new IdExpression(token);
         			
         			handleExpressionEntered(id);
-        			condenseStackIfPossible();
-        			if (!this.stack.isEmpty() && this.stack.peek().first instanceof LetExpression)
-        				setMode(Mode.BINDING_STRING);
-        			else setMode(Mode.WAITING);
+        			condenseStackWhilePossible();
     			}
     			else {
 	    			this.currentInt = Integer.parseInt(token);
@@ -198,11 +204,32 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
     		break;
     		
     	case BINDING_STRING:
-    		if (token.equals("Enter"))
-    			this.stack.peek().second.add(-1);
-    		else
+    		if (token.equals("Enter")) {
+    			this.stack.peek().second.add(this.doneMarker);
+//    			if (this.stack.peek().first instanceof LetExpression) {  this or lambda should always be the case for BINDING_STRING
+				Iterator<Object> iter = this.stack.peek().second.iterator();
+				Object obj;
+				String s;
+    			while (iter.hasNext()) {
+    				obj = iter.next();
+					if (obj instanceof String) {
+						s = (String) obj;
+						if (iter.next() instanceof LambdaExpression) {
+							this.OPLIST.add(s);
+						}
+						this.bindings.add(s);
+					}
+				}
+//    			}
+    			setMode(Mode.WAITING);
+    		}
+    		else {
 				this.stack.peek().second.add(token);
-			setMode(Mode.WAITING);
+				if (this.stack.peek().first instanceof LetExpression)
+					setMode(Mode.WAITING);
+				else // Lambda
+					setMode(Mode.BINDING_STRING);
+    		}
 			break;
 			
 		default:
@@ -215,7 +242,7 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
     			text = ("ID: " + ((IdExpression) this.fullExpression).getId());
     		else {
     			try {
-//    				text = unparsedFullExpressionWithoutNewlines();
+//    				text = Integer.toString(Evaluator.evaluate(this.fullExpression).getValue());
     				text = Unparser.unparse(this.fullExpression);
     				text += "\n=\n" + Evaluator.evaluate(this.fullExpression).getValue();
     			}
@@ -227,8 +254,8 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
     	}
     	else text = unparseStack();
 //    	if (this.fullExpression != null) text = Unparser.unparse(this.fullExpression) + "\n=\n" + Evaluator.evaluate(this.fullExpression);
+    	
     	this.textView.setText(text);
-    	System.out.println(text);
     }
     
     private String visualRepresentation(String token) {
@@ -247,8 +274,9 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
 		int size = pair.second.size();
     	if (pair.first instanceof IfExpression)
     		return size == 3;
-    	else if (pair.first instanceof LetExpression) {
-    		return (pair.second.get(size-2).equals(-1));
+    	else if (pair.first instanceof LetExpression ||
+    			pair.first instanceof LambdaExpression) {
+    		return (size > 1 && pair.second.get(size-2) instanceof Integer);
     	}
     	else
     		return pair.second.get(size-1) instanceof Integer;
@@ -264,15 +292,31 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
 			List<Pair<String, Expression>> localBindings = new ArrayList<Pair<String, Expression>>();
 			List<Object> args = pair.second;
 			String binding;
+			Expression boundExpression;
 			while (args.size() > 2) {
 				binding = (String) args.remove(0);
-				this.bindings.remove(binding);
-				localBindings.add(new Pair<String, Expression>(binding, (Expression) args.remove(0)));
+				boundExpression = (Expression) args.remove(0);
+				this.bindings.removeLastOccurrence(binding);
+				if (boundExpression instanceof LambdaExpression)
+					this.OPLIST.removeLastOccurrence(binding);
+				localBindings.add(new Pair<String, Expression>(binding, boundExpression));
 			}
 			args.remove(0); // 'finished' marker
 			exp = new LetExpression(localBindings, (Expression) args.remove(0));
 		}
-		else {
+		else if (pair.first instanceof LambdaExpression) {
+			ArrayList<String> localParams = new ArrayList<String>();
+			List<Object> args = pair.second;
+			String param;
+			while (args.size() > 2) {
+				param = (String) args.remove(0);
+				this.bindings.removeLastOccurrence(param);
+				localParams.add(param);
+			}
+			args.remove(0); // 'finished' marker
+			exp = new LambdaExpression(localParams, (Expression) args.remove(0));
+		}
+		else { // presumable Call expression
 			pair.second.remove(pair.second.size()-1);
 			exp = new CallExpression(pair.first, (List<Expression>)(List<?>) pair.second);
 		}
@@ -284,16 +328,10 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
 			this.fullExpression = exp;
 		else {
 			this.stack.peek().second.add(exp);
-			if (this.stack.peek().first instanceof LetExpression) {
-				for (Object obj : this.stack.peek().second) {
-					if (obj instanceof String && !(this.bindings.contains((String) obj)))
-						this.bindings.add((String) obj);
-				}
-			}
 		}
     }
     
-	private void condenseStackIfPossible() {
+	private void condenseStackWhilePossible() {
 		while (! this.stack.isEmpty() && topExpressionComplete()) {
 			Expression top = popTopExpression();
 			
@@ -333,7 +371,11 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
     		disactivateButton(R.id.varSelectButton);
     		for (int number : this.numberButtonIds) 
     			disactivateButton(number);
-    		activateButton(R.id.EnterButton);
+    		if (! this.stack.isEmpty() &&
+    				(this.stack.peek().first instanceof LetExpression || this.stack.peek().first instanceof LambdaExpression) &&
+    				this.stack.peek().second.size() >= 1)
+    			activateButton(R.id.EnterButton);
+    		else disactivateButton(R.id.EnterButton);
     		activateButton(R.id.varCreateButton);
     	}
     }
@@ -385,13 +427,13 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
 //    }
     
     private String unparseStack() {
+		@SuppressWarnings("unchecked")
 		List<Pair<Expression, List<Object>>> list = (List<Pair<Expression, List<Object>>>) this.stack.clone();
 		return unparseStack(list);
     }
     
     private String unparseStack(List<Pair<Expression, List<Object>>> list) {
     	String s = "";
-    	@SuppressWarnings("unchecked")
     	Pair<Expression, List<Object>> pair;
     	if (list.isEmpty()) {
     		if (this.currentInt != null)
@@ -417,7 +459,7 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
         		Object obj = pair.second.get(i);
         		if (obj instanceof Expression) {
         			s += Unparser.unparse((Expression) obj);
-        			s += ") ";
+        			s += ")";
         		}
         		else if (obj instanceof Integer) {
         			s += ")";
@@ -427,7 +469,27 @@ public class Calculator_Activity extends Activity implements KeypadCreator, IdCr
         	}
     	}
     	else if (pair.first instanceof LambdaExpression) {
-    		s += "(lambda";
+    		s += "(lambda (";
+        	for (int i=0; i<pair.second.size(); i++) {
+        		Object obj = pair.second.get(i);
+        		if (obj instanceof Expression) {
+        			s += Unparser.unparse((Expression) obj);
+        			s += ")";
+        		}
+        		else if (obj instanceof Integer) {
+        			s += " )";
+        		}
+        		else
+        			s += " " + (String) obj;
+        	}
+    	}
+    	else if (pair.first instanceof IfExpression) {
+    		s += "(if" + ((IdExpression) pair.first).getId() + " ";
+    		if (pair.second.size() > 0) {
+    			s += Unparser.unparse((Expression) pair.second.get(0));
+    			if (pair.second.size() > 1)
+    				s += Unparser.unparse((Expression) pair.second.get(1));
+    		}
     	}
     	return s + unparseStack(list);
     }
