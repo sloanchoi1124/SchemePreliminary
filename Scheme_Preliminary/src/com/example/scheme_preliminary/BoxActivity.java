@@ -15,6 +15,7 @@ import parser.Parser;
 import parser.token.Token;
 import scheme_ast.*;
 import unparser.ShallowUnparser;
+import util.Pair;
 import android.os.Bundle;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.RelativeLayout;
@@ -29,7 +30,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator{
 	private Bundle extras;
 	private String schemeText;
 	private Expression toReturnToFragment;
-	private HashMap<String,Expression> toReturnBindings;
+	private List<Pair<String, Expression>> toReturnBindings;
 	private Fragment currentFrag;
 	private FragmentTransaction ft;
 	private RelativeLayout background;
@@ -148,7 +149,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator{
 
 
 	@Override
-	public void passBindingsToActivity(HashMap<String, Expression> bindings) {
+	public void passBindingsToActivity(List<Pair<String, Expression>> bindings) {
 		// TODO Auto-generated method stub
 		toReturnBindings=bindings;
 		ft=getFragmentManager().beginTransaction();
@@ -159,7 +160,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator{
 	}
 
 	@Override
-	public HashMap<String, Expression> passBindingsToFragment() {
+	public List<Pair<String, Expression>> passBindingsToFragment() {
 		// TODO Auto-generated method stub
 		return toReturnBindings;
 	}

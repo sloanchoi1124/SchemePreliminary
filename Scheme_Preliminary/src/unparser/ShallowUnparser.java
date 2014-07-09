@@ -1,6 +1,7 @@
 package unparser;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import scheme_ast.CallExpression;
@@ -10,6 +11,7 @@ import scheme_ast.IfExpression;
 import scheme_ast.IntExpression;
 import scheme_ast.LambdaExpression;
 import scheme_ast.LetExpression;
+import util.Pair;
 
 public class ShallowUnparser {
 	public static String shallowUnparse(Expression ast, int depth)
@@ -64,7 +66,7 @@ public class ShallowUnparser {
 	        else
 	        {
 	        	result+="(";
-	            result+=shallowBindings((HashMap<String, Expression>) ((LetExpression)ast).getBindings(),depth-1)+" ";
+	            result+=shallowBindings(((LetExpression)ast).getBindings(),depth-1)+" ";
 	            result+=shallowUnparse(((LetExpression)ast).getBody(),depth-1);
 	            result+=")";
 	        }
@@ -90,13 +92,13 @@ public class ShallowUnparser {
 	    }
 	    return result;
 	    }
-	public static String shallowBindings(HashMap<String,Expression> bindings, int depth)
+	public static String shallowBindings(List<Pair<String, Expression>> list, int depth)
 	{
 		String result="";
 	    result+="(";
-	    for(Map.Entry<String,Expression> entry:bindings.entrySet())
+	    for(Pair<String,Expression> entry:list)
 	    {
-	    	result+=entry.getKey()+"->"+shallowUnparse(entry.getValue(),depth-1)+" ";
+	    	result+=entry.first+"->"+shallowUnparse(entry.second,depth-1)+" ";
 	    }
 	    result+=")";
 	    return result;

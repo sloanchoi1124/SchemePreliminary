@@ -1,6 +1,7 @@
 package com.example.scheme_preliminary.boxFragment;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.example.scheme_preliminary.ActivityCommunicator;
@@ -10,6 +11,7 @@ import com.example.scheme_preliminary.R.layout;
 
 import scheme_ast.*;
 import unparser.ShallowUnparser;
+import util.Pair;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.Fragment;
@@ -22,7 +24,7 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 public class BindingsBox_Fragment extends Fragment {
-	private HashMap<String,Expression> bindings;
+	private List<Pair<String, Expression>> bindings;
 	private ActivityCommunicator myActivityCommunicator;
 	private int id=1000;
 	
@@ -41,23 +43,23 @@ public class BindingsBox_Fragment extends Fragment {
 		bindings=myActivityCommunicator.passBindingsToFragment();
 		LinearLayout valuesbackground=(LinearLayout) v.findViewById(R.id.valuesbackground);
 		LinearLayout keysbackground=(LinearLayout) v.findViewById(R.id.keysbackground);
-		for(final Map.Entry<String, Expression> entry: bindings.entrySet())
+		for(final Pair<String,Expression> entry:bindings)
 		{
 			TextView valueTemp=new TextView(v.getContext());
-			valueTemp.setText(ShallowUnparser.shallowUnparse(entry.getValue(), 1));
+			valueTemp.setText(ShallowUnparser.shallowUnparse(entry.second, 1));
 			valueTemp.setTextSize(20);
 			valueTemp.setOnClickListener(new View.OnClickListener() {
 				
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					myActivityCommunicator.passExpressionToActivity(entry.getValue());
+					myActivityCommunicator.passExpressionToActivity(entry.second);
 				}
 			});
 			valuesbackground.addView(valueTemp);
 			
 			TextView keyTemp=new TextView(v.getContext());
-			keyTemp.setText(entry.getKey());
+			keyTemp.setText(entry.first);
 			keyTemp.setTextSize(20);
 			keysbackground.addView(keyTemp);
 		}
