@@ -1,6 +1,11 @@
 package evaluator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
+
 import scheme_ast.CallExpression;
+import scheme_ast.DefOrExp;
+import scheme_ast.Definition;
 import scheme_ast.Expression;
 import scheme_ast.IdExpression;
 import scheme_ast.IfExpression;
@@ -8,6 +13,7 @@ import scheme_ast.IntExpression;
 import scheme_ast.LambdaExpression;
 import scheme_ast.LetExpression;
 import scheme_ast.OperatorExpression;
+import scheme_ast.Program;
 import util.Pair;
 
 public class Evaluator {
@@ -30,8 +36,25 @@ public class Evaluator {
 		return env;
 	}
 	
-	public static IntExpression evaluate(Expression e) {
-		return (IntExpression) (evaluate(e, initializeEnv()));
+	public static IntExpression evaluate(Program p) {
+		Iterator<DefOrExp> itr = p.getProgram().iterator();
+		DefOrExp temp;
+		IntExpression step_result;
+		Stack<IntExpression> list = new Stack<IntExpression>();
+		Environment general_envr =initializeEnv();
+		while (itr.hasNext()) {
+			temp = itr.next();
+			if (temp instanceof Definition) {
+				general_envr.put(((Definition) temp).getSymbol(), ((Definition) temp).getBody(), general_envr);
+				System.out.println(((Definition) temp).getSymbol());
+			} else {
+				step_result = (IntExpression) (evaluate(((Expression)temp), general_envr));
+				list.add(step_result);
+				System.out.println(step_result.getValue());
+			}
+			
+		}
+		return list.pop();
 	}
 	
 	private static Expression evaluate(Expression e, Environment env) {
@@ -45,6 +68,7 @@ public class Evaluator {
 			return letEval((LetExpression) e, env);
 		} else if (e instanceof IdExpression) {
 			String id = ((IdExpression) e).getId();
+			System.out.println(id);
 			return env.getExpression(id);
 		} else {
 			return null; // error!!
@@ -80,8 +104,20 @@ public class Evaluator {
 		if (e.getOperator() instanceof IdExpression && evaluate(e.getOperator(), envr) instanceof LambdaExpression) {
 			LambdaExpression operator = (LambdaExpression)evaluate(e.getOperator(), envr);
 			Environment origin = envr.getEnvironment(((IdExpression)e.getOperator()).getId());
-			CallExpression temp = new CallExpression(operator, e.getOperands());
-			return lambdaEval(temp, origin);
+			List<Expression> numbers = e.getOperands();
+			if (operator.getParameters().size() != numbers.size()) {
+				// error
+				return null;
+			}
+			int i = 0;
+			Environment copy = new Environment(origin);
+			for (String para : operator.getParameters()) {
+				Expression value = evaluate(numbers.get(i), envr);
+				copy.put(para, value, envr);
+				i++;
+			}
+			Expression result = evaluate( operator.getBody(), copy);
+			return result;
 		}
 		Expression operator = evaluate(e.getOperator(), envr);		
 		if (operator instanceof OperatorExpression) {
@@ -184,26 +220,6 @@ public class Evaluator {
 			// error: operator neither Lambda nor Operator
 			return null;
 		}
-	}
-	
-	private static Expression lambdaEval(CallExpression e,
-			Environment envr) {
-		LambdaExpression lam = (LambdaExpression) e.getOperator();
-		List<Expression> numbers = e.getOperands();
-		if (lam.getParameters().size() != numbers.size()) {
-			// error
-			return null;
-		}
-		int i = 0;
-		Environment copy = new Environment(envr);
-		for (String para : lam.getParameters()) {
-			Expression value = evaluate(numbers.get(i), envr);
-			copy.put(para, value, envr);
-			i++;
-		}
-		Expression body = lam.getBody();
-		Expression result = evaluate(body, copy);
-		return result;
 	}
 	
 }
