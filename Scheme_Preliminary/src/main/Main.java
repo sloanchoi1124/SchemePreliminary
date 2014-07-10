@@ -18,18 +18,22 @@ import evaluator.Mapper;
 public class Main {
 	
 	public static void main(String[] args) {
-		String simpleSource = "(let ((modExp (lambda (base exponent modulus) (let ((modExpRec (lambda (a sq x) (if (= x 0) a (let ((newA (if (odd? x) (remainder (* a sq) modulus) a)) (newSq (remainder (* sq sq) modulus)) (newX (quotient x 2))) (modExpRec newA newSq newX)))))) (modExpRec 1 (remainder base modulus) exponent))))) (modExp 2 100 101))";
-		stringTest(simpleSource);
+		//String simpleSource = "(let ((modExp (lambda (base exponent modulus) (let ((modExpRec (lambda (a sq x) (if (= x 0) a (let ((newA (if (odd? x) (remainder (* a sq) modulus) a)) (newSq (remainder (* sq sq) modulus)) (newX (quotient x 2))) (modExpRec newA newSq newX)))))) (modExpRec 1 (remainder base modulus) exponent))))) (modExp 2 100 101))";
+		//stringTest(simpleSource);
 		
+		String nonrec = "(if (= 0 0) 3 2)";
+		stringTest(nonrec);
+		String let = "(let ((x 5) (y 10)) (+ x y))";
+		stringTest(let);
+		String fac = "(let ((fact (lambda (n) (if (= n 0) 1 (* n (fact (- n 1))))))) (fact 5))";
+		stringTest(fac);
 		/*AstExamples examples = new AstExamples();
 		for (Expression e : examples.examples) {
 			astTest(e);
 			
 		}*/
-		/*String test = "(let ((f (lambda ( x ) (+ x 1 ))) (f 5))";
-		List<Token> tokens = Lexer.lex(test);
-		Expression ast = Parser.parse(tokens);
-		astTest(ast);*/
+		String test = "(let ((f (lambda ( x ) (+ x 1 ))) (f 5))";
+		stringTest(test);
 	}
 		
 	public static void stringTest(String s) {
