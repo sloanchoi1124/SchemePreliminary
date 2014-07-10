@@ -7,7 +7,8 @@ public enum TokenKind {
     INT("[NUM]"),
     IF("if"),
     LAMBDA("lambda"),
-    LET("let");
+    LET("let"),
+    DEFINE("define");
     
     private String mRep;
     

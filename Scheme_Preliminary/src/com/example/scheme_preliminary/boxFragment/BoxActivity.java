@@ -35,7 +35,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator{
 		{
 			schemeText=extras.getString("schemeText");
 			List<Token> tokens = Lexer.lex(schemeText);
-			Expression ast = Parser.parse(tokens);
+			Expression ast = Parser.parseExpression(tokens);
 			passExpressionToActivity(ast);
 		}
 	}

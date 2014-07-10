@@ -39,7 +39,7 @@ public class Main {
 	public static void stringTest(String s) {
 		List<Token> tokens = Lexer.lex(s);
 		System.out.println("Tokens: " + tokens);
-		Expression ast = Parser.parse(tokens);
+		Expression ast = Parser.parseExpression(tokens);
 		if (ast != null) {
 			String unparsed = Unparser.unparse(ast);
 			System.out.println(unparsed);

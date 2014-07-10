@@ -38,6 +38,8 @@ public class Lexer {
                     list.add(new Token(TokenKind.LAMBDA));
                 else if (token.equals("let"))
                     list.add(new Token(TokenKind.LET));
+                else if (token.equals("define"))
+                	list.add(new Token(TokenKind.DEFINE));
                 else
                     list.add(new IdToken(token));
             }
