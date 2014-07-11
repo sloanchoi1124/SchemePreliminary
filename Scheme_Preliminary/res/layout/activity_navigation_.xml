@@ -10,11 +10,14 @@
 
     <TextView
         android:id="@+id/nav_path"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:minLines="2"
+        android:maxLines="2"
+		android:scrollHorizontally="true"
         android:gravity="center"
         android:layout_marginBottom="12dp"
         android:textSize="16sp" />
