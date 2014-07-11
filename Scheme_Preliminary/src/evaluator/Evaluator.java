@@ -12,6 +12,8 @@ import scheme_ast.IfExpression;
 import scheme_ast.IntExpression;
 import scheme_ast.LambdaExpression;
 import scheme_ast.LetExpression;
+import scheme_ast.LetStarExpression;
+import scheme_ast.LetrecExpression;
 import scheme_ast.OperatorExpression;
 import scheme_ast.Program;
 import util.Pair;
@@ -57,6 +59,7 @@ public class Evaluator {
 		return list.pop();
 	}
 	
+	// integer, boolean, string, symbol 
 	// temporary methods evaluate only one expression
 	
 	public static IntExpression evaluate(Expression e) {
@@ -76,6 +79,10 @@ public class Evaluator {
 			String id = ((IdExpression) e).getId();
 			System.out.println(id);
 			return env.getExpression(id);
+		} else if (e instanceof LetStarExpression) {
+			return letStarEval((LetStarExpression)e, env);
+		} else if (e instanceof LetrecExpression) {
+			return letrecEval((LetrecExpression)e, env);
 		} else {
 			return null; // error!!
 		}
@@ -91,6 +98,29 @@ public class Evaluator {
 		return evaluate(e.getBody(), augmentedEnv);
 	}
 
+	private static Expression letStarEval(LetStarExpression e, Environment env) {
+		Environment t = new Environment(env); // full copy		
+		for (Pair<String, Expression> i : e.getBindings()) {
+                    // bindings are evaluated in updated environment
+			Environment augmentedEnv = new Environment(t);
+            augmentedEnv.put(i.first, evaluate(i.second, t), t);
+            t = augmentedEnv;
+		}
+		return evaluate(e.getBody(), t);
+	}
+	
+	private static Expression letrecEval(LetrecExpression e, Environment env) {
+		Environment augmentedEnv = new Environment(env); // full copy
+		for (Pair<String, Expression> i : e.getBindings()) {
+                    // bindings are evaluated different envr according to its class
+			if (i.second instanceof LambdaExpression) {
+				augmentedEnv.put(i.first, i.second, augmentedEnv); // do not evaluate lambdaExpression
+			} else {
+                augmentedEnv.put(i.first, evaluate(i.second, env), env);
+			}
+		}
+		return evaluate(e.getBody(), augmentedEnv);
+	}
 	
 	private static Expression ifEval(IfExpression e, Environment env) {
 		Expression v = evaluate(e.getCondition(), env);

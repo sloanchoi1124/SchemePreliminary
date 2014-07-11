@@ -19,6 +19,7 @@ import scheme_ast.IntExpression;
 import scheme_ast.LambdaExpression;
 import scheme_ast.LetExpression;
 import scheme_ast.OperatorExpression;
+import scheme_ast.Program;
 import util.Pair;
 import util.Uid;
 
@@ -31,6 +32,10 @@ public class Mapper {
 		HashSet<String> workingSet = new HashSet<String>();
 		evaluate(e, workingSet);		
 		return memo;
+	}
+	
+	public static HashMap<Uid, HashSet<String>> getMap(Program p) {
+		return null;
 	}
 
 	public static void evaluate(Expression e, HashSet<String> workingSet) {
