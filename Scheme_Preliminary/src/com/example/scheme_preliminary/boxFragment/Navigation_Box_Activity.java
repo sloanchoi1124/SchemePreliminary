@@ -51,7 +51,7 @@ public class Navigation_Box_Activity extends Activity {
 		{
 			schemeText=extras.getString("schemeText");
 			List<Token> tokens=Lexer.lex(schemeText);
-			ast = Parser.parse(tokens);
+			ast = Parser.parseExpression(tokens);
 			if(ast!= null) 
 			{
 				sv=(ScrollView) findViewById(R.id.scrollView1);

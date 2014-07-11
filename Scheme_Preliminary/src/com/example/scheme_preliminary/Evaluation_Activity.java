@@ -27,7 +27,7 @@ public class Evaluation_Activity extends Activity {
 		{
 			schemeText=extras.getString("schemeText");
 			List<Token> tokens=Lexer.lex(schemeText);
-			Expression ast = Parser.parse(tokens);
+			Expression ast = Parser.parseExpression(tokens);
 			if(ast!= null) 
 			{
 //				result=Evaluator.evaluate(ast);

@@ -42,14 +42,15 @@ public class BoxActivity extends Activity implements ActivityCommunicator,RightS
 		map=new HashMap<String,Expression>();
 		String temp="(if (< (+ 1 2) 4) (let ((a 1) (b 2) (c 3)) (+ a b c)) (let ((x (lambda (a b c) (* a b c)))) (x 1 2 3)))";
 		List<Token> tokens = Lexer.lex(temp);
-		Expression ast1 = Parser.parse(tokens);
+		Expression ast1 = Parser.parseExpression(tokens);
 		
 		map.put("example1", ast1);
 		String temp1="(+ 2 2)";
 		tokens = Lexer.lex(temp1);
-		Expression ast2 = Parser.parse(tokens);
+		Expression ast2 = Parser.parseExpression(tokens);
 		map.put("example2", ast2);
 		initializeRightSideBar();
+
 	}
 
 	@Override

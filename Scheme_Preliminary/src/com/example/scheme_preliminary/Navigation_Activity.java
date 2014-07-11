@@ -34,7 +34,7 @@ public class Navigation_Activity extends Activity implements Navigation_Fragment
         this.listSourceList = new LinkedList<Pair<String,Expression>>();
         
         Expression exp;
-        if ((exp = Parser.parse(Lexer.lex(schemeText))) != null) {
+        if ((exp = Parser.parseExpression(Lexer.lex(schemeText))) != null) {
             // Set the title (path)
         	this.ROOT_TEXT = "/" + SchemeExpressionsAdapter.expressionType(exp);
             this.navPath = (TextView) findViewById(R.id.nav_path);

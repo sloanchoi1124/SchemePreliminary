@@ -24,7 +24,7 @@ public class testing {
 		String simpleSource="(if (< (+ 1 2) 4) (let ((a 1) (b 2) (c 3)) (+ a b c)) (let ((x (lambda (a b c) (* a b c)))) (x 1 2 3)))";
 		//main.Main.stringTest(simpleSource);
 		List<Token> tokens = Lexer.lex(simpleSource);
-		Expression ast = Parser.parse(tokens);
+		Expression ast = Parser.parseExpression(tokens);
 		System.out.println(ShallowUnparser.shallowUnparse(ast, 0));
 		System.out.println(ShallowUnparser.shallowUnparse(ast, 1));
 		System.out.println(ShallowUnparser.shallowUnparse(ast, 2));
