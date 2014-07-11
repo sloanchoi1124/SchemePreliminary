@@ -12,7 +12,7 @@ import util.Pair;
 
 public class Parser {
     
-    public static Expression parse(List<Token> tokens) {
+    public static Expression parseExpression(List<Token> tokens) {
         if (tokens.isEmpty()) return null;
         Iterator<Token> iter = tokens.iterator();
         return parseExpression(iter, null);
@@ -126,6 +126,61 @@ public class Parser {
             return null;
         }
         return map;
+    }
+    
+    // -------------------------------------------------------------------------------------------
+    // Definition support
+    // -------------------------------------------------------------------------------------------
+    
+    private static List<List<Token>> separateDefOrExps(List<Token> tokens) {
+        List<List<Token>> listOfLists = new ArrayList<List<Token>>();
+        Iterator<Token> tokenIter = tokens.iterator();
+        int currentIndex = -1;
+        int parenBalance = 0;
+        Token t;
+        TokenKind kind;
+        while (tokenIter.hasNext()) {
+            if (parenBalance == 0) {
+                listOfLists.add(new ArrayList<Token>());
+                currentIndex++;
+            }
+            
+            t = tokenIter.next();
+            listOfLists.get(currentIndex).add(t);
+            
+            kind = t.getKind();
+            if (kind.equals(TokenKind.LPAREN))
+                parenBalance++;
+            else if (kind.equals(TokenKind.RPAREN))
+                parenBalance--;
+        }
+        return listOfLists;
+    }
+    
+    public static Program parse(List<Token> tokens) {
+        List<List<Token>> defOrExps = separateDefOrExps(tokens);
+        
+        List<DefOrExp> programList = new ArrayList<DefOrExp>();
+        for (List<Token> list : defOrExps) {
+            if (isDefinition(list))
+                programList.add(parseDefinition(list));
+            else // is expression
+                programList.add(parseExpression(list));
+        }
+        return new Program(programList);
+    }
+
+    private static Definition parseDefinition(List<Token> tokens) {
+        tokens.remove(0); // (
+        tokens.remove(0); // define
+        String symbol = tokens.remove(0).toString();
+        tokens.remove(tokens.size() - 1); // )
+        Expression expression = parseExpression(tokens);
+        return new Definition(symbol, expression);
+    }
+    
+    private static boolean isDefinition(List<Token> tokens) {
+        return tokens.get(1).getKind().equals(TokenKind.DEFINE);
     }
     
 }
