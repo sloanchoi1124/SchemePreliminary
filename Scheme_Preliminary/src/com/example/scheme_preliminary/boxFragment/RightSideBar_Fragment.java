@@ -59,7 +59,7 @@ public class RightSideBar_Fragment extends Fragment {
 					for(TextView tv:textList)
 					{
 						if(tv!=temp)
-							tv.setBackgroundColor(Color.WHITE);
+							tv.setBackgroundColor(Color.LTGRAY);
 					}
 				}
 			});

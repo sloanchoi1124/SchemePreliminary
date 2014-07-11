@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 public class CallBox_Fragment extends Fragment {
@@ -66,7 +67,10 @@ public class CallBox_Fragment extends Fragment {
 		for(final Expression expression: ast.getOperands())
 		{
 			TextView temp=new TextView(v.getContext());
-			temp.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.WRAP_CONTENT));
+			RelativeLayout.LayoutParams paramsTemp=new RelativeLayout.LayoutParams(
+					RelativeLayout.LayoutParams.MATCH_PARENT,RelativeLayout.LayoutParams.WRAP_CONTENT);
+			paramsTemp.setMargins(0, 20, 0, 20);
+			temp.setLayoutParams(paramsTemp);
 			temp.setText(ShallowUnparser.shallowUnparse(expression, 1));
 			operands.add(temp);
 			temp.setTextSize(20);
