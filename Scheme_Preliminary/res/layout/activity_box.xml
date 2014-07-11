@@ -28,7 +28,4 @@
         android1:layout_alignParentTop="true" 
         android1:background="#eeeeee">        
     </FrameLayout>
-
-        
-
 </RelativeLayout>

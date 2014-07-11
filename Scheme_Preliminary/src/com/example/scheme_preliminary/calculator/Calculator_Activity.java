@@ -243,8 +243,8 @@ public class Calculator_Activity extends Activity implements Calculator_Fragment
     		else {
     			try {
 //    				text = Integer.toString(Evaluator.evaluate(this.fullExpression).getValue());
-    				text = Unparser.unparse(this.fullExpression);
-    				text += "\n=\n" + Evaluator.evaluate(this.fullExpression).getValue();
+//    				text = Unparser.unparse(this.fullExpression);
+//    				text += "\n=\n" + Evaluator.evaluate(this.fullExpression).getValue();
     			}
     			catch (Exception e) {
     				text += ("\n\nCannot be evaluated");
@@ -446,7 +446,8 @@ public class Calculator_Activity extends Activity implements Calculator_Fragment
     		s += "(" + ((IdExpression) pair.first).getId() + " ";
         	for (Object obj : pair.second) {
         		if (obj instanceof Expression)
-        			s += Unparser.unparse((Expression) obj);
+//        			s += Unparser.unparse((Expression) obj);
+        			s+="";
         		else if (obj instanceof Integer) {
         		}
         		else
@@ -458,7 +459,7 @@ public class Calculator_Activity extends Activity implements Calculator_Fragment
         	for (int i=0; i<pair.second.size(); i++) {
         		Object obj = pair.second.get(i);
         		if (obj instanceof Expression) {
-        			s += Unparser.unparse((Expression) obj);
+//        			s += Unparser.unparse((Expression) obj);
         			s += ")";
         		}
         		else if (obj instanceof Integer) {
@@ -473,7 +474,7 @@ public class Calculator_Activity extends Activity implements Calculator_Fragment
         	for (int i=0; i<pair.second.size(); i++) {
         		Object obj = pair.second.get(i);
         		if (obj instanceof Expression) {
-        			s += Unparser.unparse((Expression) obj);
+//        			s += Unparser.unparse((Expression) obj);
         			s += ")";
         		}
         		else if (obj instanceof Integer) {
@@ -486,9 +487,10 @@ public class Calculator_Activity extends Activity implements Calculator_Fragment
     	else if (pair.first instanceof IfExpression) {
     		s += "(if" + ((IdExpression) pair.first).getId() + " ";
     		if (pair.second.size() > 0) {
-    			s += Unparser.unparse((Expression) pair.second.get(0));
+//    			s += Unparser.unparse((Expression) pair.second.get(0));
     			if (pair.second.size() > 1)
-    				s += Unparser.unparse((Expression) pair.second.get(1));
+//    				s += Unparser.unparse((Expression) pair.second.get(1));
+    				s+="";
     		}
     	}
     	return s + unparseStack(list);

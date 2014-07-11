@@ -2,6 +2,7 @@ package com.example.scheme_preliminary.boxFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +17,6 @@ import scheme_ast.*;
 import util.Pair;
 import android.os.Bundle;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;

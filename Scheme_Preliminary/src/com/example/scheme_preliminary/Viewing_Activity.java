@@ -30,7 +30,7 @@ public class Viewing_Activity extends Activity {
 			Expression ast = Parser.parse(tokens);
 			if(ast!= null) 
 			{
-				result=Unparser.unparse(ast);
+//				result=Unparser.unparse(ast);
 				tv.setText(result);
 			}
 			

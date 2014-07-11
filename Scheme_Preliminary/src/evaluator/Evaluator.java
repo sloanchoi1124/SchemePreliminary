@@ -1,158 +1,132 @@
 package evaluator;
-
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Map.Entry;
 import java.util.Stack;
 
-import scheme_ast.*;
+import scheme_ast.CallExpression;
+import scheme_ast.DefOrExp;
+import scheme_ast.Definition;
+import scheme_ast.Expression;
+import scheme_ast.IdExpression;
+import scheme_ast.IfExpression;
+import scheme_ast.IntExpression;
+import scheme_ast.LambdaExpression;
+import scheme_ast.LetExpression;
+import scheme_ast.OperatorExpression;
+import scheme_ast.Program;
 import util.Pair;
 
 public class Evaluator {
 
-	private static HashMap<String, Expression> standardBindings;
-
-	private static Stack<HashMap<String, Expression>> operatorInit() {
-		Stack<HashMap<String, Expression>> maps = new Stack<HashMap<String, Expression>>();
-		standardBindings = new HashMap<String, Expression>();
-		standardBindings.put("+", new OperatorExpression("+", true, 2));
-		standardBindings.put("*", new OperatorExpression("*", true, 2));
-		standardBindings.put("-", new OperatorExpression("-", false, 2));
-		standardBindings.put("/", new OperatorExpression("/", false, 2));
-		standardBindings.put("<", new OperatorExpression("<", false, 2));
-		standardBindings.put(">", new OperatorExpression(">", false, 2));
-		standardBindings.put("=", new OperatorExpression("=", false, 2));
-		standardBindings.put("!", new OperatorExpression("not", false, 1));
-		standardBindings.put("odd?", new OperatorExpression("odd?", false, 1));
-		standardBindings.put("remainder", new OperatorExpression("remainder", false, 2));
-		standardBindings.put("quotient", new OperatorExpression("quotient", false, 2));
-		maps.add(standardBindings);
-		return maps;
-	}
-
-	public static IntExpression evaluate(Expression e) {
-		Stack<HashMap<String, Expression>> maps = operatorInit();
-		IntExpression result = (IntExpression) evaluate(e, maps);
-		return result;
-	}
-
-	private static Expression evaluate(Expression e,
-			Stack<HashMap<String, Expression>> maps) {
-		if (e instanceof IfExpression) {
-			System.out.println("If (...)");
-			return ifEval((IfExpression) e, maps);
-		} else if (e instanceof CallExpression) {
-			callPrint((CallExpression)e, maps);
-			return callEval((CallExpression) e, maps);
-		} else if (e instanceof LetExpression) {
-			System.out.println("let (...)");
-			return letEval((LetExpression) e, maps);
-		} else if (e instanceof IdExpression) {
-			String key = ((IdExpression) e).getId();
-			System.out.printf("IdExpression key: %s \n", key);
-			return findBinding(key, maps);
-		} else {
-			return e;
-		}
+	private static Environment initializeEnv() {
+		Environment env = new Environment();
+		// we do not really need to use OperatorExpression any more;
+		// we can just map the id to an idExpression; or even leave it null as an encoding?
+		env.put("+", new OperatorExpression("+", true, 2), null);
+		env.put("*", new OperatorExpression("*", true, 2), null);
+		env.put("-", new OperatorExpression("-", false, 2), null);
+		env.put("/", new OperatorExpression("/", false, 2), null);
+		env.put("<", new OperatorExpression("<", false, 2), null);
+		env.put(">", new OperatorExpression(">", false, 2), null);
+		env.put("=", new OperatorExpression("=", false, 2), null);
+		env.put("!", new OperatorExpression("not", false, 1), null);
+		env.put("odd?", new OperatorExpression("odd?", false, 1), null);
+		env.put("remainder", new OperatorExpression("remainder", false, 2), null);
+		env.put("quotient", new OperatorExpression("quotient", false, 2), null);
+		return env;
 	}
 	
-	
-	private static void callPrint(CallExpression e, Stack<HashMap<String, Expression>> maps) {
-		if (e.getOperator() instanceof  OperatorExpression) {
-			System.out.printf("(%s ...)", ((OperatorExpression) e.getOperator()).getName());
-		} else {
-			System.out.printf("(%s ...)", getName(e.getOperator(), maps));
-		}
-	}
-	
-	
-	private static String getName(Expression e, Stack<HashMap<String, Expression>> maps) {
-		for (HashMap<String, Expression> map : maps) {
-			for (Entry<String, Expression> entry : map.entrySet()) {
-				if (entry.getValue().equals(e)) {
-					return entry.getKey();
-				}
+	public static IntExpression evaluate(Program p) {
+		Iterator<DefOrExp> itr = p.getProgram().iterator();
+		DefOrExp temp;
+		IntExpression step_result;
+		Stack<IntExpression> list = new Stack<IntExpression>();
+		Environment general_envr =initializeEnv();
+		while (itr.hasNext()) {
+			temp = itr.next();
+			if (temp instanceof Definition) {
+				general_envr.put(((Definition) temp).getSymbol(), ((Definition) temp).getBody(), general_envr);
+				System.out.println(((Definition) temp).getSymbol());
+			} else {
+				step_result = (IntExpression) (evaluate(((Expression)temp), general_envr));
+				list.add(step_result);
+				System.out.println(step_result.getValue());
 			}
+			
 		}
-		return null;
+		return list.pop();
 	}
 	
+	private static Expression evaluate(Expression e, Environment env) {
+		if (e instanceof IntExpression || e instanceof LambdaExpression) {
+			return e;
+		} else if (e instanceof IfExpression) {
+			return ifEval((IfExpression) e, env);
+		} else if (e instanceof CallExpression) {
+			return callEval((CallExpression) e, env);
+		} else if (e instanceof LetExpression) {
+			return letEval((LetExpression) e, env);
+		} else if (e instanceof IdExpression) {
+			String id = ((IdExpression) e).getId();
+			System.out.println(id);
+			return env.getExpression(id);
+		} else {
+			return null; // error!!
+		}
+	}
+		
 	
-	private static Expression letEval(LetExpression e,
-			Stack<HashMap<String, Expression>> maps) {
-		HashMap<String, Expression> bindings = new HashMap<String, Expression>();
+	private static Expression letEval(LetExpression e, Environment env) {
+		Environment augmentedEnv = new Environment(env); // full copy
 		for (Pair<String, Expression> i : e.getBindings()) {
-			Expression value = evaluate(i.second, maps);
-			bindings.put(i.first, value);			
+                    // bindings are evaluated in original environment
+                    augmentedEnv.put(i.first, evaluate(i.second, env), env);
 		}
-		maps.push(bindings);
-		Expression result = evaluate(e.getBody(), maps);
-		maps.pop();
-		return result;
+		return evaluate(e.getBody(), augmentedEnv);
 	}
 
 	
-	private static Expression ifEval(IfExpression e,
-			Stack<HashMap<String, Expression>> maps) {
-
-		Expression v = evaluate(e.getCondition(), maps);
+	private static Expression ifEval(IfExpression e, Environment env) {
+		Expression v = evaluate(e.getCondition(), env);
 		if (v instanceof IntExpression) {
 			if (((IntExpression) v).getValue() != 0) {
-				System.out.println("evaluate the body of if: \n");
-				Expression then = e.getThen();
-				return evaluate(then, maps);
+				return evaluate(e.getThen(), env);
 			} else {
-				System.out.println("evaluate else: \n");
-				Expression not = e.getElse();
-				return evaluate(not, maps);
+				return evaluate(e.getElse(), env);
 			}
 		} else {
-			return null;
+			return null; // ERROR - not int/bool
 		}
 	}
-
-	
-	private static Expression lambdaEval(CallExpression e,
-			Stack<HashMap<String, Expression>> maps) {
-		LambdaExpression lam = (LambdaExpression) e.getOperator();
-		List<Expression> numbers = e.getOperands();
-		if (lam.getParameters().size() != numbers.size()) {
-			// error
-			return null;
-		}
-		HashMap<String, Expression> assignments = new HashMap<String, Expression>();
-		int i = 0;
-		for (String para : lam.getParameters()) {
-			Expression value = evaluate(numbers.get(i), maps);
-			assignments.put(para, value);
-			i++;
-		}
-		maps.push(assignments);
-		Expression body = lam.getBody();
-		Expression result = evaluate(body, maps);
-		maps.pop();
-		return result;
-	}
-
 	
 	private static Expression callEval(CallExpression e,
-			Stack<HashMap<String, Expression>> maps) {
-		Expression operator = evaluate(e.getOperator(), maps);
-		
-		if (operator instanceof LambdaExpression) {
-			CallExpression temp = new CallExpression(operator, e.getOperands());
-			return lambdaEval(temp, maps);
+			Environment envr) {
+		if (e.getOperator() instanceof IdExpression && evaluate(e.getOperator(), envr) instanceof LambdaExpression) {
+			LambdaExpression operator = (LambdaExpression)evaluate(e.getOperator(), envr);
+			Environment origin = envr.getEnvironment(((IdExpression)e.getOperator()).getId());
+			List<Expression> numbers = e.getOperands();
+			if (operator.getParameters().size() != numbers.size()) {
+				// error
+				return null;
+			}
+			int i = 0;
+			Environment copy = new Environment(origin);
+			for (String para : operator.getParameters()) {
+				Expression value = evaluate(numbers.get(i), envr);
+				copy.put(para, value, envr);
+				i++;
+			}
+			Expression result = evaluate( operator.getBody(), copy);
+			return result;
 		}
-		
-		else if (operator instanceof OperatorExpression) {
+		Expression operator = evaluate(e.getOperator(), envr);		
+		if (operator instanceof OperatorExpression) {
 			List<Expression> items = e.getOperands();
 			OperatorExpression oprt = (OperatorExpression) operator;
 			String id = oprt.getName();
 			if ((!oprt.acceptsLists()) && items.size() != oprt.getArity()) {
 				return null;
 			}
-
 			if ((oprt.acceptsLists()) && items.size() < oprt.getArity()) {
 				return null;
 			}
@@ -161,7 +135,7 @@ public class Evaluator {
 			IntExpression f = new IntExpression(0);
 
 			if (id.equals("odd?")) {
-				IntExpression i = (IntExpression) evaluate(items.get(0), maps);
+				IntExpression i = (IntExpression) evaluate(items.get(0), envr);
 				int temp = i.getValue();
 				if (temp % 2 == 0) {
 					return f;
@@ -169,8 +143,8 @@ public class Evaluator {
 				return t;
 			}
 
-			Expression i1 = evaluate(items.get(0), maps);
-			Expression i2 = evaluate(items.get(1), maps);
+			Expression i1 = evaluate(items.get(0), envr);
+			Expression i2 = evaluate(items.get(1), envr);
 			int item1 = ((IntExpression) i1).getValue();
 			int item2 = ((IntExpression) i2).getValue();
 			int result = 0;
@@ -188,15 +162,13 @@ public class Evaluator {
 					return f;
 				}
 			}
-
 			else if (id.equals("<")) {
 				if (item1 < item2) {
 					return t;
 				} else {
 					return f;
 				}
-			}
-			
+			}			
 			else if (id.equals(">")) {
 				if (item1 > item2) {
 					return t;
@@ -206,67 +178,48 @@ public class Evaluator {
 			}
 
 			// operators: +, -, * /
-
 			else if (id.equals("+")) {
 				for (Expression item : items) {
 					result = result
-							+ ((IntExpression) evaluate(item, maps)).getValue();
+							+ ((IntExpression) evaluate(item, envr)).getValue();
 				}
 			}
 
 			else if (id.equals("-")) {
-				result = ((IntExpression) evaluate(items.get(0), maps))
+				result = ((IntExpression) evaluate(items.get(0), envr))
 						.getValue();
 				for (int i = 1; i < items.size(); i++) {
 					Expression item = items.get(i);
 					result = result
-							- ((IntExpression) evaluate(item, maps)).getValue();
+							- ((IntExpression) evaluate(item, envr)).getValue();
 				}
 			}
-
 			else if (id.equals("*")) {
 				result = 1;
 				for (Expression item : items) {
 					result = result
-							* ((IntExpression) evaluate(item, maps)).getValue();
+							* ((IntExpression) evaluate(item, envr)).getValue();
 				}
 			}
-
 			else if (id.equals("quotient")) {
-				result = ((IntExpression) evaluate(items.get(0), maps))
+				result = ((IntExpression) evaluate(items.get(0), envr))
 						.getValue();
 				for (int i = 1; i < items.size(); i++) {
 					Expression item = items.get(i);
 					result = result
-							/ ((IntExpression) evaluate(item, maps)).getValue();
+							/ ((IntExpression) evaluate(item, envr)).getValue();
 				}
-			}
-			
+			}			
 			else {
 				// error: operator not defined;
 				return null;
 			}
-
 			return new IntExpression(result);
-		}
-		
+		}		
 		else {
 			// error: operator neither Lambda nor Operator
 			return null;
 		}
 	}
 	
-
-	private static Expression findBinding(String key,
-			Stack<HashMap<String, Expression>> maps) {
-		ListIterator<HashMap<String, Expression>> li = maps.listIterator(maps
-				.size());
-		while (li.hasPrevious()) {
-			HashMap<String, Expression> map = li.previous();
-			if (map.containsKey(key)) {
-				return (Expression) map.get(key);
-			}
-		}		
-		return null;
-	}
 }

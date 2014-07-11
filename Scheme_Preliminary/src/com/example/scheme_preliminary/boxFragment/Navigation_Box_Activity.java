@@ -124,7 +124,7 @@ public class Navigation_Box_Activity extends Activity {
 				// TODO Auto-generated method stub
 				if(toReturn.getChildCount()<=1)
 				{
-				    tv.setText(Unparser.unparse(intAst));
+//				    tv.setText(Unparser.unparse(intAst));
 					toReturn.addView(tv);
 					toReturn.removeView(dotdotdot);
 				}
@@ -160,7 +160,7 @@ public class Navigation_Box_Activity extends Activity {
 				if(toReturn.getChildCount()<=1)
 				{
 					//if tv has not been set with text
-					tv.setText(Unparser.unparse(idAst));
+//					tv.setText(Unparser.unparse(idAst));
 					toReturn.addView(tv);
 					toReturn.removeView(dotdotdot);
 				}

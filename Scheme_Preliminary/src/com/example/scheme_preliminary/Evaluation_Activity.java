@@ -30,7 +30,7 @@ public class Evaluation_Activity extends Activity {
 			Expression ast = Parser.parse(tokens);
 			if(ast!= null) 
 			{
-				result=Evaluator.evaluate(ast);
+//				result=Evaluator.evaluate(ast);
 				tv.setText("" + result.getValue());
 			}
 			
