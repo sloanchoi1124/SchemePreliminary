@@ -57,6 +57,12 @@ public class Evaluator {
 		return list.pop();
 	}
 	
+	// temporary methods evaluate only one expression
+	
+	public static IntExpression evaluate(Expression e) {
+		return (IntExpression) evaluate(e, initializeEnv());
+	}
+	
 	private static Expression evaluate(Expression e, Environment env) {
 		if (e instanceof IntExpression || e instanceof LambdaExpression) {
 			return e;
