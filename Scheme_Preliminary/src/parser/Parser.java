@@ -86,17 +86,34 @@ public class Parser {
                 }
                 return new LambdaExpression(parameters, body);
             case LET:
-            	List<Pair<String, Expression>> bindings = parseBindings(iter);
+            	List<Pair<String, Expression>> letbindings = parseBindings(iter);
                 body = parseExpression(iter, iter.next());
                 if (! (token = iter.next()).getKind().equals(TokenKind.RPAREN)) {
                     System.out.println("Expected end of let call, received " + token + " instead.");
                     return null;
-                }               
-                return new LetExpression(bindings, body);
+                }
+                return new LetExpression(letbindings, body);
+            case LETREC:
+            	List<Pair<String, Expression>> letrecBindings = parseBindings(iter);
+                body = parseExpression(iter, iter.next());
+                if (! (token = iter.next()).getKind().equals(TokenKind.RPAREN)) {
+                    System.out.println("Expected end of let call, received " + token + " instead.");
+                    return null;
+                }
+                return new LetrecExpression(letrecBindings, body);
+            case LETSTAR:
+            	List<Pair<String, Expression>> letStarBindings = parseBindings(iter);
+                body = parseExpression(iter, iter.next());
+                if (! (token = iter.next()).getKind().equals(TokenKind.RPAREN)) {
+                    System.out.println("Expected end of let call, received " + token + " instead.");
+                    return null;
+                }
+                return new LetStarExpression(letStarBindings, body);
             default:
                 return null;
         }
     }
+    
     
     private static List<Expression> parseOperands(Iterator<Token> iter) {
         // Parse operands of a function call

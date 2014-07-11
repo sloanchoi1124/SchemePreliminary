@@ -8,6 +8,8 @@ public enum TokenKind {
     IF("if"),
     LAMBDA("lambda"),
     LET("let"),
+    LETREC("letrec"),
+    LETSTAR("let*"),
     DEFINE("define");
     
     private String mRep;

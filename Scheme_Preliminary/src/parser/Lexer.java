@@ -12,7 +12,7 @@ public class Lexer {
     public static List<Token> lex(String source) {
         List<Token> list = new LinkedList<Token>();
         
-        String rVar = "\\p{Alpha}[\\p{Alpha}\\d\\?]*"; //subset of legal identifiers
+        String rVar = "\\p{Alpha}[\\p{Alnum}\\?\\*]*"; //subset of legal identifiers
         String rOp  = "[<>=*/+\\-]";
         String rLP  = "(\\()";  // group 1
         String rRP  = "(\\))";  // group 2
@@ -40,6 +40,10 @@ public class Lexer {
                     list.add(new Token(TokenKind.LAMBDA));
                 else if (token.equals("let"))
                     list.add(new Token(TokenKind.LET));
+                else if (token.equals("letrec"))
+                	list.add(new Token(TokenKind.LETREC));
+                else if (token.equals("let*"))
+                	list.add(new Token(TokenKind.LETSTAR));
                 else if (token.equals("define"))
                  list.add(new Token(TokenKind.DEFINE));
                 else
