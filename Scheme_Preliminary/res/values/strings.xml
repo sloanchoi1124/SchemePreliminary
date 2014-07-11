@@ -44,7 +44,6 @@
     <string name="title_activity_parameter_box__fragment">ParameterBox_Fragment</string>
     <string name="title_activity_bindings_box__fragment">BindingsBox_Fragment</string>
     <string name="title_activity_int_id_box__fragment">IntIdBox_Fragment</string>
-
     <string name="If">if</string>
     <string name="newVar">New Variable</string>
     <string name="varCreate">Create Var</string>
@@ -52,5 +51,7 @@
     <string name="opSelect">Operators</string>
     <string name="lambda">λ</string>
     <string name="let">let</string>
+    <string name="title_activity_right_side_bar__fragment">RightSideBar_Fragment</string>
+    <string name="title_activity_top_side_bar__fragment">TopSideBar_Fragment</string>
 
 </resources>

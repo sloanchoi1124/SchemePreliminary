@@ -1,0 +1,15 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RightSideBar_Fragment"
+    android:orientation="vertical"
+    android:id="@+id/rightsidebar_background">
+    <TextView
+        android:id="@+id/head_rightsidebar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="FUNCTIONS" 
+        android:background="#cccccc"/>
+
+</LinearLayout>

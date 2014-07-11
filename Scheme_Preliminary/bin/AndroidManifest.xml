@@ -50,7 +50,6 @@
             android:name="com.example.scheme_preliminary.boxFragment.Navigation_Box_Activity"
             android:label="@string/title_activity_navigation__box_" >
         </activity>
-
         <activity android:name="com.example.scheme_preliminary.Calculator_Activity" >
         </activity>
         <activity
@@ -93,7 +92,16 @@
             android:name="com.example.scheme_preliminary.boxFragment.IntIdBox_Fragment"
             android:label="@string/title_activity_int_id_box__fragment" >
         </activity>
-        <activity android:name=".calculator.Calculator_Activity"></activity>
+        <activity android:name="com.example.scheme_preliminary.calculator.Calculator_Activity" >
+        </activity>
+        <activity
+            android:name="com.example.scheme_preliminary.boxFragment.RightSideBar_Fragment"
+            android:label="@string/title_activity_right_side_bar__fragment" >
+        </activity>
+        <activity
+            android:name="com.example.scheme_preliminary.boxFragment.TopSideBar_Fragment"
+            android:label="@string/title_activity_top_side_bar__fragment" >
+        </activity>
     </application>
 
 </manifest>
