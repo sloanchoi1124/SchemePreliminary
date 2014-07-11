@@ -6,6 +6,13 @@ import util.Pair;
 import java.util.*;
 
 public class Unparser {
+	
+	public static String unparse(Expression e) {
+		List<DefOrExp> l = new ArrayList<DefOrExp>();
+		l.add(e);
+		Program temp = new Program(l);
+		return unparse(temp);
+	}
 
 	public static String unparse(Program ast) {
 		Iterator<DefOrExp> itr = ast.getProgram().iterator();
