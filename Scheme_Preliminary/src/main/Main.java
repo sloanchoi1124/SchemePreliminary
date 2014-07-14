@@ -1,6 +1,7 @@
 package main;
 
 import java.util.HashMap;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
@@ -11,6 +12,7 @@ import parser.token.Token;
 import scheme_ast.Expression;
 import scheme_ast.IntExpression;
 import scheme_ast.Program;
+import scheme_ast.BoolExpression;
 import unparser.Unparser;
 import util.Uid;
 import evaluator.Evaluator;
@@ -24,25 +26,54 @@ public class Main {
 		
 		String nonrec = "(let ((a 5)) (let* ((a (* 2 a)) (a (* 3 a))) a))";
 		stringTest(nonrec);
+		String fac = "(letrec ((fact (lambda (n) (if (= n 0) 1 (* n (fact (- n 1))))))) (fact 5))";
+	    stringTest(fac);
 		String let = "(let ((x 5) (y 10)) (+ x y))";
 		stringTest(let);
-		String fac = "(let* ((fact (lambda (n) (if (= n 0) 1 (* n (fact (- n 1))))))) (fact 5))";
-		stringTest(fac);
+		
+		String odd = "(letrec " +
+    "("
+    + "(even " +
+      "(lambda (n) " +
+        "(if (= n 0) " +
+            "1 " +
+            "(if (= 1 (odd (- n 1))) " +
+             "1 " +
+             "0 )))) " +
+     "(odd " +
+      "(lambda (n) " +
+        "(if (= n 1) " +
+            "1 " +
+            "(if (= 1 (even (- n 1))) " +
+                 "1 " +
+                  "0 )))) " +
+     ")" +
+  "(odd 51))";
+		stringTest(odd);
 		/*AstExamples examples = new AstExamples();
 		for (Expression e : examples.examples) {
 			astTest(e);
-			
+			s
 		}*/
 		//String test = "(let ((f (lambda ( x ) (+ x 1 ))) (f 5))";
 		//stringTest(test);
+		
+		String andor = "(letrec ((even  (lambda (n) (or (= n 0) (odd (- n 1))))) (odd (lambda (n) (or (= n 1) (even (- n 1)))))) (odd 51))";
+		stringTest(andor);
 	}
 		
 	public static void stringTest(String s) {
 		List<Token> tokens = Lexer.lex(s);
 		System.out.println("Tokens: " + tokens);
 		Program ast = Parser.parse(tokens);
-		IntExpression v = Evaluator.evaluate(ast);
-		System.out.println("Evaluates to: " + v.getValue());
+		Expression v = Evaluator.evaluate(ast);
+		if (v instanceof IntExpression) {
+			System.out.println("Evaluates to: " + ((IntExpression)v).getValue());
+			
+		} else {
+			System.out.println(((BoolExpression)v).getValue());
+		}
+		
 		if (ast != null) {
 //			String unparsed = Unparser.unparse(ast);
 //			System.out.println(unparsed);
