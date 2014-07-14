@@ -18,9 +18,10 @@ public class Lexer {
         String rRP  = "(\\))";  // group 2
         String rNum = "(\\d+)"; // group 3
         String rID  = "(" + rVar + "|" + rOp + ")"; // group 4
-        String rComment = "(;)"; // group 5
-        String rEndLine = "(\\n)"; // group 6
-        Pattern pattern = Pattern.compile(rLP + "|" + rRP + "|" + rNum + "|" + rID + "|" + rComment + "|" + rEndLine);
+        String rBoolean = "(#[tf])"; // group 5
+        String rComment = "(;)"; // group 6
+        String rEndLine = "(\\n)"; // group 7
+        Pattern pattern = Pattern.compile(rLP + "|" + rRP + "|" + rNum + "|" + rID + "|" + rBoolean + "|" + rComment + "|" + rEndLine);
         
         
         Scanner in = new Scanner(source);
@@ -50,13 +51,19 @@ public class Lexer {
                     list.add(new IdToken(token));
             }
             else if (result.group(5) != null) {
+            	if (token.equals("#t"))
+            		list.add(new Token(TokenKind.TRUE));
+            	else // token equals "#f"
+            		list.add(new Token(TokenKind.FALSE));
+            }
+            else if (result.group(6) != null) {
                 while ((token = in.findWithinHorizon(pattern, 0)) != null) { // while (token = next token) != null
                     result = in.match();
-                    if (result.group(6) != null)
+                    if (result.group(7) != null)
                         break;
                 }
             }
-            else if (result.group(6) != null); // do nothing
+            else if (result.group(7) != null); // do nothing
             else
                 System.out.println("No match for " + token);
                 

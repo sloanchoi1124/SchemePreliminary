@@ -39,6 +39,12 @@ public class Parser {
             case ID:
                 toReturn = new IdExpression(token.toString());
                 break;
+            case TRUE:
+            	toReturn = new BoolExpression(true);
+            	break;
+            case FALSE:
+            	toReturn = new BoolExpression(false);
+            	break;
             default:
                 System.out.println("Invalid token");
                 return null;
@@ -97,7 +103,7 @@ public class Parser {
             	List<Pair<String, Expression>> letrecBindings = parseBindings(iter);
                 body = parseExpression(iter, iter.next());
                 if (! (token = iter.next()).getKind().equals(TokenKind.RPAREN)) {
-                    System.out.println("Expected end of let call, received " + token + " instead.");
+                    System.out.println("Expected end of letrec call, received " + token + " instead.");
                     return null;
                 }
                 return new LetrecExpression(letrecBindings, body);
@@ -105,7 +111,7 @@ public class Parser {
             	List<Pair<String, Expression>> letStarBindings = parseBindings(iter);
                 body = parseExpression(iter, iter.next());
                 if (! (token = iter.next()).getKind().equals(TokenKind.RPAREN)) {
-                    System.out.println("Expected end of let call, received " + token + " instead.");
+                    System.out.println("Expected end of let* call, received " + token + " instead.");
                     return null;
                 }
                 return new LetStarExpression(letStarBindings, body);

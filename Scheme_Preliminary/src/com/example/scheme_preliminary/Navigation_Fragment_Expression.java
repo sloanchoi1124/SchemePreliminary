@@ -20,13 +20,13 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class Navigation_Fragment extends ListFragment {
+public class Navigation_Fragment_Expression extends ListFragment {
 	
-	private MyListFragmentCommunicator mCallback;
+	private ExpressionFragmentCommunicator mCallback;
 	private Pair<String, Expression> listSource;
 	
-	public interface MyListFragmentCommunicator {
-		public Pair<String, Expression> getListSource();
+	public interface ExpressionFragmentCommunicator {
+		public Pair<String, Expression> getSourceExpression();
 		public void onItemTouch(Pair<String, Expression> pair);
 	}
 	
@@ -35,11 +35,11 @@ public class Navigation_Fragment extends ListFragment {
 		// This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
 		try {
-            this.mCallback = (MyListFragmentCommunicator) activity;
-            this.listSource = this.mCallback.getListSource();
+            this.mCallback = (ExpressionFragmentCommunicator) activity;
+            this.listSource = this.mCallback.getSourceExpression();
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
-                    + " must implement MyListFragmentCommunicator");
+                    + " must implement ExpressionFragmentCommunicator");
         }
     }
 	
@@ -47,14 +47,14 @@ public class Navigation_Fragment extends ListFragment {
 			Bundle savedInstanceBundle) {
 		View v = inflater.inflate(R.layout.activity_navigation_fragment, container, false);
 		
-		if (createList(v, this.listSource)) // provides debug printing
+		if (createList()) // provides debug printing
 			return v;
 		else {
 			return null;
 		}
 	}
 	
-	public boolean createList(View v, Pair<String, Expression> pair) {
+	public boolean createList() {
         // Create the appropriate Adapter
 		final SchemeExpressionsAdapter adapter;
 		List<Pair<String, Expression>> list = new ArrayList<Pair<String, Expression>>();
