@@ -21,7 +21,7 @@ public class Lexer {
         String rBoolean = "(#[tf])"; // group 5
         String rComment = "(;)"; // group 6
         String rEndLine = "(\\n)"; // group 7
-        Pattern pattern = Pattern.compile(rLP + "|" + rRP + "|" + rNum + "|" + rID + "|" + rComment + "|" + rEndLine + "|" + rBoolean);
+        Pattern pattern = Pattern.compile(rLP + "|" + rRP + "|" + rNum + "|" + rID + "|" + rBoolean + "|" + rComment + "|" + rEndLine);
         
         
         Scanner in = new Scanner(source);
@@ -52,9 +52,9 @@ public class Lexer {
             }
             else if (result.group(5) != null) {
             	if (token.equals("#t"))
-            		list.add(new BoolToken(true));
+            		list.add(new Token(TokenKind.TRUE));
             	else // token equals "#f"
-            		list.add(new BoolToken(false));
+            		list.add(new Token(TokenKind.FALSE));
             }
             else if (result.group(6) != null) {
                 while ((token = in.findWithinHorizon(pattern, 0)) != null) { // while (token = next token) != null
@@ -63,7 +63,7 @@ public class Lexer {
                         break;
                 }
             }
-            else if (result.group(6) != null); // do nothing
+            else if (result.group(7) != null); // do nothing
             else
                 System.out.println("No match for " + token);
                 

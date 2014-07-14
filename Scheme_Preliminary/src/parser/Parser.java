@@ -39,8 +39,11 @@ public class Parser {
             case ID:
                 toReturn = new IdExpression(token.toString());
                 break;
-            case BOOL:
-            	toReturn = new BoolExpression(Boolean.getBoolean(token.toString()));
+            case TRUE:
+            	toReturn = new BoolExpression(true);
+            	break;
+            case FALSE:
+            	toReturn = new BoolExpression(false);
             	break;
             default:
                 System.out.println("Invalid token");
