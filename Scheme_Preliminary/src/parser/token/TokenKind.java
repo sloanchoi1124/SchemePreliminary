@@ -8,6 +8,8 @@ public enum TokenKind {
     TRUE("#t"),
     FALSE("#f"),
     IF("if"),
+    AND("and"),
+    OR("or"),
     LAMBDA("lambda"),
     LET("let"),
     LETREC("letrec"),

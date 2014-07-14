@@ -37,6 +37,10 @@ public class Lexer {
             else if (result.group(4) != null) {
                 if (token.equals("if"))
                     list.add(new Token(TokenKind.IF));
+                else if (token.equals("and"))
+                	list.add(new Token(TokenKind.AND));
+                else if (token.equals("or"))
+                	list.add(new Token(TokenKind.OR));
                 else if (token.equals("lambda"))
                     list.add(new Token(TokenKind.LAMBDA));
                 else if (token.equals("let"))
