@@ -5,6 +5,7 @@ public enum TokenKind {
     RPAREN(")"),
     ID("[ID]"),
     INT("[NUM]"),
+    BOOL("[BOOL]"),
     IF("if"),
     LAMBDA("lambda"),
     LET("let"),
