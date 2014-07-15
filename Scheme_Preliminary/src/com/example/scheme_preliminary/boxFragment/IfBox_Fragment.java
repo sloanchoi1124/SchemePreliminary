@@ -2,7 +2,6 @@ package com.example.scheme_preliminary.boxFragment;
 
 import java.util.List;
 
-import com.example.scheme_preliminary.ActivityCommunicator;
 import com.example.scheme_preliminary.R;
 import com.example.scheme_preliminary.R.id;
 import com.example.scheme_preliminary.R.layout;
@@ -28,6 +27,7 @@ public class IfBox_Fragment extends Fragment {
     private TextView then;
     private TextView otherwise;
     private IfExpression ast;
+    private boolean clickable;
     
     
 
@@ -36,7 +36,7 @@ public class IfBox_Fragment extends Fragment {
 		// TODO Auto-generated method stub
 		super.onAttach(activity);
 		myActivityCommunicator=(ActivityCommunicator) activity;
-		ast=(IfExpression) myActivityCommunicator.passExpressionToFragment();
+		ast=(IfExpression) myActivityCommunicator.passDefOrExpToFragment();
 	}
 
 	@Override
@@ -44,6 +44,7 @@ public class IfBox_Fragment extends Fragment {
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		View v = inflater.inflate(R.layout.activity_if_box__fragment, container, false);
+		clickable=myActivityCommunicator.setClickabilityToFragment();
 		condition=(TextView) v.findViewById(R.id.condition);
 		condition.setText(ShallowUnparser.shallowUnparse(ast.getCondition(), 1));
 		condition.setOnClickListener(new View.OnClickListener() {
@@ -51,7 +52,10 @@ public class IfBox_Fragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				myActivityCommunicator.passExpressionToActivity(ast.getCondition());
+				if(clickable==false)
+					myActivityCommunicator.destroySubsequentFragments();
+				myActivityCommunicator.passDefOrExpToActivity(ast.getCondition());
+				myActivityCommunicator.passLabelToActivity("if.condition/");
 			}
 		});
 		
@@ -62,7 +66,10 @@ public class IfBox_Fragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				myActivityCommunicator.passExpressionToActivity(ast.getThen());
+				if(clickable==false)
+					myActivityCommunicator.destroySubsequentFragments();
+				myActivityCommunicator.passDefOrExpToActivity(ast.getThen());
+				myActivityCommunicator.passLabelToActivity("if.then/");
 			}
 		});
 		
@@ -73,7 +80,10 @@ public class IfBox_Fragment extends Fragment {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				myActivityCommunicator.passExpressionToActivity(ast.getElse());
+				if(clickable==false)
+					myActivityCommunicator.destroySubsequentFragments();
+				myActivityCommunicator.passDefOrExpToActivity(ast.getElse());
+				myActivityCommunicator.passLabelToActivity("if.else/");
 			}
 		});
 		return v;

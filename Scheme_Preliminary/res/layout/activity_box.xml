@@ -1,31 +1,49 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android1="http://schemas.android.com/apk/res/android"
-    android:id="@+id/background"
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".BoxActivity" >
-
-   <FrameLayout
-        android1:id="@+id/center_screen_background"
-        android1:layout_width="200dp"
-        android1:layout_height="match_parent"
-        android1:layout_alignParentLeft="true"
-        android1:layout_alignParentTop="true"
-        android1:layout_toLeftOf="@+id/right_side_bar_background"
-        android1:background="#ccff22" >    
-    </FrameLayout>
-
+    android:layout_height="match_parent">
     <FrameLayout
-        android1:id="@+id/right_side_bar_background"
-        android1:layout_width="80dp"
-        android1:layout_height="match_parent"
-        android1:layout_alignParentRight="true"
-        android1:layout_alignParentTop="true" 
-        android1:background="#eeeeee">        
+        android:id="@+id/frame_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" 
+            android:background="#ccffcc">
+
+
+
+            <FrameLayout
+                android:id="@+id/top_side_bar_background"
+                android:layout_width="match_parent"
+                android:layout_height="75dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:background="#22ffcc" >
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/center_screen_background"
+                android:layout_width="wrap_content"
+                android:layout_height="375dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/top_side_bar_background"
+                android:background="#ccff22" >
+            </FrameLayout>
+            
+        </RelativeLayout>
+        
     </FrameLayout>
-</RelativeLayout>
+    
+    <ListView
+        android:id="@+id/drawer"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="right"    
+        android:background="#ccff88">
+   </ListView>
+</android.support.v4.widget.DrawerLayout>

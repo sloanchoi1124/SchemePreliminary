@@ -102,6 +102,10 @@
             android:name="com.example.scheme_preliminary.boxFragment.TopSideBar_Fragment"
             android:label="@string/title_activity_top_side_bar__fragment" >
         </activity>
+        <activity
+            android:name="com.example.scheme_preliminary.boxFragment.DefinitionBox_Fragment"
+            android:label="@string/title_activity_definition_box__fragment" >
+        </activity>
     </application>
 
 </manifest>

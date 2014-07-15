@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.example.scheme_preliminary.ActivityCommunicator;
 import com.example.scheme_preliminary.R;
 import com.example.scheme_preliminary.R.id;
 import com.example.scheme_preliminary.R.layout;
@@ -27,7 +26,7 @@ import android.widget.TextView;
 public class BindingsBox_Fragment extends Fragment {
 	private List<Pair<String, Expression>> bindings;
 	private ActivityCommunicator myActivityCommunicator;
-	private int id=1000;
+	private boolean clickable;
 	
 	@Override
 	public void onAttach(Activity activity) {
@@ -42,6 +41,7 @@ public class BindingsBox_Fragment extends Fragment {
 		// TODO Auto-generated method stub
 		View v = inflater.inflate(R.layout.activity_bindings_box__fragment, container, false);
 		bindings=myActivityCommunicator.passBindingsToFragment();
+		clickable=myActivityCommunicator.setClickabilityToFragment();
 		LinearLayout valuesbackground=(LinearLayout) v.findViewById(R.id.valuesbackground);
 		LinearLayout keysbackground=(LinearLayout) v.findViewById(R.id.keysbackground);
 		for(final Pair<String,Expression> entry:bindings)
@@ -54,11 +54,14 @@ public class BindingsBox_Fragment extends Fragment {
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					myActivityCommunicator.passExpressionToActivity(entry.second);
+					if(clickable==false)
+						myActivityCommunicator.destroySubsequentFragments();
+					myActivityCommunicator.passDefOrExpToActivity(entry.second);
+					int i=bindings.indexOf(entry);
+					myActivityCommunicator.passLabelToActivity("binding"+((Integer)i).toString()+"/");
 				}
 			});
 			valuesbackground.addView(valueTemp);
-			
 			TextView keyTemp=new TextView(v.getContext());
 			keyTemp.setText(entry.first);
 			keyTemp.setTextSize(20);

@@ -3,7 +3,6 @@ package com.example.scheme_preliminary.boxFragment;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.scheme_preliminary.ActivityCommunicator;
 import com.example.scheme_preliminary.R;
 import com.example.scheme_preliminary.R.id;
 import com.example.scheme_preliminary.R.layout;
@@ -34,6 +33,7 @@ public class CallBox_Fragment extends Fragment {
 	private TextView operator;
 	private ArrayList<TextView> operands;
 	private ActivityCommunicator myActivityCommunicator;
+	private boolean clickable;
 	
 
 	@Override
@@ -41,7 +41,8 @@ public class CallBox_Fragment extends Fragment {
 		// TODO Auto-generated method stub
 		super.onAttach(activity);
 		myActivityCommunicator=(ActivityCommunicator) activity;
-		ast=(CallExpression) myActivityCommunicator.passExpressionToFragment();
+		ast=(CallExpression) myActivityCommunicator.passDefOrExpToFragment();
+		
 	}
 
 	@Override
@@ -49,15 +50,18 @@ public class CallBox_Fragment extends Fragment {
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		View v = inflater.inflate(R.layout.activity_call_box__fragment, container, false);
-		
-		TextView operator=(TextView) v.findViewById(R.id.operator);
+		clickable=myActivityCommunicator.setClickabilityToFragment();
+		operator=(TextView) v.findViewById(R.id.operator);
 		operator.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				//this is revised intentionally!!
-				myActivityCommunicator.passExpressionToActivity(ast.getOperator());
+				if(clickable==false)
+					myActivityCommunicator.destroySubsequentFragments();
+				myActivityCommunicator.passDefOrExpToActivity(ast.getOperator());
+				myActivityCommunicator.passLabelToActivity("call.operator/");
 			}
 		});
 		
@@ -79,7 +83,11 @@ public class CallBox_Fragment extends Fragment {
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					myActivityCommunicator.passExpressionToActivity(expression);
+					if(clickable==false)
+						myActivityCommunicator.destroySubsequentFragments();
+					myActivityCommunicator.passDefOrExpToActivity(expression);
+					int i=ast.getOperands().indexOf(expression);
+					myActivityCommunicator.passLabelToActivity("call.operand"+((Integer)i).toString()+"/");
 				}
 			});
 			operands_layout.addView(temp);

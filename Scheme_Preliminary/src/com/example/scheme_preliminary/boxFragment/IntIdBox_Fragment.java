@@ -1,6 +1,5 @@
 package com.example.scheme_preliminary.boxFragment;
 
-import com.example.scheme_preliminary.ActivityCommunicator;
 import com.example.scheme_preliminary.R;
 import com.example.scheme_preliminary.R.id;
 import com.example.scheme_preliminary.R.layout;
@@ -20,12 +19,13 @@ import android.widget.TextView;
 public class IntIdBox_Fragment extends Fragment {
 	private ActivityCommunicator myActivityCommunicator;
 	private Expression ast;
+	
 	@Override
 	public void onAttach(Activity activity) {
 		// TODO Auto-generated method stub
 		super.onAttach(activity);
 		myActivityCommunicator=(ActivityCommunicator) activity;
-		ast=myActivityCommunicator.passExpressionToFragment();
+		ast=(Expression) myActivityCommunicator.passDefOrExpToFragment();
 	}
 
 	@Override
