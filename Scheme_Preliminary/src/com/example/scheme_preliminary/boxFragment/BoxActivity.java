@@ -94,7 +94,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 			{
 				currentFrag=new DefinitionBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				ft.addToBackStack(null);
+				//ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 			ft.commit();
@@ -111,10 +111,26 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 			{
 				currentFrag=new CallBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				ft.addToBackStack(null);
+				//ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 			ft.commit();
+		}
+		else if(ast instanceof AndExpression||ast instanceof OrExpression)
+		{
+			if(currentFrag==null)
+			{
+				currentFrag=new AndOrBox_Fragment();
+				ft.add(R.id.center_screen_background,currentFrag);
+				fragmentList.add(currentFrag);
+			}
+			else
+			{
+				currentFrag=new AndOrBox_Fragment();
+				ft.replace(R.id.center_screen_background, currentFrag);
+				//ft.addToBackStack(null);
+				fragmentList.add(currentFrag);
+			}
 		}
 		else if(ast instanceof IfExpression)
 		{
@@ -128,7 +144,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 			{
 				currentFrag=new IfBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				ft.addToBackStack(null);
+				//ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 			ft.commit();
@@ -145,7 +161,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 			{
 				currentFrag=new LetBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				ft.addToBackStack(null);
+				//ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 			ft.commit();
@@ -162,24 +178,24 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 			{
 				currentFrag=new LambdaBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				ft.addToBackStack(null);
+				//ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 			ft.commit();
 		}
-		else if(ast instanceof IntExpression||ast instanceof IdExpression)
+		else if(ast instanceof IntExpression||ast instanceof IdExpression||ast instanceof BoolExpression)
 		{
 			if(currentFrag==null)
 			{
-				currentFrag=new IntIdBox_Fragment();
+				currentFrag=new IntIdBoolBox_Fragment();
 				ft.add(R.id.center_screen_background, currentFrag);
 				fragmentList.add(currentFrag);
 			}
 			else
 			{
-				currentFrag=new IntIdBox_Fragment();
+				currentFrag=new IntIdBoolBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				ft.addToBackStack(null);
+				//ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 			ft.commit();
@@ -259,8 +275,6 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 		}
 	}
 
-	
-	
 	@Override
 	public void passLabelToActivity(String label) {
 		// TODO Auto-generated method stub
@@ -312,6 +326,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 		}
 		ft.commit();
 	}
+	
 	@Override
 	public List<String> passLabelListToFragment() {
 		// TODO Auto-generated method stub

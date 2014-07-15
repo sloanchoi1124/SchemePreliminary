@@ -4,6 +4,7 @@ import com.example.scheme_preliminary.R;
 import com.example.scheme_preliminary.R.id;
 import com.example.scheme_preliminary.R.layout;
 
+import scheme_ast.BoolExpression;
 import scheme_ast.Expression;
 import scheme_ast.IdExpression;
 import scheme_ast.IntExpression;
@@ -16,7 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class IntIdBox_Fragment extends Fragment {
+public class IntIdBoolBox_Fragment extends Fragment {
 	private ActivityCommunicator myActivityCommunicator;
 	private Expression ast;
 	
@@ -41,6 +42,13 @@ public class IntIdBox_Fragment extends Fragment {
 		else if(ast instanceof IdExpression)
 		{
 			int_id_textview.setText(((IdExpression) ast).getId());
+		}
+		else if(ast instanceof BoolExpression)
+		{
+			if(((BoolExpression) ast).getValue())
+				int_id_textview.setText("TRUE");
+			else
+				int_id_textview.setText("FALSE");
 		}
 		return v;
 	}
