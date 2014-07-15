@@ -53,5 +53,6 @@
     <string name="let">let</string>
     <string name="title_activity_right_side_bar__fragment">RightSideBar_Fragment</string>
     <string name="title_activity_top_side_bar__fragment">TopSideBar_Fragment</string>
+    <string name="title_activity_definition_box__fragment">DefinitionBox_Fragment</string>
 
 </resources>
