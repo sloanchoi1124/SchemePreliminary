@@ -18,4 +18,12 @@ public class Definition extends DefOrExp{
 	public Expression getBody(){
 		return this.mBody;
 	}
+	
+	public void setSymbol(String symbol) {
+		this.mSymbol = symbol;
+	}
+	
+	public void setBody(Expression body) {
+		this.mBody = body;
+	}
 }

@@ -21,6 +21,18 @@ public class IfExpression extends Expression {
 	public Expression getElse() {
 		return mElse;
 	}
+
+	public void setCondition(Expression condition) {
+		this.mCondition = condition;
+	}
+
+	public void setThen(Expression then) {
+		this.mThen = then;
+	}
+
+	public void setElse(Expression elseExp) {
+		this.mElse = elseExp;
+	}
 	
 	
 }
