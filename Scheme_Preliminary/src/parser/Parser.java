@@ -1,13 +1,26 @@
 package parser;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.HashMap;
-import java.util.Map.Entry;
+import java.util.List;
 
-import parser.token.*;
-import scheme_ast.*;
+import parser.token.Token;
+import parser.token.TokenKind;
+import scheme_ast.AndExpression;
+import scheme_ast.BoolExpression;
+import scheme_ast.CallExpression;
+import scheme_ast.DefOrExp;
+import scheme_ast.Definition;
+import scheme_ast.Expression;
+import scheme_ast.IdExpression;
+import scheme_ast.IfExpression;
+import scheme_ast.IntExpression;
+import scheme_ast.LambdaExpression;
+import scheme_ast.LetExpression;
+import scheme_ast.LetStarExpression;
+import scheme_ast.LetrecExpression;
+import scheme_ast.OrExpression;
+import scheme_ast.Program;
 import util.Pair;
 
 public class Parser {
@@ -22,8 +35,11 @@ public class Parser {
         // Returns parsed Expression if given valid list of tokens
         // Otherwise currently returns null
         
-        // Outer expression parse called with nextToken = null
-        // Other expressions called with nextToken = <next Token to be used>
+        // Outer expression parse called with (nextToken = null)
+        // Other expressions called with (nextToken = <next Token to be used>)
+    	
+    	// Shallow (non-recursive) parsing handled here
+    	// Recursive parsing (for calls, ifs, etc) handled in parseSubExpression()
         Expression toReturn;
         Token token;
         if (nextToken != null) token = nextToken;
@@ -39,12 +55,18 @@ public class Parser {
             case ID:
                 toReturn = new IdExpression(token.toString());
                 break;
+            case TRUE:
+            	toReturn = new BoolExpression(true);
+            	break;
+            case FALSE:
+            	toReturn = new BoolExpression(false);
+            	break;
             default:
-                System.out.println("Invalid token");
+                System.out.println("Invalid token '" + token.toString() + "'");
                 return null;
         }
         if (iter.hasNext() && nextToken == null) { // if more comes after RPAREN in outer expression...
-            System.out.println("Invalid token " + iter.next() + " after expression");
+            System.out.println("Invalid token " + iter.next() + " after outer expression");
             return null;
         }
         return toReturn;
@@ -60,8 +82,8 @@ public class Parser {
         switch (kind) {
             case ID:
                 IdExpression operator = new IdExpression(token.toString());
-                List<Expression> operands = parseOperands(iter);
-                return new CallExpression(operator, operands);
+                List<Expression> callOperands = parseOperands(iter);
+                return new CallExpression(operator, callOperands);
             case IF:
                 Expression condition = parseExpression(iter, iter.next());
                 Expression thenBranch = parseExpression(iter, iter.next());
@@ -71,6 +93,12 @@ public class Parser {
                     return null;
                 }
                 return new IfExpression(condition, thenBranch, elseBranch);
+            case AND:
+            	List<Expression> andConditions = parseOperands(iter);
+            	return new AndExpression(andConditions);
+            case OR:
+            	List<Expression> orConditions = parseOperands(iter);
+            	return new OrExpression(orConditions);
             case LAMBDA: ;
                 if (! iter.next().getKind().equals(TokenKind.LPAREN)) {
                     System.out.println("Expected '(' after 'lambda', received " + token + " instead.");
@@ -86,17 +114,34 @@ public class Parser {
                 }
                 return new LambdaExpression(parameters, body);
             case LET:
-            	List<Pair<String, Expression>> bindings = parseBindings(iter);
+            	List<Pair<String, Expression>> letbindings = parseBindings(iter);
                 body = parseExpression(iter, iter.next());
                 if (! (token = iter.next()).getKind().equals(TokenKind.RPAREN)) {
                     System.out.println("Expected end of let call, received " + token + " instead.");
                     return null;
-                }               
-                return new LetExpression(bindings, body);
+                }
+                return new LetExpression(letbindings, body);
+            case LETREC:
+            	List<Pair<String, Expression>> letrecBindings = parseBindings(iter);
+                body = parseExpression(iter, iter.next());
+                if (! (token = iter.next()).getKind().equals(TokenKind.RPAREN)) {
+                    System.out.println("Expected end of letrec call, received " + token + " instead.");
+                    return null;
+                }
+                return new LetrecExpression(letrecBindings, body);
+            case LETSTAR:
+            	List<Pair<String, Expression>> letStarBindings = parseBindings(iter);
+                body = parseExpression(iter, iter.next());
+                if (! (token = iter.next()).getKind().equals(TokenKind.RPAREN)) {
+                    System.out.println("Expected end of let* call, received " + token + " instead.");
+                    return null;
+                }
+                return new LetStarExpression(letStarBindings, body);
             default:
                 return null;
         }
     }
+    
     
     private static List<Expression> parseOperands(Iterator<Token> iter) {
         // Parse operands of a function call

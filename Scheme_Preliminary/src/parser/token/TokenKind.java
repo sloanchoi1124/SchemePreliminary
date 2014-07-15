@@ -5,9 +5,15 @@ public enum TokenKind {
     RPAREN(")"),
     ID("[ID]"),
     INT("[NUM]"),
+    TRUE("#t"),
+    FALSE("#f"),
     IF("if"),
+    AND("and"),
+    OR("or"),
     LAMBDA("lambda"),
     LET("let"),
+    LETREC("letrec"),
+    LETSTAR("let*"),
     DEFINE("define");
     
     private String mRep;
