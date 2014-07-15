@@ -14,14 +14,17 @@ public class Lexer {
         
         String rVar = "\\p{Alpha}[\\p{Alnum}\\?\\*]*"; //subset of legal identifiers
         String rOp  = "[<>=*/+\\-]";
-        String rLP  = "(\\()";  // group 1
-        String rRP  = "(\\))";  // group 2
-        String rNum = "(\\d+)"; // group 3
-        String rID  = "(" + rVar + "|" + rOp + ")"; // group 4
-        String rBoolean = "(#[tf])"; // group 5
-        String rComment = "(;)"; // group 6
-        String rEndLine = "(\\n)"; // group 7
-        Pattern pattern = Pattern.compile(rLP + "|" + rRP + "|" + rNum + "|" + rID + "|" + rBoolean + "|" + rComment + "|" + rEndLine);
+        String rNull= "('\\(\\))"; // group 1
+        String rLP  = "(\\()";  // group 2
+        String rRP  = "(\\))";  // group 3
+        String rNum = "(\\d+)"; // group 4
+        String rID  = "(" + rVar + "|" + rOp + ")"; // group 5
+        String rBoolean = "(#[tf])"; // group 6
+        String rComment = "(;)"; // group 7
+        String rEndLine = "(\\n)"; // group 8
+        Pattern pattern = Pattern.compile(rNull + "|" + rLP + "|" + rRP + "|" + 
+        								  rNum + "|" + rID + "|" + rBoolean + "|" + 
+        								  rComment + "|" + rEndLine);
         
         
         Scanner in = new Scanner(source);
@@ -29,12 +32,14 @@ public class Lexer {
         while (token != null) {
             MatchResult result = in.match();
             if (result.group(1) != null)
-                list.add(new Token(TokenKind.LPAREN));
+            	list.add(new Token(TokenKind.NULL));
             else if (result.group(2) != null)
-                list.add(new Token(TokenKind.RPAREN));
+                list.add(new Token(TokenKind.LPAREN));
             else if (result.group(3) != null)
+                list.add(new Token(TokenKind.RPAREN));
+            else if (result.group(4) != null)
                 list.add(new IntToken(Integer.parseInt(token)));
-            else if (result.group(4) != null) {
+            else if (result.group(5) != null) {
                 if (token.equals("if"))
                     list.add(new Token(TokenKind.IF));
                 else if (token.equals("and"))
@@ -54,20 +59,20 @@ public class Lexer {
                 else
                     list.add(new IdToken(token));
             }
-            else if (result.group(5) != null) {
+            else if (result.group(6) != null) {
             	if (token.equals("#t"))
             		list.add(new Token(TokenKind.TRUE));
             	else // token equals "#f"
             		list.add(new Token(TokenKind.FALSE));
             }
-            else if (result.group(6) != null) {
+            else if (result.group(7) != null) {
                 while ((token = in.findWithinHorizon(pattern, 0)) != null) { // while (token = next token) != null
                     result = in.match();
-                    if (result.group(7) != null)
+                    if (result.group(8) != null)
                         break;
                 }
             }
-            else if (result.group(7) != null); // do nothing
+            else if (result.group(8) != null); // do nothing
             else
                 System.out.println("No match for " + token);
                 

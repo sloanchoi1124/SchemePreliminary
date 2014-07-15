@@ -6,21 +6,7 @@ import java.util.List;
 
 import parser.token.Token;
 import parser.token.TokenKind;
-import scheme_ast.AndExpression;
-import scheme_ast.BoolExpression;
-import scheme_ast.CallExpression;
-import scheme_ast.DefOrExp;
-import scheme_ast.Definition;
-import scheme_ast.Expression;
-import scheme_ast.IdExpression;
-import scheme_ast.IfExpression;
-import scheme_ast.IntExpression;
-import scheme_ast.LambdaExpression;
-import scheme_ast.LetExpression;
-import scheme_ast.LetStarExpression;
-import scheme_ast.LetrecExpression;
-import scheme_ast.OrExpression;
-import scheme_ast.Program;
+import scheme_ast.*;
 import util.Pair;
 
 public class Parser {
@@ -60,6 +46,9 @@ public class Parser {
             	break;
             case FALSE:
             	toReturn = new BoolExpression(false);
+            	break;
+            case NULL:
+            	toReturn = new NullExpression();
             	break;
             default:
                 System.out.println("Invalid token '" + token.toString() + "'");

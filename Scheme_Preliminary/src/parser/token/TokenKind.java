@@ -1,6 +1,7 @@
 package parser.token;
 
 public enum TokenKind {
+	NULL("'()"),
     LPAREN("("),
     RPAREN(")"),
     ID("[ID]"),
