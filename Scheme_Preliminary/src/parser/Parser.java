@@ -214,7 +214,7 @@ public class Parser {
     }
     
     private static boolean isDefinition(List<Token> tokens) {
-        return tokens.get(1).getKind().equals(TokenKind.DEFINE);
+        return tokens.size() > 2 && tokens.get(1).getKind().equals(TokenKind.DEFINE);
     }
     
 }
