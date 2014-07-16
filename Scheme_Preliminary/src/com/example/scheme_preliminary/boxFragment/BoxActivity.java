@@ -15,11 +15,15 @@ import parser.token.Token;
 import scheme_ast.*;
 import util.Pair;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -34,48 +38,113 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 	private Fragment currentFrag;
 	private TopSideBar_Fragment topSideBar;
 	//----------------------------------------
+	private List<Program> programList;
+	private Program currentProgram;
 	private Map<String, DefOrExp> map;
-	private Program program;
 	//----------------------------------------
 	private List<Fragment> fragmentList;
 	private int currentIndex;
 	//----------------------------------------
 	private String currentExpressionTag;
 	//----------------------------------------
-	private ListView drawer_background;
+	private ListView left_drawer_background;
+	//----------------------------------------
+	private ListView right_drawer_background;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_box);
-		//-----------BUILD A MAP FROM THE PROGRAM PASSED IN-------------
+		
 		String toParse="(define THREE 3) (define square (lambda (x) (* x x))) (square THREE) (define sumSquares (lambda (a b) (+ (square a) (square b)))) (sumSquares THREE 4) (define factorial (lambda (n) (if (= n 0) 1 (* n (factorial (- n 1)))))) (factorial THREE)";
 		List<Token> tokens = Lexer.lex(toParse);
-		program=Parser.parse(tokens);
-		List<DefOrExp> programList=program.getProgram();
-		map=new HashMap<String,DefOrExp>();
+		this.currentProgram=Parser.parse(tokens);
+		String toParse1="(define THREE 4)";
+		List<Token> tokens1 = Lexer.lex(toParse1);
+		Program currentProgram1=Parser.parse(tokens1);
+		//---------------------------------------
+		
+		this.programList=new ArrayList<Program>();
+		this.programList.add(this.currentProgram);
+		this.programList.add(currentProgram1);
+		
+		//INITIALIZE DRAWERS FROM BOTH SIDE-----
+		this.left_drawer_background=(ListView) findViewById(R.id.drawer_left);
+		this.right_drawer_background=(ListView) findViewById(R.id.drawer);
+		//--------------------------------------
+		initializeLeftSideDrawer();		
+		this.fragmentList=new ArrayList<Fragment>();
+		this.currentIndex=-1;
+	}
+	//----------------METHODS FOR LEFT SIDE DRAWER--------------------------
+	public void initializeLeftSideDrawer(){
+		List<String> tags=new ArrayList<String>();
+		for(int i=0;i<this.programList.size();i++)
+			tags.add("Program"+((Integer)i).toString());
+		this.left_drawer_background.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,tags));
+		this.left_drawer_background.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position,
+					long id) {
+				// TODO Auto-generated method stub
+				currentProgram=programList.get(position);
+				map=initializeMap(initializeDefOrExpList(currentProgram,null));
+				initializeRightSideDrawer();
+			}
+		});
+	}
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+		MenuInflater inflater=getMenuInflater();
+		inflater.inflate(R.menu.box_activity_action, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+		switch(item.getItemId()){
+		    case R.id.action_add:
+		    	//go to the calculator fragment
+		    	System.out.println("GENERATE THE CALCULATOR FRAGMENT");
+		    	//generate a new interface to communicate between the activity and the calculator fragment
+		    	//pass in the list of function names within a certain program
+		    	break;
+		}
+		return true;
+	}
+
+	private List<DefOrExp> initializeDefOrExpList(Program program,DefOrExp doe)
+	{
+		List<DefOrExp> temp=program.getProgram();
+		if(doe!=null)
+			temp.add(doe);
+		return temp;
+	}
+	
+	public HashMap<String,DefOrExp> initializeMap(List<DefOrExp> programList)
+	{
+		HashMap<String,DefOrExp> temp=new HashMap<String,DefOrExp>();
 		int i=0;
-		for(DefOrExp temp:programList)
+		for(DefOrExp doe:programList)
 		{
-			if(temp instanceof Definition)
-				map.put(((Definition) temp).getSymbol(), temp);
+			if(doe instanceof Definition)
+			{
+				temp.put(((Definition) doe).getSymbol(), doe);
+			}	
 			else
 			{
-				map.put("Exp"+((Integer)i).toString(), temp);
+			    temp.put("Exp"+((Integer)i).toString(), doe);
 				i++;
 			}
 		}
-		//----------BUILD A MAP FROM THE PROGRAM PASSED IN--------------
-		
-		//----------SET UP THE NAVIGATION DRAWER------------------------
-		drawer_background=(ListView) findViewById(R.id.drawer);
-		initializeRightSideDrawer();
-		//----------SET UP THE NAVIGATION DRAWER------------------------
-		
-		fragmentList=new ArrayList<Fragment>();
-		currentIndex=-1;
+		return temp;
 	}
-
+	
+	
+	//----------------METHOD FROM ACTIVITY COMMUNICATOR---------------------
 	@Override
 	public void passDefOrExpToActivity(DefOrExp ast) {
 		// TODO Auto-generated method stub
@@ -94,7 +163,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 			{
 				currentFrag=new DefinitionBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				//ft.addToBackStack(null);
+				ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 			ft.commit();
@@ -111,7 +180,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 			{
 				currentFrag=new CallBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				//ft.addToBackStack(null);
+				ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 			ft.commit();
@@ -128,7 +197,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 			{
 				currentFrag=new AndOrBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				//ft.addToBackStack(null);
+				ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 		}
@@ -144,7 +213,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 			{
 				currentFrag=new IfBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				//ft.addToBackStack(null);
+				ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 			ft.commit();
@@ -161,7 +230,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 			{
 				currentFrag=new LetBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				//ft.addToBackStack(null);
+				ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 			ft.commit();
@@ -178,7 +247,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 			{
 				currentFrag=new LambdaBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				//ft.addToBackStack(null);
+				ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 			ft.commit();
@@ -195,7 +264,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 			{
 				currentFrag=new IntIdBoolBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				//ft.addToBackStack(null);
+				ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 			ft.commit();
@@ -219,20 +288,51 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 		// TODO Auto-generated method stub
 		toReturnBindings=bindings;
 		FragmentTransaction ft=getFragmentManager().beginTransaction();
-		ft=getFragmentManager().beginTransaction();
 		currentFrag=new BindingsBox_Fragment();
 		ft.replace(R.id.center_screen_background, currentFrag);
 		ft.addToBackStack(null);
 		fragmentList.add(currentFrag);
 		ft.commit();
 	}
+	
+	@Override
+	public void passLabelToActivity(String label) {
+		// TODO Auto-generated method stub
+		toReturnLabels.add(label);
+		passLabelListToFragment();
+		FragmentTransaction ft=getFragmentManager().beginTransaction();
+		topSideBar=new TopSideBar_Fragment();
+		ft.replace(R.id.top_side_bar_background, topSideBar);
+		ft.commit();
+	}
+	
+	@Override
+	public boolean setClickabilityToFragment() {
+		// TODO Auto-generated method stub
+		if(currentIndex<fragmentList.size()-1)
+			return false;
+		else
+			return true;
+	}
 
+	@Override
+	public void destroySubsequentFragments() {
+		// TODO Auto-generated method stub
+		fragmentList=fragmentList.subList(0, currentIndex+1);
+		initializeTopSideBar();
+	}
+	
+	//----------------METHOD FROM ACTIVITY COMMUNICATOR---------------------
+	
+
+	
+	//----------------METHODS FOR RIGHT SIDE DRAWER-------------------------
 	public void initializeRightSideDrawer(){
 		toReturnKeys=new ArrayList<String>();
 		for(String key:map.keySet())
 			toReturnKeys.add(key);
-		drawer_background.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, toReturnKeys));
-		drawer_background.setOnItemClickListener(new OnItemClickListener() {
+		this.right_drawer_background.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, toReturnKeys));
+		this.right_drawer_background.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position,
@@ -240,7 +340,6 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 				// TODO Auto-generated method stub
 				String item=(String) parent.getItemAtPosition(position);
 				passTopLevelExpressionToCenterScreen(item);
-				//passTopLevelExpressionToActivity(item);
 			}
 		});
 	}
@@ -274,18 +373,10 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 			}
 		}
 	}
-
-	@Override
-	public void passLabelToActivity(String label) {
-		// TODO Auto-generated method stub
-		toReturnLabels.add(label);
-		passLabelListToFragment();
-		FragmentTransaction ft=getFragmentManager().beginTransaction();
-		topSideBar=new TopSideBar_Fragment();
-		ft.replace(R.id.top_side_bar_background, topSideBar);
-		ft.commit();
-	}
+	//----------------METHODS FOR RIGHT SIDE DRAWER-------------------------
 	
+	
+	//---------------METHODS FOR TOP SIDE BAR-------------------------------
 	@Override
 	public void passIndexToActivity(int i) {
 		// TODO Auto-generated method stub
@@ -332,22 +423,6 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 		// TODO Auto-generated method stub
 		return toReturnLabels;
 	}
-
-	@Override
-	public boolean setClickabilityToFragment() {
-		// TODO Auto-generated method stub
-		if(currentIndex<fragmentList.size()-1)
-			return false;
-		else
-			return true;
-	}
-
-	@Override
-	public void destroySubsequentFragments() {
-		// TODO Auto-generated method stub
-		fragmentList=fragmentList.subList(0, currentIndex+1);
-		initializeTopSideBar();
-	}
-
+	//---------------METHODS FOR TOP SIDE BAR-------------------------------
 }
 

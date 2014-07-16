@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+     <item android:id="@+id/action_add"
+          android:icon="@drawable/round_plus"
+          android:title="@string/action_dd"
+          android:showAsAction="ifRoom" />
+</menu>
