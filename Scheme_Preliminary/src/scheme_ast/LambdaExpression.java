@@ -19,5 +19,9 @@ public class LambdaExpression extends Expression {
 	public Expression getBody() {
 		return mBody;
 	}
+	
+	public void setBody(Expression body) {
+		this.mBody = body;
+	}
 		
 }
