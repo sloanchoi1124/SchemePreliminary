@@ -54,5 +54,9 @@
     <string name="title_activity_right_side_bar__fragment">RightSideBar_Fragment</string>
     <string name="title_activity_top_side_bar__fragment">TopSideBar_Fragment</string>
     <string name="title_activity_definition_box__fragment">DefinitionBox_Fragment</string>
+    <string name="title_activity_and_box__fragment">AndBox_Fragment</string>
+    <string name="title_activity_or_box__fragment">OrBox_Fragment</string>
+    <string name="title_activity_and_or_box__fragment">AndOrBox_Fragment</string>
+    <string name="action_dd">Add</string>
 
 </resources>

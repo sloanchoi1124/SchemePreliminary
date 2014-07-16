@@ -89,7 +89,7 @@
             android:label="@string/title_activity_bindings_box__fragment" >
         </activity>
         <activity
-            android:name="com.example.scheme_preliminary.boxFragment.IntIdBox_Fragment"
+            android:name="com.example.scheme_preliminary.boxFragment.IntIdBoolBox_Fragment"
             android:label="@string/title_activity_int_id_box__fragment" >
         </activity>
         <activity android:name="com.example.scheme_preliminary.calculator.Calculator_Activity" >
@@ -105,6 +105,18 @@
         <activity
             android:name="com.example.scheme_preliminary.boxFragment.DefinitionBox_Fragment"
             android:label="@string/title_activity_definition_box__fragment" >
+        </activity>
+        <activity
+            android:name="com.example.scheme_preliminary.boxFragment.AndBox_Fragment"
+            android:label="@string/title_activity_and_box__fragment" >
+        </activity>
+        <activity
+            android:name="com.example.scheme_preliminary.OrBox_Fragment"
+            android:label="@string/title_activity_or_box__fragment" >
+        </activity>
+        <activity
+            android:name="com.example.scheme_preliminary.boxFragment.AndOrBox_Fragment"
+            android:label="@string/title_activity_and_or_box__fragment" >
         </activity>
     </application>
 
