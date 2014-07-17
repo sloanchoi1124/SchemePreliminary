@@ -37,7 +37,7 @@ public class IntIdBoolBox_Fragment extends Fragment {
 		TextView int_id_textview=(TextView) v.findViewById(R.id.int_id_text);
 		if(ast instanceof IntExpression)
 		{
-			int_id_textview.setText(((Integer)((IntExpression) ast).getValue()).toString());
+			int_id_textview.setText(((IntExpression) ast).getValue().toString());
 		}
 		else if(ast instanceof IdExpression)
 		{

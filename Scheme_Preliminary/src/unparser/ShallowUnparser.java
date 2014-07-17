@@ -19,7 +19,7 @@ public class ShallowUnparser {
 		String result="";
 	    if(ast instanceof IntExpression)
 	    {
-	    	result+=((Integer)((IntExpression)ast).getValue()).toString()+" ";
+	    	result+=((IntExpression)ast).getValue().toString()+" ";
 	    }
 	    else if(ast instanceof IdExpression)
 	    {

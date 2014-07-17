@@ -1,12 +1,30 @@
 package parser;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import parser.token.StrToken;
 import parser.token.Token;
 import parser.token.TokenKind;
-import scheme_ast.*;
+import scheme_ast.AndExpression;
+import scheme_ast.BoolExpression;
+import scheme_ast.CallExpression;
+import scheme_ast.DefOrExp;
+import scheme_ast.Definition;
+import scheme_ast.Expression;
+import scheme_ast.IdExpression;
+import scheme_ast.IfExpression;
+import scheme_ast.IntExpression;
+import scheme_ast.LambdaExpression;
+import scheme_ast.LetExpression;
+import scheme_ast.LetStarExpression;
+import scheme_ast.LetrecExpression;
+import scheme_ast.NullExpression;
+import scheme_ast.OrExpression;
+import scheme_ast.Program;
+import scheme_ast.StringExpression;
 import util.Pair;
 
 public class Parser {
@@ -36,7 +54,7 @@ public class Parser {
                 toReturn = parseSubExpression(iter);
                 break;
             case INT:
-                toReturn = new IntExpression(Integer.parseInt(token.toString()));
+                toReturn = new IntExpression(new BigInteger(token.toString()));
                 break;
             case ID:
                 toReturn = new IdExpression(token.toString());
@@ -50,6 +68,8 @@ public class Parser {
             case NULL:
             	toReturn = new NullExpression();
             	break;
+            case STR:
+            	toReturn = new StringExpression(((StrToken) token).toString());
             default:
                 System.out.println("Invalid token '" + token.toString() + "'");
                 return null;

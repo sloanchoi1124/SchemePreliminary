@@ -32,7 +32,7 @@ public class Unparser {
 		String result = "";
 
 		if (ast instanceof IntExpression) {
-			result += ((Integer) ((IntExpression) ast).getValue()).toString()
+			result += ((IntExpression) ast).getValue().toString()
 					+ " ";
 		}
 

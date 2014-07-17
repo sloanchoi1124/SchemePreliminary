@@ -118,7 +118,7 @@ public class SchemeExpressionsAdapter extends ArrayAdapter<Pair<String,Expressio
         }
         else if (expression instanceof IntExpression) {
         	IntExpression intExp = (IntExpression) expression;
-        	return new Pair<String, String>("[int]", Integer.toString(intExp.getValue()));
+        	return new Pair<String, String>("[int]", intExp.getValue().toString());
         }
         
 	    else System.out.println("IT'S NOT RECOGNIZED AS A KNOWN EXPRESSION TYPE");

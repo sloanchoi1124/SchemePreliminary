@@ -1,5 +1,6 @@
 package com.example.scheme_preliminary.calculator;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -51,7 +52,7 @@ public class Calculator_Fragment extends Fragment implements Calculator_Fragment
 	private int[] numberButtonIds;
 	
 	private Mode mode;
-	private Integer currentInt;
+	private String currentInt;
 	private Stack<Pair<Expression, List<Object>>> stack;
 	private Expression fullExpression;
 	
@@ -169,7 +170,7 @@ public class Calculator_Fragment extends Fragment implements Calculator_Fragment
     	switch (this.mode) {
     	case INTEGER:
     		if (token.equals("Enter")) {
-    			IntExpression num = new IntExpression(this.currentInt);
+    			IntExpression num = new IntExpression(new BigInteger(this.currentInt));
     			this.currentInt = null;
     			handleExpressionEntered(num);
     			condenseStackWhilePossible();
@@ -178,7 +179,7 @@ public class Calculator_Fragment extends Fragment implements Calculator_Fragment
     			else setMode(Mode.WAITING);
     		}
     		else { // adding to currentInt
-    			this.currentInt = this.currentInt * 10 + Integer.parseInt(token);
+    			this.currentInt += token;
     			text += token;
     		}
     		break;
@@ -223,7 +224,7 @@ public class Calculator_Fragment extends Fragment implements Calculator_Fragment
         			condenseStackWhilePossible();
     			}
     			else {
-	    			this.currentInt = Integer.parseInt(token);
+	    			this.currentInt = token;
 	    			setMode(Mode.INTEGER);
     			}
     		}

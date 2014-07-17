@@ -6,6 +6,7 @@ public enum TokenKind {
     RPAREN(")"),
     ID("[ID]"),
     INT("[NUM]"),
+    STR("[STR]"),
     TRUE("#t"),
     FALSE("#f"),
     IF("if"),
