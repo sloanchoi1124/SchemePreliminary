@@ -23,8 +23,10 @@ import scheme_ast.OrExpression;
 import scheme_ast.Program;
 import util.Pair;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,18 +35,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-
-import android.widget.Button;
-
 import android.widget.FrameLayout;
 import android.widget.ListView;
-
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
-import android.graphics.Color;
-
-
 import com.example.scheme_preliminary.R;
 import com.example.scheme_preliminary.boxFragment.TopSideBar_Fragment.TopSideBarActivityCommunicator;
 import com.example.scheme_preliminary.calculator.Calculator_Fragment;
@@ -69,11 +61,11 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 	private int currentIndex;
 	//----------------------------------------
 	private String currentExpressionTag;
+	//CURRENT EXPRESSION TAG IS USED TO LOOK INTO EXPRESSION IN THE CURRENT MAP!!!!!
 	//----------------------------------------
 	private ListView left_drawer_background;
 	//----------------------------------------
 	private ListView right_drawer_background;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -85,7 +77,6 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 		String toParse1="(define FOUR 4)";
 		List<Token> tokens1 = Lexer.lex(toParse1);
 		Program program1=Parser.parse(tokens1);
-		
 		//---------------------------------------
 		this.programList=new ArrayList<Program>();
 		this.programList.add(program0);
@@ -97,6 +88,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 		//-------------------------------------
 		initializeLeftSideDrawer();	
 		initilaizeCenterScreen();
+		
 	}
 	
 	//--------THE ACTION BAR---------------------------
@@ -113,18 +105,44 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 		// TODO Auto-generated method stub
 		switch(item.getItemId()){
 		    case R.id.action_add:
-		    	//go to the calculator fragment
-		    	System.out.println("GENERATE THE CALCULATOR FRAGMENT");
-		    	//generate a new interface to communicate between the activity and the calculator fragment
-		    	if (getFragmentManager().findFragmentByTag("calculator") == null) {
-			    		
-			    	getFragmentManager().beginTransaction()
-			    			.add(R.id.calculator_frame, new Calculator_Fragment(), "calculator")
-			    			.addToBackStack(null)
-	    					.commit();
-			    	//automatically passes in the list of function names within a certain program
-			    	((FrameLayout) this.findViewById(R.id.calculator_frame)).bringToFront();
-		    	}
+		    	//-----EXPERIMENTAL-----
+		    	final CharSequence[] items={"New DefOrExp","New Program","Replace current DefOrExp"};
+		    	AlertDialog.Builder builder=new AlertDialog.Builder(this);
+		    	builder.setItems(items, new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int item) {
+						// TODO Auto-generated method stub
+						switch(item){
+						case 0:
+							//go to the calculator fragment
+					    	System.out.println("GENERATE THE CALCULATOR FRAGMENT");
+					    	//generate a new interface to communicate between the activity and the calculator fragment
+					    	if (getFragmentManager().findFragmentByTag("calculator") == null) {
+						    		
+						    	getFragmentManager().beginTransaction()
+						    			.add(R.id.calculator_frame, new Calculator_Fragment(), "calculator")
+						    			.addToBackStack(null)
+				    					.commit();
+						    	//automatically passes in the list of function names within a certain program
+						    	((FrameLayout) findViewById(R.id.calculator_frame)).bringToFront();
+					    	}
+					    	break;
+						case 1:
+							System.out.println("BUILD A NEW PROGRAM");
+							Program temp=new Program(new ArrayList<DefOrExp>());
+							programList.add(temp);
+							System.out.println(programList);
+							initializeLeftSideDrawer();
+							initilaizeCenterScreen();
+							break;
+						case 2:
+							break;
+						}
+					}
+				});
+		    	AlertDialog alert=builder.create();
+		    	alert.show();
 		    	break;
 		}
 		return true;
