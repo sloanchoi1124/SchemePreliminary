@@ -15,14 +15,16 @@ public class Lexer {
     
     List<String> regEx = new ArrayList<String>();
     
-    String rVar = "\\p{Alpha}[\\p{Alnum}\\?\\*]*"; //subset of legal identifiers
-	String rOp  = "[<>=*/+\\-]";
+    String peculiarIdentifier = "[+-\\.{3}]"; // + - ...
+    String initial = 	"[\\p{Alpha}!$%&*/:<=>?^_~]"; // Letters and certain symbols
+    String subsequent = "[\\p{Alpha}!$%&*/:<=>?^_~\\d+-\\.@]"; // Letters, digits, and more symbols
+    String identifiers = peculiarIdentifier + "|" + initial + subsequent + "*";
 	
 	regEx.add("'\\(\\)");		// group 1 (null)
 	regEx.add("\\(");     		// group 2 (left parenthesis)
 	regEx.add("\\)");     		// group 3 (right parenthesis)
 	regEx.add("\\d+");    		// group 4 (numbers)
-	regEx.add(rVar + "|" + rOp);// group 5 (identifiers)
+	regEx.add(identifiers);		// group 5 (identifiers)
 	regEx.add("#[tf]");   		// group 6 (booleans)
 	regEx.add(";.*\\n");    	// group 7 (comments)
 	regEx.add("\"[^\"]*\"");   	// group 8 (strings)
