@@ -48,7 +48,7 @@ public class Lexer {
 	    else if (result.group(3) != null)
 	        tokenList.add(new Token(TokenKind.RPAREN));
 	    else if (result.group(4) != null)
-	        tokenList.add(new IntToken(Integer.parseInt(token)));
+	        tokenList.add(new IntToken(token));
 	    else if (result.group(5) != null) {
 	        if (token.equals("if"))
 	            tokenList.add(new Token(TokenKind.IF));

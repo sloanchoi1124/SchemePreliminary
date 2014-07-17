@@ -2,16 +2,16 @@ package parser.token;
 
 public class IntToken extends Token {
 
-	private int mLiteral;
+	private String mLiteral;
 	
-	public IntToken(int literal) {
+	public IntToken(String literal) {
 		super(TokenKind.INT);
 		mLiteral = literal;
 	}
 	
 	@Override
 	public String toString() {
-		return "" + mLiteral;
+		return mLiteral;
 	}
 
 }
