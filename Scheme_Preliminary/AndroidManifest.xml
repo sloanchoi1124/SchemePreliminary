@@ -92,7 +92,7 @@
             android:name="com.example.scheme_preliminary.boxFragment.IntIdBoolBox_Fragment"
             android:label="@string/title_activity_int_id_box__fragment" >
         </activity>
-        <activity android:name="com.example.scheme_preliminary.calculator.Calculator_Activity" >
+        <activity android:name="com.example.scheme_preliminary.calculator.Calculator_Fragment" >
         </activity>
         <activity
             android:name="com.example.scheme_preliminary.boxFragment.RightSideBar_Fragment"

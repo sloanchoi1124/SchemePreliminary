@@ -2,18 +2,29 @@ package com.example.scheme_preliminary.boxFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import java.util.List;
 import java.util.Map;
-
-import com.example.scheme_preliminary.R;
-import com.example.scheme_preliminary.boxFragment.TopSideBar_Fragment.TopSideBarActivityCommunicator;
 
 import parser.Lexer;
 import parser.Parser;
 import parser.token.Token;
-import scheme_ast.*;
+import scheme_ast.AndExpression;
+import scheme_ast.BoolExpression;
+import scheme_ast.CallExpression;
+import scheme_ast.DefOrExp;
+import scheme_ast.Definition;
+import scheme_ast.Expression;
+import scheme_ast.IdExpression;
+import scheme_ast.IfExpression;
+import scheme_ast.IntExpression;
+import scheme_ast.LambdaExpression;
+import scheme_ast.LetExpression;
+import scheme_ast.OrExpression;
+import scheme_ast.Program;
 import util.Pair;
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,12 +33,17 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 
-public class BoxActivity extends Activity implements ActivityCommunicator,TopSideBarActivityCommunicator{
+import com.example.scheme_preliminary.R;
+import com.example.scheme_preliminary.boxFragment.TopSideBar_Fragment.TopSideBarActivityCommunicator;
+import com.example.scheme_preliminary.calculator.Calculator_Fragment;
+import com.example.scheme_preliminary.calculator.Calculator_Fragment.Calculator_Fragment_Communicator;
+import com.example.scheme_preliminary.calculator.Calculator_Fragment_Listener;
+
+public class BoxActivity extends Activity implements ActivityCommunicator,TopSideBarActivityCommunicator,Calculator_Fragment_Communicator,Calculator_Fragment_Listener{
 
 	private DefOrExp toReturnToFragment;
 	private List<Pair<String, Expression>> toReturnBindings;
@@ -71,7 +87,9 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 		this.left_drawer_background=(ListView) findViewById(R.id.drawer_left);
 		this.right_drawer_background=(ListView) findViewById(R.id.drawer);
 		//--------------------------------------
-		initializeLeftSideDrawer();		
+		initializeLeftSideDrawer();	
+		map=initializeMap(initializeDefOrExpList(currentProgram,null));
+		initializeRightSideDrawer();	
 		this.fragmentList=new ArrayList<Fragment>();
 		this.currentIndex=-1;
 	}
@@ -88,8 +106,6 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 					long id) {
 				// TODO Auto-generated method stub
 				currentProgram=programList.get(position);
-				map=initializeMap(initializeDefOrExpList(currentProgram,null));
-				initializeRightSideDrawer();
 			}
 		});
 	}
@@ -109,7 +125,15 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 		    	//go to the calculator fragment
 		    	System.out.println("GENERATE THE CALCULATOR FRAGMENT");
 		    	//generate a new interface to communicate between the activity and the calculator fragment
-		    	//pass in the list of function names within a certain program
+		    	if (getFragmentManager().findFragmentByTag("calculator") == null) {
+			    		
+			    	getFragmentManager().beginTransaction()
+			    			.add(R.id.calculator_frame, new Calculator_Fragment(), "calculator")
+			    			.addToBackStack(null)
+	    					.commit();
+			    	//automatically passes in the list of function names within a certain program
+			    	((FrameLayout) this.findViewById(R.id.calculator_frame)).bringToFront();
+		    	}
 		    	break;
 		}
 		return true;
@@ -320,6 +344,51 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 		fragmentList=fragmentList.subList(0, currentIndex+1);
 		initializeTopSideBar();
 	}
+
+	//----------------METHODS FROM CALCULATOR FRAGMENT COMMUNICATOR---------------------
+	public void receiveDefOrExp(DefOrExp defOrExp) {
+		this.currentProgram.getProgram().add(defOrExp);
+		getFragmentManager().popBackStackImmediate();
+		map=initializeMap(currentProgram.getProgram());
+		initializeRightSideDrawer();
+	}
+	
+	public List<String> getBindings() {
+		List<DefOrExp> defOrExps = this.currentProgram.getProgram();
+		List<String> bindings = new ArrayList<String>();
+		for (DefOrExp def : defOrExps) {
+			if (def instanceof Definition) {
+				bindings.add(((Definition) def).getSymbol());
+			}
+		}
+		return bindings;
+	}
+
+	//----------------METHODS FROM CALCULATOR FRAGMENT LISTENER---------------------
+
+	public void onStringCreated(String id) {
+		((Calculator_Fragment) getFragmentManager().findFragmentByTag("calculator")).onStringCreated(id);
+	}
+	public List<String> getListSource() {
+		return ((Calculator_Fragment) getFragmentManager().findFragmentByTag("calculator")).getListSource();
+	}
+	public void onIdSelected(String id) {
+		((Calculator_Fragment) getFragmentManager().findFragmentByTag("calculator")).onIdSelected(id);
+	}
+	public void onOpSelected(View v) {
+		((Calculator_Fragment) getFragmentManager().findFragmentByTag("calculator")).onOpSelected(v);
+	}
+	public void onKeypadCreated() {
+		((Calculator_Fragment) getFragmentManager().findFragmentByTag("calculator")).onKeypadCreated();
+	}
+	public void onNewFragmentNeeded(View v) {
+		((Calculator_Fragment) getFragmentManager().findFragmentByTag("calculator")).onNewFragmentNeeded(v);
+	}
+    public void onButtonClick(View v) {
+    	((Calculator_Fragment) getFragmentManager().findFragmentByTag("calculator")).onButtonClick(v);
+    }
+	// getSystemService is a standard Activity method
+	
 	
 	//----------------METHOD FROM ACTIVITY COMMUNICATOR---------------------
 	
