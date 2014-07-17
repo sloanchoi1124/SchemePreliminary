@@ -1,5 +1,6 @@
 package evaluator;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -333,8 +334,9 @@ public class Evaluator {
 
 			if (id.equals("odd?")) {
 				IntExpression i = (IntExpression) evaluate(items.get(0), envr);
-				int temp = i.getValue();
-				if (temp % 2 == 0) {
+				BigInteger temp = i.getValue();
+				BigInteger two = BigInteger.valueOf(2);
+				if (temp.remainder(two) == BigInteger.valueOf(0)) {
 					return f;
 				}
 				return t;
@@ -342,30 +344,30 @@ public class Evaluator {
 
 			Expression i1 = evaluate(items.get(0), envr);
 			Expression i2 = evaluate(items.get(1), envr);
-			int item1 = ((IntExpression) i1).getValue();
-			int item2 = ((IntExpression) i2).getValue();
-			int result = 0;
+			BigInteger item1 = ((IntExpression) i1).getValue();
+			BigInteger item2 = ((IntExpression) i2).getValue();
+			BigInteger result = BigInteger.valueOf(0);
 
 			// operator: remainder
 			if (id.equals("remainder")) {
-				return new IntExpression(item1 % item2);
+				return new IntExpression(item1.remainder(item2));
 			}
 
 			// operators: <, >, =, return 1 for true, 0 for false
 			else if (id.equals("=")) {
-				if (item1 == item2) {
+				if (item1.compareTo(item2) == 0) {
 					return t;
 				} else {
 					return f;
 				}
 			} else if (id.equals("<")) {
-				if (item1 < item2) {
+				if (item1.compareTo(item2) == -1) {
 					return t;
 				} else {
 					return f;
 				}
 			} else if (id.equals(">")) {
-				if (item1 > item2) {
+				if (item1.compareTo(item2) == 1) {
 					return t;
 				} else {
 					return f;
@@ -375,8 +377,7 @@ public class Evaluator {
 			// operators: +, -, * /
 			else if (id.equals("+")) {
 				for (Expression item : items) {
-					result = result
-							+ ((IntExpression) evaluate(item, envr)).getValue();
+					result = result.add(((IntExpression) evaluate(item, envr)).getValue());
 				}
 			}
 
@@ -385,22 +386,19 @@ public class Evaluator {
 						.getValue();
 				for (int i = 1; i < items.size(); i++) {
 					Expression item = items.get(i);
-					result = result
-							- ((IntExpression) evaluate(item, envr)).getValue();
+					result = result.subtract(((IntExpression) evaluate(item, envr)).getValue());
 				}
 			} else if (id.equals("*")) {
-				result = 1;
+				result = BigInteger.valueOf(1);
 				for (Expression item : items) {
-					result = result
-							* ((IntExpression) evaluate(item, envr)).getValue();
+					result = result.multiply(((IntExpression) evaluate(item, envr)).getValue());
 				}
 			} else if (id.equals("quotient")) {
 				result = ((IntExpression) evaluate(items.get(0), envr))
 						.getValue();
 				for (int i = 1; i < items.size(); i++) {
 					Expression item = items.get(i);
-					result = result
-							/ ((IntExpression) evaluate(item, envr)).getValue();
+					result = result.divide(((IntExpression) evaluate(item, envr)).getValue());
 				}
 			} else {
 				// error: operator not defined;

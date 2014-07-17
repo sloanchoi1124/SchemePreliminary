@@ -1,14 +1,16 @@
 package scheme_ast;
 
+import java.math.BigInteger;
+
 public class IntExpression extends Expression {
-	private int mValue;
+	private BigInteger mValue;
 	
-	public IntExpression(int value) {
+	public IntExpression(BigInteger value) {
 		super();
 		mValue = value;
 	}
 	
-	public int getValue() {
+	public BigInteger getValue() {
 		return mValue;
 	}
 }
