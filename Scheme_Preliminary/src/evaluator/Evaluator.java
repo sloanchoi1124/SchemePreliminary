@@ -1,7 +1,9 @@
 package evaluator;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Stack;
 
 import scheme_ast.AndExpression;
@@ -22,6 +24,7 @@ import scheme_ast.NullExpression;
 import scheme_ast.OperatorExpression;
 import scheme_ast.OrExpression;
 import scheme_ast.Program;
+import scheme_ast.StringExpression;
 import util.Pair;
 
 public class Evaluator {
@@ -47,6 +50,14 @@ public class Evaluator {
 		env.put("cdr", new OperatorExpression("cdr", false, 1), null);
 		env.put("car", new OperatorExpression("car", false, 1), null);
 		env.put("cons", new OperatorExpression("cons", false, 2), null);
+		env.put("display", new OperatorExpression("display", false, 1), null);
+		env.put("read", new OperatorExpression("read", false, 1), null);		
+		env.put("emptyList", new NullExpression(), null);
+		env.put("string=?", new OperatorExpression("string=?", true, 2), null);
+		env.put("string1", new StringExpression("testing"), null);
+		env.put("string2", new StringExpression("testing2"), null);
+		env.put("string3", new StringExpression("testing"), null);
+		env.put("read", new OperatorExpression("read", false, 0), null);
 		return env;
 	}
 
@@ -59,18 +70,23 @@ public class Evaluator {
 		while (itr.hasNext()) {
 			temp = itr.next();
 			if (temp instanceof Definition) {
+				Expression top_eval = evaluate(((Definition) temp).getBody(), initializeEnv());
 				general_envr.put(((Definition) temp).getSymbol(),
-						((Definition) temp).getBody(), general_envr);
-				// System.out.println(((Definition) temp).getSymbol());
+						top_eval, general_envr);
+				
+				System.out.println(((Definition) temp).getBody());
 			} else {
 				step_result = evaluate(((Expression) temp), general_envr);
 				list.add(step_result);
 				if (step_result instanceof IntExpression) {
 					System.out
 							.println(((IntExpression) step_result).getValue());
-				} else {
+				} else if (step_result instanceof BoolExpression){
 					System.out.println(((BoolExpression) step_result)
 							.getValue());
+				} else {
+					//System.out.println(((ConsExpression) step_result)		.toString());
+					System.out.println(step_result);
 				}
 			}
 		}
@@ -105,6 +121,8 @@ public class Evaluator {
 			return andEval((AndExpression) e, env);
 		} else if (e instanceof OrExpression) {
 			return orEval((OrExpression) e, env);
+		} else if (e instanceof NullExpression) {
+			return e;
 		} else {
 			return null; // error!!
 		}
@@ -184,34 +202,66 @@ public class Evaluator {
 
 	private static Expression listEval(CallExpression e, Environment envr) {
 		String name = ((OperatorExpression) e.getOperator()).getName();
+		//System.out.println(name);
 		if (name.equals("null?")) {
-			boolean temp = e.getOperands().equals(new NullExpression());
+			boolean temp = e.getOperands().get(0) instanceof NullExpression;
 			if (temp) {
 				return new BoolExpression(true);
 			} else {
 				return new BoolExpression(false);
 			}
 		} else if (name.equals("car")) {
-			if (!(e.getOperands() instanceof ConsExpression)) {
-				// error
+			if (!(e.getOperands().get(0) instanceof ConsExpression)) {
+				// error 
 				return null;
 			} else {
-				return ((ConsExpression) e.getOperands()).car();
+				return ((ConsExpression) e.getOperands().get(0)).car();
 			}
 		} else if (name.equals("cdr")) {
-			if (!(e.getOperands() instanceof ConsExpression)) {
+			if (!(e.getOperands().get(0) instanceof ConsExpression)) {
 				// error
 				return null;
 			} else {
-				return ((ConsExpression) e.getOperands()).cdr();
+				return ((ConsExpression) e.getOperands().get(0)).cdr();
 			}
 		} else if (name.equals("cons")) {
+			//System.out.println("returning cosexpression");
 			return new ConsExpression(e.getOperands().get(0), e.getOperands()
 					.get(1));
 		} else {
 			// error
 			return null;
 		}
+	}
+	
+	private static void displayEval(CallExpression e, Environment envr) {
+		Expression oprand = e.getOperands().get(0);
+		if (oprand instanceof IntExpression) {
+			System.out.println(((IntExpression) oprand).getValue());
+		} else if (oprand instanceof ConsExpression) {
+			System.out.println(((ConsExpression)oprand).toString());
+		} else if (oprand instanceof BoolExpression ) {
+			System.out.println(((BoolExpression) oprand).getValue());
+		} else {
+			System.out.println("nothing to display");
+		}
+	}
+	
+	private static StringExpression readEval(CallExpression e, Environment envr) {
+		Scanner sc = new Scanner(System.in);
+		String input = sc.nextLine();
+		return new StringExpression(input);
+	}
+	
+	private static BoolExpression stringEval(CallExpression e, Environment envr) {
+		for (int i = 0; i< e.getOperands().size() - 1; i++) {
+			String temp1 = ((StringExpression) evaluate(e.getOperands().get(i), envr)).toString();
+			String temp2 = ((StringExpression) evaluate(e.getOperands().get(i+1), envr)).toString();
+			if (!temp1.equals(temp2)) {
+				return new BoolExpression(false);
+			}
+		}
+		return new BoolExpression(true);
 	}
 
 	private static Expression callEval(CallExpression e, Environment envr) {
@@ -250,7 +300,32 @@ public class Evaluator {
 			}
 			if (id.equals("null?") || id.equals("cdr") || id.equals("car")
 					|| id.equals("cons")) {
-				return listEval(e, envr); // list evaluation
+				List<Expression> operands = new ArrayList<Expression>(); 
+				for (Expression cons_item : items) {
+					Expression result = evaluate(cons_item, envr);
+					operands.add(result);
+				}
+				CallExpression temp = new CallExpression(operator, operands);
+				return listEval(temp, envr); // list evaluation
+			}
+			
+			if (id.equals("read")) {
+				return readEval(e, envr);
+			}
+			
+			if (id.equals("string=?")) {
+				return stringEval(e, envr);
+			}
+			
+			if (id.equals("display")) {
+				List<Expression> operands = new ArrayList<Expression>();
+				for (Expression cons_item : items) {
+					Expression result = evaluate(cons_item, envr);
+					operands.add(result);
+				}
+				CallExpression temp = new CallExpression(operator, operands);
+				displayEval(temp, envr);
+				return new NullExpression();
 			}
 
 			BoolExpression t = new BoolExpression(true);
