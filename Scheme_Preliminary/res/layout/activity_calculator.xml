@@ -16,7 +16,8 @@
         android:maxLines = "6"
         android:scrollbars = "vertical"
         android:gravity="center"
-        android:textSize="32sp" />
+        android:textSize="32sp"
+        android:background="#FFFFFF" />
 
     <View
         android:id="@+id/view1"

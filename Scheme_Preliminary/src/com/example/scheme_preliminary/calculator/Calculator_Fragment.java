@@ -8,13 +8,13 @@ import java.util.List;
 import java.util.Stack;
 
 import scheme_ast.CallExpression;
+import scheme_ast.DefOrExp;
 import scheme_ast.Expression;
 import scheme_ast.IdExpression;
 import scheme_ast.IfExpression;
 import scheme_ast.IntExpression;
 import scheme_ast.LambdaExpression;
 import scheme_ast.LetExpression;
-import unparser.Unparser;
 import util.Pair;
 import android.app.Activity;
 import android.app.Fragment;
@@ -22,20 +22,28 @@ import android.app.FragmentTransaction;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.example.scheme_preliminary.R;
 
-import evaluator.Evaluator;
-
-public class Calculator_Activity extends Activity implements Calculator_Fragment_Listener {
+public class Calculator_Fragment extends Fragment implements Calculator_Fragment_Listener {
+	
+	public interface Calculator_Fragment_Communicator {
+		public void receiveDefOrExp(DefOrExp defOrExp);
+		public List<String> getBindings();
+		public Object getSystemService(String name);
+	}
 	
 	private enum Mode {
 		WAITING, INTEGER, BINDING_STRING, OTHER;
 	}
+	
+	private Calculator_Fragment_Communicator mCallback;
 	private final Object doneMarker = Integer.valueOf(-42);
 	private LinkedList<String> OPLIST = new LinkedList<String>(Arrays.asList(new String[] { "+", "*", "-", "quotient", "if", "let", "lambda" }));
 	
@@ -51,11 +59,30 @@ public class Calculator_Activity extends Activity implements Calculator_Fragment
 	private TextView textView;
 	
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	    setContentView(R.layout.activity_calculator);
-	    
-	    this.fragFrame = (FrameLayout) findViewById(R.id.FrameLayout1);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceBundle) {
+		View v = inflater.inflate(R.layout.activity_calculator, container, false);
+	    return v;
+	}
+
+	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		try {
+            this.mCallback = (Calculator_Fragment_Communicator) activity;
+            this.bindings = new LinkedList<String>();
+            for (String s : this.mCallback.getBindings())
+            	this.bindings.add(s);
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement Calculator_Fragment_Communicator");
+        }
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+	    this.fragFrame = (FrameLayout) getView().findViewById(R.id.FrameLayout1);
 	    this.fragFrame.setBackgroundColor(Color.argb(255, 200, 200, 200));
 	    
 	    Keypad_Fragment keypadFragment = new Keypad_Fragment();
@@ -63,13 +90,12 @@ public class Calculator_Activity extends Activity implements Calculator_Fragment
         					.add(R.id.FrameLayout1, keypadFragment, "keypad")
         					.commit();
 	    
-        this.bindings = new LinkedList<String>();
         
         this.numberButtonIds = new int[] { R.id.Button0, R.id.Button1, R.id.Button2,
         								   R.id.Button3, R.id.Button4, R.id.Button5,
         								   R.id.Button6, R.id.Button7, R.id.Button8, R.id.Button9 };
         
-	    this.textView = (TextView) findViewById(R.id.textView1);
+	    this.textView = (TextView) getView().findViewById(R.id.textView1);
 	    this.textView.setMovementMethod(new ScrollingMovementMethod());
 
 	    this.mode = Mode.WAITING;
@@ -238,19 +264,20 @@ public class Calculator_Activity extends Activity implements Calculator_Fragment
     	
     	
     	if (this.fullExpression != null) {
-    		if (this.fullExpression instanceof IdExpression) 
-    			text = ("ID: " + ((IdExpression) this.fullExpression).getId());
-    		else {
-    			try {
-//    				text = Integer.toString(Evaluator.evaluate(this.fullExpression).getValue());
-//    				text = Unparser.unparse(this.fullExpression);
-//    				text += "\n=\n" + Evaluator.evaluate(this.fullExpression).getValue();
-    			}
-    			catch (Exception e) {
-    				text += ("\n\nCannot be evaluated");
-    				System.out.println(e);
-    			}
-    		}
+//    		if (this.fullExpression instanceof IdExpression) 
+//    			text = ("ID: " + ((IdExpression) this.fullExpression).getId());
+//    		else {
+//    			try {
+////    				text = Integer.toString(Evaluator.evaluate(this.fullExpression).getValue());
+////    				text = Unparser.unparse(this.fullExpression);
+////    				text += "\n=\n" + Evaluator.evaluate(this.fullExpression).getValue();
+//    			}
+//    			catch (Exception e) {
+//    				text += ("\n\nCannot be evaluated");
+//    				System.out.println(e);
+//    			}
+//    		}x
+    		this.mCallback.receiveDefOrExp(this.fullExpression);
     	}
     	else text = unparseStack();
 //    	if (this.fullExpression != null) text = Unparser.unparse(this.fullExpression) + "\n=\n" + Evaluator.evaluate(this.fullExpression);
@@ -495,6 +522,11 @@ public class Calculator_Activity extends Activity implements Calculator_Fragment
     	}
     	return s + unparseStack(list);
     }
+
+	@Override
+	public Object getSystemService(String name) {
+		return this.mCallback.getSystemService(name);
+	}
     
 
 }

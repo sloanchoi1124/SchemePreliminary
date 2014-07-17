@@ -11,17 +11,17 @@
         <RelativeLayout
             android:id="@+id/background"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" 
-            android:background="#ccffcc">
+            android:layout_height="match_parent" >
 
 
-            <FrameLayout
-                android:id="@+id/calculator_fragment_background"
+			<FrameLayout
+                android:id="@+id/calculator_frame"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true" >
             </FrameLayout>
+            
 
             <FrameLayout
                 android:id="@+id/top_side_bar_background"

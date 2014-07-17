@@ -1,6 +1,6 @@
 package com.example.scheme_preliminary;
 
-import com.example.scheme_preliminary.calculator.Calculator_Activity;
+import com.example.scheme_preliminary.calculator.Calculator_Fragment;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -98,7 +98,7 @@ public class MainActivity extends Activity implements OnClickListener{
 			*/
 			break;
 		case R.id.button4:
-			i=new Intent(this,Calculator_Activity.class);
+			i=new Intent(this,Calculator_Fragment.class);
 			break;
 		default:
 			i=new Intent(this,Activity_Selector.class);
