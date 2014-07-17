@@ -22,10 +22,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.graphics.Color;
 
 public class BoxActivity extends Activity implements ActivityCommunicator,TopSideBarActivityCommunicator{
 
@@ -61,20 +63,25 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 		String toParse1="(define THREE 4)";
 		List<Token> tokens1 = Lexer.lex(toParse1);
 		Program currentProgram1=Parser.parse(tokens1);
-		//---------------------------------------
 		
+		//---------------------------------------
 		this.programList=new ArrayList<Program>();
 		this.programList.add(this.currentProgram);
-		this.programList.add(currentProgram1);
 		
+		FrameLayout calculator=(FrameLayout) findViewById(R.id.calculator_fragment_background);
+		calculator.setBackgroundColor(Color.WHITE);
+		calculator.setBackgroundResource(R.drawable.ic_launcher);
 		//INITIALIZE DRAWERS FROM BOTH SIDE-----
 		this.left_drawer_background=(ListView) findViewById(R.id.drawer_left);
 		this.right_drawer_background=(ListView) findViewById(R.id.drawer);
 		//--------------------------------------
-		initializeLeftSideDrawer();		
+		initializeLeftSideDrawer();	
+		this.map=initializeMap(currentProgram.getProgram());
+		initializeRightSideDrawer();
 		this.fragmentList=new ArrayList<Fragment>();
 		this.currentIndex=-1;
 	}
+	
 	//----------------METHODS FOR LEFT SIDE DRAWER--------------------------
 	public void initializeLeftSideDrawer(){
 		List<String> tags=new ArrayList<String>();
@@ -88,11 +95,11 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 					long id) {
 				// TODO Auto-generated method stub
 				currentProgram=programList.get(position);
-				map=initializeMap(initializeDefOrExpList(currentProgram,null));
-				initializeRightSideDrawer();
 			}
 		});
 	}
+	
+	//--------THE ACTION BAR---------------------------
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// TODO Auto-generated method stub
@@ -115,12 +122,12 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 		return true;
 	}
 
-	private List<DefOrExp> initializeDefOrExpList(Program program,DefOrExp doe)
+	//-------THE ACTION BAR---------------------------
+	
+	
+	private void appendDefOrExpList(DefOrExp doe)
 	{
-		List<DefOrExp> temp=program.getProgram();
-		if(doe!=null)
-			temp.add(doe);
-		return temp;
+		this.currentProgram.getProgram().add(doe);
 	}
 	
 	public HashMap<String,DefOrExp> initializeMap(List<DefOrExp> programList)
