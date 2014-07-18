@@ -23,8 +23,4 @@ public class CallExpression extends Expression {
 	public void setOperator(Expression operator) {
 		this.mOperator = operator;
 	}
-
-	public void setOperands(List<Expression> operands) {
-		this.mOperands = operands;
-	}
 }
