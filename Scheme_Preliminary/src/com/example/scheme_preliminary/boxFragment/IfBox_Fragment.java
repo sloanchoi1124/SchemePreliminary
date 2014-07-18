@@ -1,22 +1,12 @@
 package com.example.scheme_preliminary.boxFragment;
 
-import java.util.List;
-
 import com.example.scheme_preliminary.R;
-import com.example.scheme_preliminary.R.id;
-import com.example.scheme_preliminary.R.layout;
-
-import parser.Lexer;
-import parser.Parser;
-import parser.token.Token;
-import scheme_ast.CallExpression;
 import scheme_ast.IfExpression;
 import unparser.ShallowUnparser;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -58,6 +48,15 @@ public class IfBox_Fragment extends Fragment {
 				myActivityCommunicator.passLabelToActivity("if.condition/");
 			}
 		});
+		condition.setOnLongClickListener(new View.OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+				// TODO Auto-generated method stub
+				ast.setCondition(myActivityCommunicator.getReplacementFromCalculator());
+				return false;
+			}
+		});
 		
 		then=(TextView) v.findViewById(R.id.then);
 		then.setText(ShallowUnparser.shallowUnparse(ast.getThen(), 1));
@@ -72,6 +71,15 @@ public class IfBox_Fragment extends Fragment {
 				myActivityCommunicator.passLabelToActivity("if.then/");
 			}
 		});
+		then.setOnLongClickListener(new View.OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+				// TODO Auto-generated method stub
+				ast.setThen(myActivityCommunicator.getReplacementFromCalculator());
+				return false;
+			}
+		});
 		
 		otherwise=(TextView) v.findViewById(R.id.otherwise);
 		otherwise.setText(ShallowUnparser.shallowUnparse(ast.getElse(), 1));
@@ -84,6 +92,16 @@ public class IfBox_Fragment extends Fragment {
 					myActivityCommunicator.destroySubsequentFragments();
 				myActivityCommunicator.passDefOrExpToActivity(ast.getElse());
 				myActivityCommunicator.passLabelToActivity("if.else/");
+			}
+		});
+		
+		otherwise.setOnLongClickListener(new View.OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+				// TODO Auto-generated method stub
+				ast.setElse(myActivityCommunicator.getReplacementFromCalculator());
+				return false;
 			}
 		});
 		return v;

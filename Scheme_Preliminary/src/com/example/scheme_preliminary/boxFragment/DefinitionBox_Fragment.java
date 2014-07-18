@@ -50,6 +50,15 @@ public class DefinitionBox_Fragment extends Fragment {
 				myActivityCommunicator.passLabelToActivity("def.body/");
 			}
 		});
+		body.setOnLongClickListener(new View.OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+				// TODO Auto-generated method stub
+				ast.setBody(myActivityCommunicator.getReplacementFromCalculator());
+				return false;
+			}
+		});
 		return v;
 	}
 

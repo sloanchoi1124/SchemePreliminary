@@ -15,4 +15,6 @@ public interface ActivityCommunicator {
 	public void passLabelToActivity(String label);
 	public boolean setClickabilityToFragment();
 	public void destroySubsequentFragments();
+	public void inputReplacementByCalculator();
+	public Expression getReplacementFromCalculator();
 }

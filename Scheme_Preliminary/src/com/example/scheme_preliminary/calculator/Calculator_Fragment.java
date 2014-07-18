@@ -513,7 +513,7 @@ public class Calculator_Fragment extends Fragment implements Calculator_Fragment
         	}
     	}
     	else if (pair.first instanceof IfExpression) {
-    		s += "(if" + ((IdExpression) pair.first).getId() + " ";
+    		s += "(if ";
     		if (pair.second.size() > 0) {
 //    			s += Unparser.unparse((Expression) pair.second.get(0));
     			if (pair.second.size() > 1)
