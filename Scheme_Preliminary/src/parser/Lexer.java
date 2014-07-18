@@ -48,7 +48,7 @@ public class Lexer {
 	    else if (result.group(3) != null)
 	        tokenList.add(new Token(TokenKind.RPAREN));
 	    else if (result.group(4) != null)
-	        tokenList.add(new IntToken(Integer.parseInt(token)));
+	        tokenList.add(new IntToken(token));
 	    else if (result.group(5) != null) {
 	        if (token.equals("if"))
 	            tokenList.add(new Token(TokenKind.IF));
@@ -76,8 +76,10 @@ public class Lexer {
 	      tokenList.add(new Token(TokenKind.FALSE));
 	    }
 	    else if (result.group(7) != null); // comments, do nothing
-	    else if (result.group(8) != null)
+	    else if (result.group(8) != null) {
             tokenList.add(new StrToken(token.substring(1, token.length()-1)));
+            System.out.println("Creating STR token from " + token);
+	    }
 	    else
 	        System.out.println("No match for " + token);
 	            
