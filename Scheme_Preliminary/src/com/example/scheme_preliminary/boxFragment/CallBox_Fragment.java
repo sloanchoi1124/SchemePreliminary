@@ -65,9 +65,20 @@ public class CallBox_Fragment extends Fragment {
 			}
 		});
 		
+		operator.setOnLongClickListener(new View.OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+				// TODO Auto-generated method stub
+				ast.setOperator(myActivityCommunicator.getReplacementFromCalculator());
+				return false;
+			}
+		});	
 	    operator.setText(ShallowUnparser.shallowUnparse(ast.getOperator(), 1));
+	    
 	    LinearLayout operands_layout=(LinearLayout) v.findViewById(R.id.operands);
 		operands=new ArrayList<TextView>();
+		
 		for(final Expression expression: ast.getOperands())
 		{
 			TextView temp=new TextView(v.getContext());
@@ -88,6 +99,15 @@ public class CallBox_Fragment extends Fragment {
 					myActivityCommunicator.passDefOrExpToActivity(expression);
 					int i=ast.getOperands().indexOf(expression);
 					myActivityCommunicator.passLabelToActivity("call.operand"+((Integer)i).toString()+"/");
+				}
+			});
+			temp.setOnLongClickListener(new View.OnLongClickListener() {
+				
+				@Override
+				public boolean onLongClick(View v) {
+					// TODO Auto-generated method stub
+					ast.getOperands().set(ast.getOperands().indexOf(expression), myActivityCommunicator.getReplacementFromCalculator());
+					return false;
 				}
 			});
 			operands_layout.addView(temp);

@@ -435,7 +435,17 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 		initializeTopSideBar();
 	}
 	
-	
+	@Override
+	public void inputReplacementByCalculator() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Expression getReplacementFromCalculator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	//----------------METHODS FROM CALCULATOR FRAGMENT COMMUNICATOR---------------------
 	public void receiveDefOrExp(DefOrExp defOrExp) {
 		this.currentProgram.getProgram().add(defOrExp);
@@ -546,5 +556,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 		ft.commit();
 	}
 	//---------------METHODS FOR TOP SIDE BAR-------------------------------
+
+
 }
 

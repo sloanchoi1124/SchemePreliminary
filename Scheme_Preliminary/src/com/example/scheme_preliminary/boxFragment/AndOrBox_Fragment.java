@@ -77,6 +77,16 @@ public class AndOrBox_Fragment extends Fragment {
 						myActivityCommunicator.passLabelToActivity("and.conditions"+((Integer)i).toString()+"/");
 					}
 				});
+				temp.setOnLongClickListener(new View.OnLongClickListener() {
+					
+					@Override
+					public boolean onLongClick(View v) {
+						// TODO Auto-generated method stub
+						((AndExpression) ast).getConditions().set(((AndExpression) ast).getConditions().indexOf(expression),
+								myActivityCommunicator.getReplacementFromCalculator());
+						return false;
+					}
+				});
 				conditions_layout.addView(temp);
 			}
 		}
@@ -106,6 +116,16 @@ public class AndOrBox_Fragment extends Fragment {
 						myActivityCommunicator.passDefOrExpToActivity(expression);
 						int i=((OrExpression)ast).getConditions().indexOf(expression);
 						myActivityCommunicator.passLabelToActivity("and.conditions"+((Integer)i).toString()+"/");
+					}
+				});
+				temp.setOnLongClickListener(new View.OnLongClickListener() {
+					
+					@Override
+					public boolean onLongClick(View v) {
+						// TODO Auto-generated method stub
+						((OrExpression) ast).getConditions().set(((OrExpression) ast).getConditions().indexOf(expression), 
+								myActivityCommunicator.getReplacementFromCalculator());
+						return false;
 					}
 				});
 				conditions_layout.addView(temp);
