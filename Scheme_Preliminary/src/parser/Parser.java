@@ -70,6 +70,7 @@ public class Parser {
             	break;
             case STR:
             	toReturn = new StringExpression(((StrToken) token).toString());
+            	break;
             default:
                 System.out.println("Invalid token '" + token.toString() + "'");
                 return null;
