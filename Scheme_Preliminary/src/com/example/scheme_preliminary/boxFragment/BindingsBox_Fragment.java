@@ -61,6 +61,16 @@ public class BindingsBox_Fragment extends Fragment {
 					myActivityCommunicator.passLabelToActivity("binding"+((Integer)i).toString()+"/");
 				}
 			});
+			valueTemp.setOnLongClickListener(new View.OnLongClickListener() {
+				
+				@Override
+				public boolean onLongClick(View v) {
+					// TODO Auto-generated method stub
+					Pair<String,Expression> newEntry=new Pair<String, Expression>(entry.first,myActivityCommunicator.getReplacementFromCalculator());
+					bindings.set(bindings.indexOf(entry), newEntry);
+					return false;
+				}
+			});
 			valuesbackground.addView(valueTemp);
 			TextView keyTemp=new TextView(v.getContext());
 			keyTemp.setText(entry.first);

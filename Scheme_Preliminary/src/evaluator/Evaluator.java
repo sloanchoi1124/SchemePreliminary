@@ -45,6 +45,7 @@ public class Evaluator {
 		env.put("!", new OperatorExpression("not", false, 1), null);
 		env.put("odd?", new OperatorExpression("odd?", false, 1), null);
 		env.put("remainder", new OperatorExpression("remainder", false, 2), null);
+		env.put("modulo", new OperatorExpression("remainder", false, 2), null);
 		env.put("quotient", new OperatorExpression("quotient", false, 2), null);
 		env.put("even?", new OperatorExpression("even?", false, 1), null);
 		env.put("null?", new OperatorExpression("null?", false, 1), null);
@@ -59,6 +60,7 @@ public class Evaluator {
 		env.put("string2", new StringExpression("testing2"), null);
 		env.put("string3", new StringExpression("testing"), null);
 		env.put("read", new OperatorExpression("read", false, 0), null);
+		env.put("string->number", new OperatorExpression("string->number", false, 1), null);
 		return env;
 	}
 
@@ -318,6 +320,11 @@ public class Evaluator {
 				return stringEval(e, envr);
 			}
 			
+			if(id.equals("string->number")){
+				StringExpression s = (StringExpression)evaluate(e.getOperands().get(0), envr);
+				return s.toInt();
+			}
+			
 			if (id.equals("display")) {
 				List<Expression> operands = new ArrayList<Expression>();
 				for (Expression cons_item : items) {
@@ -347,7 +354,7 @@ public class Evaluator {
 			BigInteger item1 = ((IntExpression) i1).getValue();
 			BigInteger item2 = ((IntExpression) i2).getValue();
 			BigInteger result = BigInteger.valueOf(0);
-
+			
 			// operator: remainder
 			if (id.equals("remainder")) {
 				return new IntExpression(item1.remainder(item2));
@@ -380,7 +387,6 @@ public class Evaluator {
 					result = result.add(((IntExpression) evaluate(item, envr)).getValue());
 				}
 			}
-
 			else if (id.equals("-")) {
 				result = ((IntExpression) evaluate(items.get(0), envr))
 						.getValue();

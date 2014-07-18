@@ -7,7 +7,6 @@ import com.example.scheme_preliminary.R;
 import com.example.scheme_preliminary.R.id;
 import com.example.scheme_preliminary.R.layout;
 
-import scheme_ast.Expression;
 import scheme_ast.LetExpression;
 import unparser.ShallowUnparser;
 import android.os.Bundle;
@@ -16,7 +15,6 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class LetBox_Fragment extends Fragment {
@@ -67,6 +65,16 @@ public class LetBox_Fragment extends Fragment {
 					myActivityCommunicator.destroySubsequentFragments();
 				myActivityCommunicator.passDefOrExpToActivity(ast.getBody());
 				myActivityCommunicator.passLabelToActivity("let.body/");
+			}
+		});
+		
+		body.setOnLongClickListener(new View.OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+				// TODO Auto-generated method stub
+				ast.setBody(myActivityCommunicator.getReplacementFromCalculator());
+				return false;
 			}
 		});
 		return v;

@@ -1,7 +1,11 @@
 package main;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
@@ -9,11 +13,11 @@ import java.util.Map.Entry;
 import parser.Lexer;
 import parser.Parser;
 import parser.token.Token;
+import scheme_ast.ConsExpression;
 import scheme_ast.Expression;
 import scheme_ast.IntExpression;
 import scheme_ast.Program;
 import scheme_ast.BoolExpression;
-
 import unparser.Unparser;
 import util.Uid;
 import evaluator.Evaluator;
@@ -22,7 +26,7 @@ import evaluator.Mapper;
 public class Main {
 	
 	public static void main(String[] args) {
-		//String simpleSource = "(let ((modExp (lambda (base exponent modulus) (let ((modExpRec (lambda (a sq x) (if (= x 0) a (let ((newA (if (odd? x) (remainder (* a sq) modulus) a)) (newSq (remainder (* sq sq) modulus)) (newX (quotient x 2))) (modExpRec newA newSq newX)))))) (modExpRec 1 (remainder base modulus) exponent))))) (modExp 2 100 101))";
+		/*//String simpleSource = "(let ((modExp (lambda (base exponent modulus) (let ((modExpRec (lambda (a sq x) (if (= x 0) a (let ((newA (if (odd? x) (remainder (* a sq) modulus) a)) (newSq (remainder (* sq sq) modulus)) (newX (quotient x 2))) (modExpRec newA newSq newX)))))) (modExpRec 1 (remainder base modulus) exponent))))) (modExp 2 100 101))";
 		//stringTest(simpleSource);
 		
 		String nonrec = "(let ((a 5)) (let* ((a (* 2 a)) (a (* 3 a))) a))";
@@ -51,16 +55,33 @@ public class Main {
      ")" +
   "(odd 51))";
 		stringTest(odd);
-		/*AstExamples examples = new AstExamples();
+		AstExamples examples = new AstExamples();
 		for (Expression e : examples.examples) {
 			astTest(e);
 			s
-		}*/
+		}
 		//String test = "(let ((f (lambda ( x ) (+ x 1 ))) (f 5))";
 		//stringTest(test);
 		
 		String andor = "(letrec ((even  (lambda (n) (or (= n 0) (odd (- n 1))))) (odd (lambda (n) (or (= n 1) (even (- n 1)))))) (odd 51))";
 		stringTest(andor);
+		
+		String prime_extended = "(define find-smallest-factor (lambda (n) (letrec ((odd-factor (lambda (i) (if (= 0 (remainder n i)) i (if (> (* i i) n) n (odd-factor (+ i 2))))))) (if (= 0 (remainder n 2)) 2 (odd-factor 3)))))" +
+
+"(define definitely-prime? (lambda (n) (= n (find-smallest-factor n))))" +
+
+"(define mod-exp (lambda (base exponent modulus) (letrec ((mod-exp-rec (lambda (a sq x) (if (= x 0) a (let ((newA (if (odd? x) (modulo (* a sq) modulus) a)) (newSq (modulo (* sq sq) modulus)) (newX (quotient x 2))) (mod-exp-rec newA newSq newX)))))) (mod-exp-rec 1 (modulo base modulus) exponent))))" +
+
+"(define likely-prime? (lambda (n) (= (mod-exp 2 (- n 1) n) 1)))" +
+
+"(define primes-less-n (lambda (n) (letrec ((iterate (lambda (i primes) (if (< i 2) primes (if (definitely-prime? i) (iterate (- i 1) (cons i primes)) (iterate (- i 1) primes)))))) (iterate (- n 1) '()))))"
++ "(definitely-prime? 1485867) (primes-less-n 3000)";
+		//" "
+		stringTest(prime_extended);
+		//String testings = "(cons 4 (cons 5 (cons 5 (read))))";
+		//stringTest(testings);*/
+		String program = fileToString();
+		stringTest(program);
 	}
 		
 	public static void stringTest(String s) {
@@ -71,8 +92,12 @@ public class Main {
 		if (v instanceof IntExpression) {
 			System.out.println("Evaluates to: " + ((IntExpression)v).getValue());
 			
-		} else {
+		} else if (v instanceof BoolExpression){
 			System.out.println(((BoolExpression)v).getValue());
+		} else if (v instanceof ConsExpression){
+			System.out.println(((ConsExpression)v).toString());
+		} else {
+			System.out.println(v.toString());
 		}
 		
 		if (ast != null) {
@@ -81,6 +106,32 @@ public class Main {
 //			IntExpression v = Evaluator.evaluate(ast);
 //			System.out.println("Evaluates to: " + v.getValue());
 		}
+	}
+	
+	public static String fileToString() {
+		File file = new File("testing.txt");
+		BufferedReader reader = null;
+		String result = "";
+		try {
+			reader = new BufferedReader(new FileReader(file));
+			String text = null;
+			while ((text = reader.readLine()) != null) {
+				result = result + " " + text;
+			}			
+		}
+		catch (FileNotFoundException e) {
+		    e.printStackTrace();
+		} catch (IOException e) {
+		    e.printStackTrace();
+		} finally {
+		    try {
+		        if (reader != null) {
+		            reader.close();
+		        }
+		    } catch (IOException e) {
+		    }
+		}
+		return result;
 	}
 	
 	public static void astTest(Expression e) {
