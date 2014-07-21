@@ -35,9 +35,22 @@ public class Unparser {
 			result += ((IntExpression) ast).getValue().toString()
 					+ " ";
 		}
+		
+		else if (ast instanceof StringExpression) {
+			result += ((StringExpression) ast).toString()
+					+ " ";
+		}
 
 		else if (ast instanceof IdExpression) {
 			result += ((IdExpression) ast).getId() + " ";
+		}
+		
+		else if (ast instanceof OrExpression) {
+			result += "or" + " ";
+		}
+		
+		else if (ast instanceof AndExpression) {
+			result += "and" + " ";
 		}
 
 		else if (ast instanceof CallExpression) {
@@ -116,6 +129,54 @@ public class Unparser {
 
 			result += indent_space + ")\n" + indent_space
 					+ unparse(((LetExpression) ast).getBody(), indent_length)
+					+ " )";
+			indent_length.pop();
+		}
+		
+		else if (ast instanceof LetrecExpression) {
+			String indent_space = "";
+			if (indent_length.isEmpty() == true)
+				indent_length.push(("(letrec ").length());
+			else
+				indent_length.push(indent_length.peek() + ("(letrec ").length());
+
+			for (int i = 0; i < indent_length.peek(); i++)
+				indent_space += " ";
+
+			result += "(letrec (\n";
+
+			for (Pair<String, Expression> i : ((LetrecExpression) ast)
+					.getBindings()) {
+				result += indent_space + " ( " + i.first + " ";
+				result += unparse(i.second, indent_length) + " )\n";
+			}
+
+			result += indent_space + ")\n" + indent_space
+					+ unparse(((LetrecExpression) ast).getBody(), indent_length)
+					+ " )";
+			indent_length.pop();
+		}
+		
+		else if (ast instanceof LetStarExpression) {
+			String indent_space = "";
+			if (indent_length.isEmpty() == true)
+				indent_length.push(("(let* ").length());
+			else
+				indent_length.push(indent_length.peek() + ("(let* ").length());
+
+			for (int i = 0; i < indent_length.peek(); i++)
+				indent_space += " ";
+
+			result += "(let* (\n";
+
+			for (Pair<String, Expression> i : ((LetStarExpression) ast)
+					.getBindings()) {
+				result += indent_space + " ( " + i.first + " ";
+				result += unparse(i.second, indent_length) + " )\n";
+			}
+
+			result += indent_space + ")\n" + indent_space
+					+ unparse(((LetStarExpression) ast).getBody(), indent_length)
 					+ " )";
 			indent_length.pop();
 		}

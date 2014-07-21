@@ -26,7 +26,7 @@ import evaluator.Mapper;
 public class Main {
 	
 	public static void main(String[] args) {
-		/*//String simpleSource = "(let ((modExp (lambda (base exponent modulus) (let ((modExpRec (lambda (a sq x) (if (= x 0) a (let ((newA (if (odd? x) (remainder (* a sq) modulus) a)) (newSq (remainder (* sq sq) modulus)) (newX (quotient x 2))) (modExpRec newA newSq newX)))))) (modExpRec 1 (remainder base modulus) exponent))))) (modExp 2 100 101))";
+		//String simpleSource = "(let ((modExp (lambda (base exponent modulus) (let ((modExpRec (lambda (a sq x) (if (= x 0) a (let ((newA (if (odd? x) (remainder (* a sq) modulus) a)) (newSq (remainder (* sq sq) modulus)) (newX (quotient x 2))) (modExpRec newA newSq newX)))))) (modExpRec 1 (remainder base modulus) exponent))))) (modExp 2 100 101))";
 		//stringTest(simpleSource);
 		
 		String nonrec = "(let ((a 5)) (let* ((a (* 2 a)) (a (* 3 a))) a))";
@@ -55,11 +55,7 @@ public class Main {
      ")" +
   "(odd 51))";
 		stringTest(odd);
-		AstExamples examples = new AstExamples();
-		for (Expression e : examples.examples) {
-			astTest(e);
-			s
-		}
+		
 		//String test = "(let ((f (lambda ( x ) (+ x 1 ))) (f 5))";
 		//stringTest(test);
 		
@@ -75,11 +71,11 @@ public class Main {
 "(define likely-prime? (lambda (n) (= (mod-exp 2 (- n 1) n) 1)))" +
 
 "(define primes-less-n (lambda (n) (letrec ((iterate (lambda (i primes) (if (< i 2) primes (if (definitely-prime? i) (iterate (- i 1) (cons i primes)) (iterate (- i 1) primes)))))) (iterate (- n 1) '()))))"
-+ "(definitely-prime? 1485867) (primes-less-n 3000)";
-		//" "
++ "(definitely-prime? 20) (primes-less-n 50)";
+		
 		stringTest(prime_extended);
-		//String testings = "(cons 4 (cons 5 (cons 5 (read))))";
-		//stringTest(testings);*/
+		String testings = "(cons 4 (cons 5 (cons 5 (read))))";
+		stringTest(testings);
 		String program = fileToString();
 		stringTest(program);
 	}
@@ -88,6 +84,8 @@ public class Main {
 		List<Token> tokens = Lexer.lex(s);
 		System.out.println("Tokens: " + tokens);
 		Program ast = Parser.parse(tokens);
+		String unparsed = Unparser.unparse(ast);
+		System.out.println(unparsed);
 		Expression v = Evaluator.evaluate(ast);
 		if (v instanceof IntExpression) {
 			System.out.println("Evaluates to: " + ((IntExpression)v).getValue());

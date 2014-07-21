@@ -61,6 +61,7 @@ public class Evaluator {
 		env.put("string3", new StringExpression("testing"), null);
 		env.put("read", new OperatorExpression("read", false, 0), null);
 		env.put("string->number", new OperatorExpression("string->number", false, 1), null);
+		
 		return env;
 	}
 
