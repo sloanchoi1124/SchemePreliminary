@@ -51,7 +51,9 @@ public class Lexer {
 				tokenList.add(new IntToken(token));
 			else if (result.group(5) != null) {
 				if (token.equals("if"))
-					tokenList.add(new Token(TokenKind.IF));
+					tokenList.add(new Token(TokenKind.IF));				
+				else if (token.equals("cond"))
+					tokenList.add(new Token(TokenKind.COND));
 				else if (token.equals("and"))
 					tokenList.add(new Token(TokenKind.AND));
 				else if (token.equals("or"))
