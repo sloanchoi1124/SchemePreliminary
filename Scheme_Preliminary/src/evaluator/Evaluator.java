@@ -10,6 +10,7 @@ import java.util.Stack;
 import scheme_ast.AndExpression;
 import scheme_ast.BoolExpression;
 import scheme_ast.CallExpression;
+import scheme_ast.CondExpression;
 import scheme_ast.ConsExpression;
 import scheme_ast.DefOrExp;
 import scheme_ast.Definition;
@@ -178,6 +179,16 @@ public class Evaluator {
 		} else {
 			return null; // ERROR - not int/bool
 		}
+	}
+	
+	private static Expression condEval(CondExpression e, Environment env) {
+		for (int i = 0; i < e.getSize(); i++) {
+			BoolExpression checker = (BoolExpression) evaluate(e.getCond(i), env);
+			if (checker.getValue()) {
+				return evaluate(e.getBody(i), env);
+			}
+		}
+		return null;
 	}
 
 	private static BoolExpression andEval(AndExpression e, Environment envr) {
