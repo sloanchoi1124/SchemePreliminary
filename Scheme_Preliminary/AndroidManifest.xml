@@ -118,6 +118,7 @@
             android:name="com.example.scheme_preliminary.boxFragment.AndOrBox_Fragment"
             android:label="@string/title_activity_and_or_box__fragment" >
         </activity>
+        <service android:name="file.io.ProjectFileSetup"></service>
     </application>
 
 </manifest>

@@ -2,6 +2,8 @@ package com.example.scheme_preliminary;
 
 import com.example.scheme_preliminary.calculator.Calculator_Fragment;
 
+import file.io.ProjectFileSetup;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -16,7 +18,7 @@ public class MainActivity extends Activity implements OnClickListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		
+		startService(new Intent(this, ProjectFileSetup.class)); // stops itself
 		
 		Button button0=(Button) findViewById(R.id.button0);
 		Button button1=(Button) findViewById(R.id.LambdaButton);
