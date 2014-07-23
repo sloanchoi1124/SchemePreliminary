@@ -110,6 +110,8 @@ public class Evaluator {
 			return e;
 		} else if (e instanceof IfExpression) {
 			return ifEval((IfExpression) e, env);
+		} else if (e instanceof CondExpression) {
+			return condEval((CondExpression) e, env);
 		} else if (e instanceof CallExpression) {
 			return callEval((CallExpression) e, env);
 		} else if (e instanceof LetExpression) {
@@ -128,7 +130,12 @@ public class Evaluator {
 			return orEval((OrExpression) e, env);
 		} else if (e instanceof NullExpression) {
 			return e;
-		} else {
+		} else if (e instanceof BoolExpression) {
+			return e;
+		} else if (e instanceof StringExpression) {
+			return e;
+		}
+		else {
 			return null; // error!!
 		}
 	}
@@ -182,8 +189,13 @@ public class Evaluator {
 	}
 	
 	private static Expression condEval(CondExpression e, Environment env) {
+		System.out.println(e.getSize());
 		for (int i = 0; i < e.getSize(); i++) {
 			BoolExpression checker = (BoolExpression) evaluate(e.getCond(i), env);
+			
+			System.out.println(e.getCond(i));
+			System.out.println(e.getBody(i));
+			System.out.println(checker);
 			if (checker.getValue()) {
 				return evaluate(e.getBody(i), env);
 			}

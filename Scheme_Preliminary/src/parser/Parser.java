@@ -26,6 +26,7 @@ import scheme_ast.NullExpression;
 import scheme_ast.OrExpression;
 import scheme_ast.Program;
 import scheme_ast.StringExpression;
+import unparser.Unparser;
 import util.Pair;
 
 public class Parser {
@@ -108,12 +109,16 @@ public class Parser {
             	ArrayList<Pair<Expression, Expression>> pairs = new ArrayList<Pair<Expression, Expression>>();
             	while ((token = iter.next()).getKind().equals(TokenKind.LPAREN)) {
             		Expression prediction = parseExpression(iter, iter.next());
+            		System.out.println(Unparser.unparse(prediction));
             		Expression result = parseExpression(iter, iter.next());
-            		Pair<Expression, Expression> pair = new Pair(prediction, result);
+            		System.out.println(Unparser.unparse(result));
+            		Pair<Expression, Expression> pair = new Pair<Expression, Expression>(prediction, result);
             		pairs.add(pair);
+            		iter.next(); // end of 1 branch
             	}           	
             	if (((IdExpression) pairs.get(pairs.size() - 1).first).getId().equals("else")) {
             		Expression e = pairs.remove(pairs.size() - 1).second;
+            		System.out.println(pairs.size());
             		return new CondExpression(pairs, e);
             	} else {
             		System.out.println("does not have an else branch.");

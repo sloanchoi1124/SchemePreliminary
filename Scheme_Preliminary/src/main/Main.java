@@ -28,7 +28,8 @@ public class Main {
 	public static void main(String[] args) {
 		//String simpleSource = "(let ((modExp (lambda (base exponent modulus) (let ((modExpRec (lambda (a sq x) (if (= x 0) a (let ((newA (if (odd? x) (remainder (* a sq) modulus) a)) (newSq (remainder (* sq sq) modulus)) (newX (quotient x 2))) (modExpRec newA newSq newX)))))) (modExpRec 1 (remainder base modulus) exponent))))) (modExp 2 100 101))";
 		//stringTest(simpleSource);
-		
+		String cond = "(cond ((> 3 3) \"greater\") ((< 3 3) \"less\") (else \"equal\"))";
+		stringTest(cond);
 		String nonrec = "(let ((a 5)) (let* ((a (* 2 a)) (a (* 3 a))) a))";
 		stringTest(nonrec);
 		String fac = "(letrec ((fact (lambda (n) (if (= n 0) 1 (* n (fact (- n 1))))))) (fact 5))";
@@ -95,7 +96,7 @@ public class Main {
 		} else if (v instanceof ConsExpression){
 			System.out.println(((ConsExpression)v).toString());
 		} else {
-			System.out.println(v.toString());
+			System.out.println(v);
 		}
 		
 		if (ast != null) {
