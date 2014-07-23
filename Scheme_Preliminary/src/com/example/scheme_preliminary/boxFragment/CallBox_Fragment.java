@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -41,7 +42,9 @@ public class CallBox_Fragment extends Fragment {
 		// TODO Auto-generated method stub
 		super.onAttach(activity);
 		myActivityCommunicator=(ActivityCommunicator) activity;
-		ast=(CallExpression) myActivityCommunicator.passDefOrExpToFragment();
+		System.out.println(myActivityCommunicator.passDefOrExpToFragment());
+		if(myActivityCommunicator.passDefOrExpToFragment() instanceof CallExpression)
+			ast=(CallExpression) myActivityCommunicator.passDefOrExpToFragment();
 		
 	}
 
@@ -70,10 +73,12 @@ public class CallBox_Fragment extends Fragment {
 			@Override
 			public boolean onLongClick(View v) {
 				// TODO Auto-generated method stub
-				ast.setOperator(myActivityCommunicator.getReplacementFromCalculator());
-				return false;
+				myActivityCommunicator.passReplacementTag("call.operator");
+				myActivityCommunicator.inputReplacementByCalculator();
+				return true;
 			}
 		});	
+		
 	    operator.setText(ShallowUnparser.shallowUnparse(ast.getOperator(), 1));
 	    
 	    LinearLayout operands_layout=(LinearLayout) v.findViewById(R.id.operands);
@@ -106,8 +111,10 @@ public class CallBox_Fragment extends Fragment {
 				@Override
 				public boolean onLongClick(View v) {
 					// TODO Auto-generated method stub
-					ast.getOperands().set(ast.getOperands().indexOf(expression), myActivityCommunicator.getReplacementFromCalculator());
-					return false;
+					myActivityCommunicator.passReplacementTag("call.operand", 
+							ast.getOperands().indexOf(expression));
+					myActivityCommunicator.inputReplacementByCalculator();
+					return true;
 				}
 			});
 			operands_layout.addView(temp);
