@@ -34,7 +34,10 @@ public class AndOrBox_Fragment extends Fragment {
 		// TODO Auto-generated method stub
 		super.onAttach(activity);
 		myActivityCommunicator=(ActivityCommunicator) activity;
-		ast=(Expression) myActivityCommunicator.passDefOrExpToFragment();
+		if(myActivityCommunicator.passDefOrExpToFragment() instanceof AndExpression)
+			ast=(AndExpression) myActivityCommunicator.passDefOrExpToFragment();
+		else if(myActivityCommunicator.passDefOrExpToFragment() instanceof OrExpression)
+			ast=(OrExpression) myActivityCommunicator.passDefOrExpToFragment();
 	}
 
 	@Override
@@ -82,9 +85,10 @@ public class AndOrBox_Fragment extends Fragment {
 					@Override
 					public boolean onLongClick(View v) {
 						// TODO Auto-generated method stub
-						((AndExpression) ast).getConditions().set(((AndExpression) ast).getConditions().indexOf(expression),
-								myActivityCommunicator.getReplacementFromCalculator());
-						return false;
+						myActivityCommunicator.passReplacementTag("and", 
+								((AndExpression) ast).getConditions().indexOf(expression));
+						myActivityCommunicator.inputReplacementByCalculator();
+						return true;
 					}
 				});
 				conditions_layout.addView(temp);
@@ -123,8 +127,9 @@ public class AndOrBox_Fragment extends Fragment {
 					@Override
 					public boolean onLongClick(View v) {
 						// TODO Auto-generated method stub
-						((OrExpression) ast).getConditions().set(((OrExpression) ast).getConditions().indexOf(expression), 
-								myActivityCommunicator.getReplacementFromCalculator());
+						myActivityCommunicator.passReplacementTag("or", 
+								((OrExpression) ast).getConditions().indexOf(expression));
+						myActivityCommunicator.inputReplacementByCalculator();
 						return false;
 					}
 				});
