@@ -26,7 +26,8 @@ public class IfBox_Fragment extends Fragment {
 		// TODO Auto-generated method stub
 		super.onAttach(activity);
 		myActivityCommunicator=(ActivityCommunicator) activity;
-		ast=(IfExpression) myActivityCommunicator.passDefOrExpToFragment();
+		if(myActivityCommunicator.passDefOrExpToFragment() instanceof IfExpression)
+			ast=(IfExpression) myActivityCommunicator.passDefOrExpToFragment();
 	}
 
 	@Override
@@ -53,8 +54,9 @@ public class IfBox_Fragment extends Fragment {
 			@Override
 			public boolean onLongClick(View v) {
 				// TODO Auto-generated method stub
-				ast.setCondition(myActivityCommunicator.getReplacementFromCalculator());
-				return false;
+				myActivityCommunicator.passReplacementTag("if.condition");
+				myActivityCommunicator.inputReplacementByCalculator();
+				return true;
 			}
 		});
 		
@@ -66,7 +68,9 @@ public class IfBox_Fragment extends Fragment {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				if(clickable==false)
+				{
 					myActivityCommunicator.destroySubsequentFragments();
+				}
 				myActivityCommunicator.passDefOrExpToActivity(ast.getThen());
 				myActivityCommunicator.passLabelToActivity("if.then/");
 			}
@@ -76,8 +80,9 @@ public class IfBox_Fragment extends Fragment {
 			@Override
 			public boolean onLongClick(View v) {
 				// TODO Auto-generated method stub
-				ast.setThen(myActivityCommunicator.getReplacementFromCalculator());
-				return false;
+				myActivityCommunicator.passReplacementTag("if.then");
+				myActivityCommunicator.inputReplacementByCalculator();
+				return true;
 			}
 		});
 		
@@ -100,8 +105,9 @@ public class IfBox_Fragment extends Fragment {
 			@Override
 			public boolean onLongClick(View v) {
 				// TODO Auto-generated method stub
-				ast.setElse(myActivityCommunicator.getReplacementFromCalculator());
-				return false;
+				myActivityCommunicator.passReplacementTag("if.else");
+				myActivityCommunicator.inputReplacementByCalculator();
+				return true;
 			}
 		});
 		return v;

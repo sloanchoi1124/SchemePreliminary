@@ -29,7 +29,8 @@ public class LetBox_Fragment extends Fragment {
 		// TODO Auto-generated method stub
 		super.onAttach(activity);
 		myActivityCommunicator=(ActivityCommunicator) activity;
-		ast=(LetExpression) myActivityCommunicator.passDefOrExpToFragment();
+		if(myActivityCommunicator.passDefOrExpToFragment() instanceof LetExpression)
+			ast=(LetExpression) myActivityCommunicator.passDefOrExpToFragment();
 	}
 
 
@@ -73,8 +74,9 @@ public class LetBox_Fragment extends Fragment {
 			@Override
 			public boolean onLongClick(View v) {
 				// TODO Auto-generated method stub
-				ast.setBody(myActivityCommunicator.getReplacementFromCalculator());
-				return false;
+				myActivityCommunicator.inputReplacementByCalculator();
+//				ast.setBody(myActivityCommunicator.getReplacementFromCalculator());
+				return true;
 			}
 		});
 		return v;

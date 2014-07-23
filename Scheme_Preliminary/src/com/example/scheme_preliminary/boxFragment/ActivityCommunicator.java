@@ -16,5 +16,6 @@ public interface ActivityCommunicator {
 	public boolean setClickabilityToFragment();
 	public void destroySubsequentFragments();
 	public void inputReplacementByCalculator();
-	public Expression getReplacementFromCalculator();
+	public void passReplacementTag(String tag);
+	public void passReplacementTag(String tag, int index);
 }

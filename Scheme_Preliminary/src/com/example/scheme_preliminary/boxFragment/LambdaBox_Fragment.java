@@ -34,9 +34,9 @@ public class LambdaBox_Fragment extends Fragment {
 		// TODO Auto-generated method stub
 		super.onAttach(activity);
 		myActivityCommunicator=(ActivityCommunicator) activity;
-		ast=(LambdaExpression) myActivityCommunicator.passDefOrExpToFragment();
+		if(myActivityCommunicator.passDefOrExpToFragment() instanceof LambdaExpression)
+			ast=(LambdaExpression) myActivityCommunicator.passDefOrExpToFragment();
 	}
-
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,8 +73,9 @@ public class LambdaBox_Fragment extends Fragment {
 			@Override
 			public boolean onLongClick(View v) {
 				// TODO Auto-generated method stub
-				ast.setBody(myActivityCommunicator.getReplacementFromCalculator());
-				return false;
+				myActivityCommunicator.inputReplacementByCalculator();
+//				ast.setBody(myActivityCommunicator.getReplacementFromCalculator());
+				return true;
 			}
 		});
 		return v;

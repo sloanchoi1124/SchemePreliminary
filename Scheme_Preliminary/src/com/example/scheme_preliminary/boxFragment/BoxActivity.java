@@ -1,5 +1,6 @@
 package com.example.scheme_preliminary.boxFragment;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.Map;
 import parser.Lexer;
 import parser.Parser;
 import parser.token.Token;
+import scheme_ast.AbstractLetExpression;
 import scheme_ast.AndExpression;
 import scheme_ast.BoolExpression;
 import scheme_ast.CallExpression;
@@ -26,6 +28,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
@@ -66,12 +69,18 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 	private ListView left_drawer_background;
 	//----------------------------------------
 	private ListView right_drawer_background;
+	//----------------------------------------
+	private DefOrExp newDefOrExp;
+	private boolean addToProgram=false;
+	private String replacementTag;
+	private int replacementIndex;
+	// this instance variable is used to store the newly generated definition/expression from calculator
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_box);
-		
-		String toParse="(define THREE 3) (define square (lambda (x) (* x x))) (square THREE) (define sumSquares (lambda (a b) (+ (square a) (square b)))) (sumSquares THREE 4) (define factorial (lambda (n) (if (= n 0) 1 (* n (factorial (- n 1)))))) (factorial THREE)";
+		//String toParse="(define THREE 3) (define square (lambda (x) (* x x))) (square THREE) (define sumSquares (lambda (a b) (+ (square a) (square b)))) (sumSquares THREE 4) (define factorial (lambda (n) (if (= n 0) 1 (* n (factorial (- n 1)))))) (factorial THREE)";
+		String toParse="(let ((x (lambda (n) (letrec ((odd-factor (lambda (i) (if (= 0 (remainder n i)) i (if (> (* i i) n) n (odd-factor (+ i 2))))))) (if (= 0 (remainder n 2)) 2 (odd-factor 3))))) (y (lambda (t) (= t (+ 1 t)))) (THREE 3) (z (lambda (m) (* m m)))) (z THREE)) (define THREE 3) (define square (lambda (x) (* x x))) (square THREE) (define sumSquares (lambda (a b) (+ (square a) (square b)))) (sumSquares THREE 4) (define factorial (lambda (n) (if (= n 0) 1 (* n (factorial (- n 1)))))) (factorial THREE)";
 		List<Token> tokens = Lexer.lex(toParse);
 		Program program0=Parser.parse(tokens);
 		String toParse1="(define FOUR 4)";
@@ -106,7 +115,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 		switch(item.getItemId()){
 		    case R.id.action_add:
 		    	//-----EXPERIMENTAL-----
-		    	final CharSequence[] items={"New DefOrExp","New Program","Replace current DefOrExp"};
+		    	final CharSequence[] items={"New DefOrExp","New Program"};
 		    	AlertDialog.Builder builder=new AlertDialog.Builder(this);
 		    	builder.setItems(items, new DialogInterface.OnClickListener() {
 					
@@ -125,8 +134,16 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 						    			.addToBackStack(null)
 				    					.commit();
 						    	//automatically passes in the list of function names within a certain program
+								
+								
 						    	((FrameLayout) findViewById(R.id.calculator_frame)).bringToFront();
+						    	addToProgram=true;
+
+								
+						    	//the new expression/definition should be added to the program
+						    	
 					    	}
+					    	
 					    	break;
 						case 1:
 							System.out.println("BUILD A NEW PROGRAM");
@@ -135,8 +152,6 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 							System.out.println(programList);
 							initializeLeftSideDrawer();
 							initilaizeCenterScreen();
-							break;
-						case 2:
 							break;
 						}
 					}
@@ -218,9 +233,11 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 			currentExpressionTag=s;
 			if(map.get(s)!=null)
 			{
+				System.out.println("successfully find the top level expression");
 				passDefOrExpToActivity(map.get(s));
 				initializeTopSideBar();
 			}
+
 		}
 		else
 		{
@@ -269,6 +286,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 			if(currentFrag==null)
 			{
 				currentFrag=new DefinitionBox_Fragment();
+				
 				ft.add(R.id.center_screen_background, currentFrag);
 				fragmentList.add(currentFrag);
 			}
@@ -438,21 +456,178 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 	@Override
 	public void inputReplacementByCalculator() {
 		// TODO Auto-generated method stub
+		System.out.println("GENERATE THE CALCULATOR FRAGMENT FOR EDITING");
+		if(getFragmentManager().findFragmentByTag("calculator")==null)
+		{
+			getFragmentManager().beginTransaction()
+			.add(R.id.calculator_frame, new Calculator_Fragment(), "calculator")
+			.addToBackStack(null)
+			.commit();
+			((FrameLayout) findViewById(R.id.calculator_frame)).bringToFront();
+		}
 		
 	}
 
-	@Override
-	public Expression getReplacementFromCalculator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
+
 	//----------------METHODS FROM CALCULATOR FRAGMENT COMMUNICATOR---------------------
 	public void receiveDefOrExp(DefOrExp defOrExp) {
-		this.currentProgram.getProgram().add(defOrExp);
-		getFragmentManager().popBackStackImmediate();
-		map=initializeMap(currentProgram.getProgram());
-		initializeRightSideDrawer();
+		if(addToProgram==true)
+		{
+			this.currentProgram.getProgram().add(defOrExp);
+			getFragmentManager().popBackStackImmediate();
+			map=initializeMap(currentProgram.getProgram());
+			initializeRightSideDrawer();
+			addToProgram=false;
+		}
+		else
+		{
+			this.newDefOrExp=defOrExp;
+			if(toReturnToFragment instanceof Definition)
+			{
+				System.out.println("GOING TO REPLACE THE BODY PART OF A DEFINITION");
+				((Definition) toReturnToFragment).setBody((Expression) this.newDefOrExp);
+				DefinitionBox_Fragment newFrag=new DefinitionBox_Fragment();
+				FragmentTransaction ft=getFragmentManager().beginTransaction();
+				ft.replace(R.id.center_screen_background, newFrag);
+				ft.addToBackStack(null);
+				fragmentList.remove(fragmentList.size()-1);
+				fragmentList.add(newFrag);
+				ft.commit();
+				this.currentFrag=newFrag;
+				this.replacementTag=null;
+			}
+			else if(toReturnToFragment instanceof LambdaExpression)
+			{
+				System.out.println("GOING TO REPLACE THE BODY OF A LAMBDA EXPRESSION");
+				((LambdaExpression) toReturnToFragment).setBody((Expression) this.newDefOrExp);
+				LambdaBox_Fragment newFrag=new LambdaBox_Fragment();
+				FragmentTransaction ft=getFragmentManager().beginTransaction();
+				ft.replace(R.id.center_screen_background, newFrag);
+				ft.addToBackStack(null);
+				fragmentList.remove(fragmentList.size()-1);
+				fragmentList.add(newFrag);
+				ft.commit();
+				this.currentFrag=newFrag;
+				this.replacementTag=null;
+				
+			}
+			else if(toReturnToFragment instanceof LetExpression)
+			{
+				if(this.replacementTag==null)
+				{
+					System.out.println("GOING TO REPLACE THE BODY OF A LET EXPRESSION");
+					((LetExpression) toReturnToFragment).setBody((Expression) this.newDefOrExp);
+					LetBox_Fragment newFrag=new LetBox_Fragment();
+					FragmentTransaction ft=getFragmentManager().beginTransaction();
+					ft.replace(R.id.center_screen_background, newFrag);
+					ft.addToBackStack(null);
+					fragmentList.remove(fragmentList.size()-1);
+					fragmentList.add(newFrag);
+					ft.commit();
+					this.currentFrag=newFrag;
+					this.replacementTag=null;
+				}
+				else if(this.replacementTag.equals("bindings"))
+				{
+					System.out.println(fragmentList);
+					System.out.printf("right now the replacementIndex is %d\n",this.replacementIndex);
+					String pairTag=this.toReturnBindings.get(this.replacementIndex).first;
+					((LetExpression) toReturnToFragment).getBindings().set(this.replacementIndex, 
+							new Pair<String,Expression>(pairTag,(Expression) this.newDefOrExp));
+
+					//only recreate the let box
+					
+					LetBox_Fragment newFrag=new LetBox_Fragment();
+					FragmentTransaction ft=getFragmentManager().beginTransaction();
+					ft.replace(R.id.center_screen_background, newFrag);
+					ft.addToBackStack(null);
+					fragmentList.remove(fragmentList.size()-1);
+					fragmentList.add(newFrag);
+					ft.commit();
+					this.currentFrag=newFrag;
+					this.replacementTag=null;
+				}
+			}
+			else if(toReturnToFragment instanceof IfExpression)
+			{
+				System.out.println("GOING TO REPLACE A PART OF AN IF EXPRESSION");
+				if(this.replacementTag.equals("if.condition"))
+				{
+					((IfExpression) toReturnToFragment).setCondition((Expression) this.newDefOrExp);
+				}
+				else if(this.replacementTag.equals("if.then"))
+				{
+					((IfExpression) toReturnToFragment).setThen((Expression) this.newDefOrExp);
+				}
+				else if(this.replacementTag.equals("if.else"))
+				{
+					((IfExpression) toReturnToFragment).setElse((Expression) this.newDefOrExp);
+				}
+				IfBox_Fragment newFrag=new IfBox_Fragment();
+				FragmentTransaction ft=getFragmentManager().beginTransaction();
+				ft.replace(R.id.center_screen_background, newFrag);
+				ft.addToBackStack(null);
+				fragmentList.remove(fragmentList.size()-1);
+				fragmentList.add(newFrag);
+				ft.commit();
+				this.currentFrag=newFrag;
+				this.replacementTag=null;
+			}
+			else if(toReturnToFragment instanceof CallExpression)
+			{
+				System.out.println("GOING TO REPLACE A PART OF CALL EXPRESSION");
+				System.out.printf("Call_Expression, expression tag=%s\n",this.replacementTag);
+				if(this.replacementTag.equals("call.operator"))
+				{
+					((CallExpression) toReturnToFragment).setOperator((Expression) this.newDefOrExp);
+				}
+				else if(this.replacementTag.equals("call.operand"))
+				{
+					((CallExpression) toReturnToFragment).getOperands().set(this.replacementIndex, (Expression) this.newDefOrExp);
+				}
+				CallBox_Fragment newFrag=new CallBox_Fragment();
+				FragmentTransaction ft=getFragmentManager().beginTransaction();
+				ft.replace(R.id.center_screen_background, newFrag);
+				ft.addToBackStack(null);
+				fragmentList.remove(fragmentList.size()-1);
+				fragmentList.add(newFrag);
+				ft.commit();
+				this.currentFrag=newFrag;
+				this.replacementTag=null;
+			}
+			else if(toReturnToFragment instanceof AndExpression)
+			{
+				System.out.println("GOING TO REPLACE A PART OF AND EXPRESSION");
+				((AndExpression) toReturnToFragment).getConditions().set(this.replacementIndex, (Expression) this.newDefOrExp);
+				AndOrBox_Fragment newFrag=new AndOrBox_Fragment();
+				FragmentTransaction ft=getFragmentManager().beginTransaction();
+				ft.replace(R.id.center_screen_background, newFrag);
+				ft.addToBackStack(null);
+				fragmentList.remove(fragmentList.size()-1);
+				fragmentList.add(newFrag);
+				ft.commit();
+				this.currentFrag=newFrag;
+				this.replacementTag=null;
+			}
+			else if(toReturnToFragment instanceof OrExpression)
+			{
+				System.out.println("GOING TO REPLACE A PART OF OR EXPRESSION");
+				((OrExpression) toReturnToFragment).getConditions().set(this.replacementIndex, (Expression) this.newDefOrExp);
+				AndOrBox_Fragment newFrag=new AndOrBox_Fragment();
+				FragmentTransaction ft=getFragmentManager().beginTransaction();
+				ft.replace(R.id.center_screen_background, newFrag);
+				ft.addToBackStack(null);
+				fragmentList.remove(fragmentList.size()-1);
+				fragmentList.add(newFrag);
+				ft.commit();
+				this.currentFrag=newFrag;
+				this.replacementTag=null;
+			}
+
+		}
 	}
+	
 	
 	public List<String> getBindings() {
 		List<DefOrExp> defOrExps = this.currentProgram.getProgram();
@@ -507,6 +682,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 	public void initializeTopSideBar() {
 		// TODO Auto-generated method stub
 		//if the fragmentList is just initialized
+		//just changed <=1 to <1
 		if(fragmentList.size()<=1)
 		{
 			toReturnLabels=new ArrayList<String>();
@@ -556,6 +732,19 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 		ft.commit();
 	}
 	//---------------METHODS FOR TOP SIDE BAR-------------------------------
+
+	@Override
+	public void passReplacementTag(String tag) {
+		// TODO Auto-generated method stub
+		this.replacementTag=tag;
+	}
+
+	@Override
+	public void passReplacementTag(String tag, int index) {
+		// TODO Auto-generated method stub
+		this.replacementTag=tag;
+		this.replacementIndex=index;
+	}
 
 
 }
