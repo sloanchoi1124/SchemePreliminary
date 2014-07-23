@@ -1,6 +1,7 @@
 package com.example.scheme_preliminary.boxFragment;
 
 import scheme_ast.Definition;
+import scheme_ast.Expression;
 import unparser.ShallowUnparser;
 
 import com.example.scheme_preliminary.R;
@@ -25,8 +26,9 @@ public class DefinitionBox_Fragment extends Fragment {
 	public void onAttach(Activity activity) {
 		// TODO Auto-generated method stub
 		super.onAttach(activity);
-		myActivityCommunicator=(ActivityCommunicator) activity;
-		ast=(Definition) myActivityCommunicator.passDefOrExpToFragment();
+		this.myActivityCommunicator=(ActivityCommunicator) activity;
+		if(myActivityCommunicator.passDefOrExpToFragment() instanceof Definition)
+			ast=(Definition) myActivityCommunicator.passDefOrExpToFragment();
 	}
 
 	@Override
@@ -34,7 +36,7 @@ public class DefinitionBox_Fragment extends Fragment {
 			Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		View v = inflater.inflate(R.layout.activity_definition_box__fragment, container, false);
-		clickable=myActivityCommunicator.setClickabilityToFragment();
+		clickable=this.myActivityCommunicator.setClickabilityToFragment();
 		TextView symbol=(TextView) v.findViewById(R.id.definition_symbol);
 		symbol.setText(ast.getSymbol());
 		TextView body=(TextView) v.findViewById(R.id.definition_body);
@@ -55,13 +57,13 @@ public class DefinitionBox_Fragment extends Fragment {
 			@Override
 			public boolean onLongClick(View v) {
 				// TODO Auto-generated method stub
-				ast.setBody(myActivityCommunicator.getReplacementFromCalculator());
-				return false;
+				myActivityCommunicator.inputReplacementByCalculator();
+				//the calculator is popped up and then the on long click listener is over
+				return true;
 			}
 		});
 		return v;
 	}
-
-
-
+	
+	
 }
