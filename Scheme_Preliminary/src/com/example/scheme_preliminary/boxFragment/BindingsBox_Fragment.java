@@ -58,7 +58,7 @@ public class BindingsBox_Fragment extends Fragment {
 						myActivityCommunicator.destroySubsequentFragments();
 					myActivityCommunicator.passDefOrExpToActivity(entry.second);
 					int i=bindings.indexOf(entry);
-					myActivityCommunicator.passLabelToActivity("binding"+((Integer)i).toString()+"/");
+					myActivityCommunicator.passLabelToActivity("let.bindings.binding"+((Integer)i).toString()+"/");
 				}
 			});
 			valueTemp.setOnLongClickListener(new View.OnLongClickListener() {
@@ -66,9 +66,9 @@ public class BindingsBox_Fragment extends Fragment {
 				@Override
 				public boolean onLongClick(View v) {
 					// TODO Auto-generated method stub
-					Pair<String,Expression> newEntry=new Pair<String, Expression>(entry.first,myActivityCommunicator.getReplacementFromCalculator());
-					bindings.set(bindings.indexOf(entry), newEntry);
-					return false;
+					myActivityCommunicator.passReplacementTag("bindings", bindings.indexOf(entry));
+					myActivityCommunicator.inputReplacementByCalculator();
+					return true;
 				}
 			});
 			valuesbackground.addView(valueTemp);
