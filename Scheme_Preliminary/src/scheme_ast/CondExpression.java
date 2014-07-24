@@ -7,11 +7,10 @@ import util.Pair;
 public class CondExpression extends Expression{
 	
 	private ArrayList<Pair<Expression, Expression>> pairs;
-	private Expression else_body;
 	
 	public CondExpression(ArrayList<Pair<Expression, Expression>> p, Expression e) {
 		pairs = p;
-		else_body = e;
+		pairs.add(new Pair(new BoolExpression(true), e));
 	}
 
 	public Pair<Expression, Expression> getPair(int n) {
@@ -25,9 +24,9 @@ public class CondExpression extends Expression{
 	public Expression getBody(int n) {
 		return pairs.get(n).second;
 	}
-	
-	public Expression getElse(){
-		return else_body;
+
+	public int getSize() {
+		return this.pairs.size();
 	}
 	
 	

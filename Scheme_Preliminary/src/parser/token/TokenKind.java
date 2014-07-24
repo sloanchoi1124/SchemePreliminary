@@ -16,7 +16,8 @@ public enum TokenKind {
     LET("let"),
     LETREC("letrec"),
     LETSTAR("let*"),
-    DEFINE("define");
+    DEFINE("define"),
+	COND("cond");
     
     private String mRep;
     

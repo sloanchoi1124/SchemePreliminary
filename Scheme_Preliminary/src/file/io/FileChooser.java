@@ -46,7 +46,7 @@ public class FileChooser extends ListActivity {
          		if (! name.startsWith(".")) {
 	         		if (ff.isDirectory())
 	         			dir.add(new Option(name, "Folder" , ff.getAbsolutePath()));
-	         		else if (name.endsWith(".scm"))
+	         		else if (name.endsWith(".scm") || name.endsWith(".rkt"))
 	            		fls.add(new Option(ff.getName(), "File Size: " + ff.length(), ff.getAbsolutePath()));
          		}
          	}
