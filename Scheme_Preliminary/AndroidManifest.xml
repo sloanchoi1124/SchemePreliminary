@@ -118,7 +118,14 @@
             android:name="com.example.scheme_preliminary.boxFragment.AndOrBox_Fragment"
             android:label="@string/title_activity_and_or_box__fragment" >
         </activity>
-        <service android:name="file.io.ProjectFileSetup"></service>
+
+        <service android:name="file.io.ProjectFileSetup" >
+        </service>
+
+        <activity
+            android:name="com.example.scheme_preliminary.CondBox_Fragment"
+            android:label="@string/title_activity_cond_box__fragment" >
+        </activity>
     </application>
 
 </manifest>
