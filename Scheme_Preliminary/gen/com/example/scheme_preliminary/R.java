@@ -47,9 +47,11 @@ public final class R {
         public static final int MinusButton=0x7f080036;
         public static final int PlusButton=0x7f080033;
         public static final int RelativeLayout1=0x7f080015;
+        public static final int TextView01=0x7f08005c;
+        public static final int TextView02=0x7f08005d;
         public static final int TimesButton=0x7f080034;
-        public static final int action_add=0x7f08005d;
-        public static final int action_settings=0x7f08005c;
+        public static final int action_add=0x7f08005f;
+        public static final int action_settings=0x7f08005e;
         public static final int activity_evaluation=0x7f08003d;
         public static final int activity_viewing=0x7f08005b;
         public static final int args=0x7f080055;
@@ -148,6 +150,7 @@ public final class R {
         public static final int activity_string__creator=0x7f030016;
         public static final int activity_top_side_bar__fragment=0x7f030017;
         public static final int activity_viewing_=0x7f030018;
+        public static final int file_view=0x7f030019;
     }
     public static final class menu {
         public static final int activity__selector=0x7f070000;
