@@ -59,5 +59,6 @@
     <string name="title_activity_and_or_box__fragment">AndOrBox_Fragment</string>
     <string name="action_dd">Add</string>
     <string name="title_activity_cond_box__fragment">CondBox_Fragment</string>
+    <string name="title_activity_pair_generator">PairGenerator</string>
 
 </resources>

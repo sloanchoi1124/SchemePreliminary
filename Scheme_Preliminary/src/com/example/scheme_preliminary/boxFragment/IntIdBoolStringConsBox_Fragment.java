@@ -19,7 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-public class IntIdBoolStringBox_Fragment extends Fragment {
+public class IntIdBoolStringConsBox_Fragment extends Fragment {
 	private ActivityCommunicator myActivityCommunicator;
 	private Expression ast;
 	
@@ -58,7 +58,7 @@ public class IntIdBoolStringBox_Fragment extends Fragment {
 		}
 		else if(ast instanceof ConsExpression)
 		{
-			
+			int_id_textview.setText(((ConsExpression)ast).toString());
 		}
 		return v;
 	}

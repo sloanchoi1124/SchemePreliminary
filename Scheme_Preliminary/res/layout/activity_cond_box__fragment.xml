@@ -6,11 +6,47 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".CondBox_Fragment" >
-
+    tools:context=".CondBox_Fragment" 
+    android:background="#dddddd">
+    
     <TextView
+        android:id="@+id/pair_head_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:text="EXP0 ->"
+        android:textAppearance="?android:attr/textAppearanceLarge" 
+        android:layout_marginLeft="50dp"
+        android:background="#cccccc" />
+    
+    <TextView
+        android:id="@+id/pair_head_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/pair_head_1"
+        android:layout_alignBottom="@+id/pair_head_1"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="50dp"
+        android:background="#cccccc"
+        android:text="EXP1"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+   
+   <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/pair_head_1"
+        android:layout_below="@+id/pair_head_1"
+        android:orientation="vertical" 
+        android:id="@+id/pair1_background">
+    </LinearLayout>
+    
+       <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/pair_head_2"
+        android:layout_below="@+id/pair_head_2"
+        android:orientation="vertical" 
+        android:id="@+id/pair2_background">
+                
+    </LinearLayout>
 
 </RelativeLayout>
