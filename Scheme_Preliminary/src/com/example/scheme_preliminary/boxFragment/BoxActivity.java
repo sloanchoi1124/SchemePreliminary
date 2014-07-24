@@ -1,6 +1,5 @@
 package com.example.scheme_preliminary.boxFragment;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.Map;
 import parser.Lexer;
 import parser.Parser;
 import parser.token.Token;
-import scheme_ast.AbstractLetExpression;
 import scheme_ast.AndExpression;
 import scheme_ast.BoolExpression;
 import scheme_ast.CallExpression;
@@ -23,12 +21,12 @@ import scheme_ast.LambdaExpression;
 import scheme_ast.LetExpression;
 import scheme_ast.OrExpression;
 import scheme_ast.Program;
+import scheme_ast.StringExpression;
 import util.Pair;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.Menu;
@@ -40,6 +38,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+
 import com.example.scheme_preliminary.R;
 import com.example.scheme_preliminary.boxFragment.TopSideBar_Fragment.TopSideBarActivityCommunicator;
 import com.example.scheme_preliminary.calculator.Calculator_Fragment;
@@ -115,7 +114,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 		switch(item.getItemId()){
 		    case R.id.action_add:
 		    	//-----EXPERIMENTAL-----
-		    	final CharSequence[] items={"New DefOrExp","New Program"};
+		    	final CharSequence[] items={"New DefOrExp","New Program","New Operand/Condition"};
 		    	AlertDialog.Builder builder=new AlertDialog.Builder(this);
 		    	builder.setItems(items, new DialogInterface.OnClickListener() {
 					
@@ -153,6 +152,66 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 							initializeLeftSideDrawer();
 							initilaizeCenterScreen();
 							break;
+						case 2:
+							if(toReturnToFragment instanceof CallExpression)
+							{
+								System.out.println("add a new operand to the call expression");
+								//pop up the calculator here
+						    	if (getFragmentManager().findFragmentByTag("calculator") == null) {
+						    		
+							    	getFragmentManager().beginTransaction()
+							    			.add(R.id.calculator_frame, new Calculator_Fragment(), "calculator")
+							    			.addToBackStack(null)
+					    					.commit();
+							    	//automatically passes in the list of function names within a certain program
+									
+									
+							    	((FrameLayout) findViewById(R.id.calculator_frame)).bringToFront();	
+							    	//the new expression/definition should be added to the program
+							    	//add a new operand to call expression, specify in the replacement tag as "call.newOperand"
+									replacementTag="call.newOperand";
+						    	}
+							}
+							else if(toReturnToFragment instanceof AndExpression)
+							{
+								System.out.println("add a new condition to the and expression");
+								//pop up the calculator here
+						    	if (getFragmentManager().findFragmentByTag("calculator") == null) {
+						    		
+							    	getFragmentManager().beginTransaction()
+							    			.add(R.id.calculator_frame, new Calculator_Fragment(), "calculator")
+							    			.addToBackStack(null)
+					    					.commit();
+							    	//automatically passes in the list of function names within a certain program
+									
+									
+							    	((FrameLayout) findViewById(R.id.calculator_frame)).bringToFront();	
+							    	//the new expression/definition should be added to the program
+							    	//add a new operand to call expression, specify in the replacement tag as "call.newOperand"
+									replacementTag="and.newCondition";
+						    	}
+							}
+							else if(toReturnToFragment instanceof OrExpression)
+							{
+								System.out.println("add a new condition to the or expression");
+								//pop up the calculator here
+						    	if (getFragmentManager().findFragmentByTag("calculator") == null) {
+						    		
+							    	getFragmentManager().beginTransaction()
+							    			.add(R.id.calculator_frame, new Calculator_Fragment(), "calculator")
+							    			.addToBackStack(null)
+					    					.commit();
+							    	//automatically passes in the list of function names within a certain program
+									
+									
+							    	((FrameLayout) findViewById(R.id.calculator_frame)).bringToFront();	
+							    	//the new expression/definition should be added to the program
+							    	//add a new operand to call expression, specify in the replacement tag as "call.newOperand"
+									replacementTag="or.newCondition";
+						    	}
+							}
+							break;
+							
 						}
 					}
 				});
@@ -383,17 +442,17 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 			}
 			ft.commit();
 		}
-		else if(ast instanceof IntExpression||ast instanceof IdExpression||ast instanceof BoolExpression)
+		else if(ast instanceof IntExpression||ast instanceof IdExpression||ast instanceof BoolExpression||ast instanceof StringExpression)
 		{
 			if(currentFrag==null)
 			{
-				currentFrag=new IntIdBoolBox_Fragment();
+				currentFrag=new IntIdBoolStringBox_Fragment();
 				ft.add(R.id.center_screen_background, currentFrag);
 				fragmentList.add(currentFrag);
 			}
 			else
 			{
-				currentFrag=new IntIdBoolBox_Fragment();
+				currentFrag=new IntIdBoolStringBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
 				ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
@@ -586,6 +645,11 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 				{
 					((CallExpression) toReturnToFragment).getOperands().set(this.replacementIndex, (Expression) this.newDefOrExp);
 				}
+
+				else if(this.replacementTag.equals("call.newOperand"))
+				{
+					((CallExpression) toReturnToFragment).getOperands().add((Expression) this.newDefOrExp);
+				}
 				CallBox_Fragment newFrag=new CallBox_Fragment();
 				FragmentTransaction ft=getFragmentManager().beginTransaction();
 				ft.replace(R.id.center_screen_background, newFrag);
@@ -598,8 +662,18 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 			}
 			else if(toReturnToFragment instanceof AndExpression)
 			{
-				System.out.println("GOING TO REPLACE A PART OF AND EXPRESSION");
-				((AndExpression) toReturnToFragment).getConditions().set(this.replacementIndex, (Expression) this.newDefOrExp);
+				//generate a new condition aftermath
+				if(this.replacementTag.equals("and.newCondition"))
+				{
+					((AndExpression) toReturnToFragment).getConditions().add((Expression) this.newDefOrExp);
+					
+				}
+				else
+				{
+					System.out.println("GOING TO REPLACE A PART OF AND EXPRESSION");
+					((AndExpression) toReturnToFragment).getConditions().set(this.replacementIndex, (Expression) this.newDefOrExp);
+					
+				}
 				AndOrBox_Fragment newFrag=new AndOrBox_Fragment();
 				FragmentTransaction ft=getFragmentManager().beginTransaction();
 				ft.replace(R.id.center_screen_background, newFrag);
@@ -609,11 +683,19 @@ public class BoxActivity extends Activity implements ActivityCommunicator,TopSid
 				ft.commit();
 				this.currentFrag=newFrag;
 				this.replacementTag=null;
+
 			}
 			else if(toReturnToFragment instanceof OrExpression)
 			{
-				System.out.println("GOING TO REPLACE A PART OF OR EXPRESSION");
-				((OrExpression) toReturnToFragment).getConditions().set(this.replacementIndex, (Expression) this.newDefOrExp);
+				if(this.replacementTag.equals("or.newCondition"))
+				{
+					((OrExpression) toReturnToFragment).getConditions().add((Expression) this.newDefOrExp);
+				}
+				else
+				{
+					System.out.println("GOING TO REPLACE A PART OF OR EXPRESSION");
+					((OrExpression) toReturnToFragment).getConditions().set(this.replacementIndex, (Expression) this.newDefOrExp);
+				}
 				AndOrBox_Fragment newFrag=new AndOrBox_Fragment();
 				FragmentTransaction ft=getFragmentManager().beginTransaction();
 				ft.replace(R.id.center_screen_background, newFrag);
