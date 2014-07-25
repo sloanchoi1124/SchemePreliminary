@@ -17,6 +17,11 @@ public class CondExpression extends Expression{
 		return pairs.get(n);
 	}
 	
+	public ArrayList<Pair<Expression,Expression>> getAllPairs()
+	{
+		return this.pairs;
+	}
+	
 	public Expression getCond(int n) {
 		return pairs.get(n).first;
 	}

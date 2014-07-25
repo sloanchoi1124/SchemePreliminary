@@ -92,7 +92,7 @@
             android:label="@string/title_activity_bindings_box__fragment" >
         </activity>
         <activity
-            android:name="com.example.scheme_preliminary.boxFragment.IntIdBoolBox_Fragment"
+            android:name="com.example.scheme_preliminary.boxFragment.IntIdBoolStringConsBox_Fragment"
             android:label="@string/title_activity_int_id_box__fragment" >
         </activity>
         <activity android:name="com.example.scheme_preliminary.calculator.Calculator_Fragment" >
@@ -121,8 +121,19 @@
             android:name="com.example.scheme_preliminary.boxFragment.AndOrBox_Fragment"
             android:label="@string/title_activity_and_or_box__fragment" >
         </activity>
+
         <service android:name="file.io.ProjectFileSetup"></service>
         <activity android:name="file.io.FileChooser"></activity>
+
+        <activity
+            android:name="com.example.scheme_preliminary.boxFragment.CondBox_Fragment"
+            android:label="@string/title_activity_cond_box__fragment" >
+        </activity>
+        <activity
+            android:name="com.example.scheme_preliminary.boxFragment.PairGenerator"
+            android:label="@string/title_activity_pair_generator" >
+        </activity>
+>>>>>>> branch 'master' of https://github.com/slc-cs-summer-research/Scheme_Preliminary
     </application>
 
 </manifest>

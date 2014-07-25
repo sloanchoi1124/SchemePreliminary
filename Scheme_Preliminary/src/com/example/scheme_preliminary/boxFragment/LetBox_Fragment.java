@@ -7,7 +7,10 @@ import com.example.scheme_preliminary.R;
 import com.example.scheme_preliminary.R.id;
 import com.example.scheme_preliminary.R.layout;
 
+import scheme_ast.AbstractLetExpression;
 import scheme_ast.LetExpression;
+import scheme_ast.LetStarExpression;
+import scheme_ast.LetrecExpression;
 import unparser.ShallowUnparser;
 import android.os.Bundle;
 import android.app.Activity;
@@ -18,7 +21,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 public class LetBox_Fragment extends Fragment {
-    private LetExpression ast;
+    private AbstractLetExpression ast;
+    private TextView head;
 	private TextView bindings;
     private TextView body;
     private ActivityCommunicator myActivityCommunicator;
@@ -29,8 +33,8 @@ public class LetBox_Fragment extends Fragment {
 		// TODO Auto-generated method stub
 		super.onAttach(activity);
 		myActivityCommunicator=(ActivityCommunicator) activity;
-		if(myActivityCommunicator.passDefOrExpToFragment() instanceof LetExpression)
-			ast=(LetExpression) myActivityCommunicator.passDefOrExpToFragment();
+		if(myActivityCommunicator.passDefOrExpToFragment() instanceof AbstractLetExpression)
+			ast=(AbstractLetExpression) myActivityCommunicator.passDefOrExpToFragment();
 	}
 
 
@@ -40,6 +44,19 @@ public class LetBox_Fragment extends Fragment {
 		// TODO Auto-generated method stub
 		View v = inflater.inflate(R.layout.activity_let_box__fragment, container, false);
 		clickable=myActivityCommunicator.setClickabilityToFragment();
+		head=(TextView) v.findViewById(R.id.head_let);
+		if(ast instanceof LetExpression)
+		{
+			head.setText("Let");
+		}
+		else if(ast instanceof LetrecExpression)
+		{
+			head.setText("Letrec");
+		}
+		else if(ast instanceof LetStarExpression)
+		{
+			head.setText("Let*");
+		}
 		bindings=(TextView) v.findViewById(R.id.bindings);
 		body=(TextView) v.findViewById(R.id.body_let);
 		bindings.setText(ShallowUnparser.shallowBindings(ast.getBindings(), 0));
