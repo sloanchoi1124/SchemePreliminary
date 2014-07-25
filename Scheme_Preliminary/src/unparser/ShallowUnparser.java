@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import scheme_ast.BoolExpression;
 import scheme_ast.CallExpression;
 import scheme_ast.Expression;
 import scheme_ast.IdExpression;
@@ -24,6 +25,11 @@ public class ShallowUnparser {
 	    else if(ast instanceof IdExpression)
 	    {
 	    	result+=((IdExpression)ast).getId()+" ";
+	    }
+	    else if(ast instanceof BoolExpression)
+	    {
+	    	Boolean temp=((BoolExpression)ast).getValue();
+	    	result+=temp.toString();
 	    }
 	    else if(ast instanceof CallExpression)
 	    {

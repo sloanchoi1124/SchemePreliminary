@@ -92,6 +92,14 @@ public class Parser {
         Expression body;
         
         switch (kind) {
+	        case AND:
+	        	List<Expression> andConditions = parseOperands(iter);
+	        	System.out.println("andConditions");
+	        	return new AndExpression(andConditions);
+	        case OR:
+	        	List<Expression> orConditions = parseOperands(iter);
+	        	System.out.println("orConditions");
+	        	return new OrExpression(orConditions);
             case ID:
                 IdExpression operator = new IdExpression(token.toString());
                 List<Expression> callOperands = parseOperands(iter);
@@ -109,27 +117,18 @@ public class Parser {
             	ArrayList<Pair<Expression, Expression>> pairs = new ArrayList<Pair<Expression, Expression>>();
             	while ((token = iter.next()).getKind().equals(TokenKind.LPAREN)) {
             		Expression prediction = parseExpression(iter, iter.next());
-            		System.out.println(Unparser.unparse(prediction));
             		Expression result = parseExpression(iter, iter.next());
-            		System.out.println(Unparser.unparse(result));
             		Pair<Expression, Expression> pair = new Pair<Expression, Expression>(prediction, result);
             		pairs.add(pair);
             		iter.next(); // end of 1 branch
             	}           	
             	if (((IdExpression) pairs.get(pairs.size() - 1).first).getId().equals("else")) {
             		Expression e = pairs.remove(pairs.size() - 1).second;
-            		System.out.println(pairs.size());
             		return new CondExpression(pairs, e);
             	} else {
             		System.out.println("does not have an else branch.");
             		return null;
             	}
-            case AND:
-            	List<Expression> andConditions = parseOperands(iter);
-            	return new AndExpression(andConditions);
-            case OR:
-            	List<Expression> orConditions = parseOperands(iter);
-            	return new OrExpression(orConditions);
             case LAMBDA: ;
                 if (! iter.next().getKind().equals(TokenKind.LPAREN)) {
                     System.out.println("Expected '(' after 'lambda', received " + token + " instead.");
@@ -230,6 +229,7 @@ public class Parser {
             else if (kind.equals(TokenKind.RPAREN))
                 parenBalance--;
         }
+        System.out.println(listOfLists.size());
         return listOfLists;
     }
     
@@ -238,10 +238,14 @@ public class Parser {
         
         List<DefOrExp> programList = new ArrayList<DefOrExp>();
         for (List<Token> list : defOrExps) {
-            if (isDefinition(list))
+            if (isDefinition(list)) {
                 programList.add(parseDefinition(list));
-            else // is expression
+                System.out.println("Def");
+            }
+            else { // is expression
                 programList.add(parseExpression(list));
+                System.out.println("Exp");
+            }
         }
         return new Program(programList);
     }
