@@ -1,0 +1,6 @@
+(if (< (+ 1 2) 4)
+    (let ((a 1) (b 2) (c 3)) 
+      (+ a b c))
+    (let ((x (lambda (a b c)
+               (* a b c))))
+      (x 1 2 3)))

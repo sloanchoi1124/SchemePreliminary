@@ -1,12 +1,14 @@
 package file.io;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.os.Environment;
 import android.os.IBinder;
 
@@ -16,25 +18,40 @@ public class ProjectFileSetup extends Service {
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+//		System.out.println("ProjectFileSetup started");
 		if (externalStorageWritable()) {
+//			System.out.println("external storage writable");
+			File examplesFolder = new File(rootPath + "/com.example.scheme_preliminary/");
 			try {
-				File examplesFolder = new File(rootPath + "/com.example.scheme_preliminary/.examples");
 				if (! examplesFolder.exists()) {
 					examplesFolder.mkdirs();
-					File example0File = new File(rootPath + "/com.example.scheme_preliminary/.examples/example0.rkt");
-					FileOutputStream fos = new FileOutputStream(example0File);
-					InputStream is = getAssets().open("example0.rtk");
-					int b;
-					while ((b = is.read()) != -1) {
-						fos.write(b);
+//					System.out.println("examples folder made");
+				}
+				AssetManager am = getAssets();
+				String[] filenames = am.list("");
+				for (int i=0; i<filenames.length; i++) {
+					String filename = filenames[i];
+					File file;
+					if ((filename.endsWith(".rkt") || filename.endsWith(".scm")) &&
+						! ((file = new File(examplesFolder.getPath() + File.separator + filename)).exists())) {
+
+						PrintWriter out = new PrintWriter(file);
+
+					    BufferedReader in = new BufferedReader(new InputStreamReader(am.open(filename), "UTF-8"));
+						
+						StringBuilder buf = new StringBuilder();
+					    String str;
+					    while ((str = in.readLine()) != null)
+					    	buf.append(str).append("\n");
+
+					    in.close();
+					    out.write(buf.toString());
+					    out.close();
 					}
-					is.close();
-					fos.close();
 				}
-				else {
-				}
-				InputStream is = getAssets().open("example0.rkt");
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
+				System.out.println(e);
 				e.printStackTrace();
 			}
 		}
