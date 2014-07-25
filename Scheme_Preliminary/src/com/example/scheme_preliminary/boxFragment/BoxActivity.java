@@ -90,7 +90,8 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_box);
 		//String toParse="(define THREE 3) (define square (lambda (x) (* x x))) (square THREE) (define sumSquares (lambda (a b) (+ (square a) (square b)))) (sumSquares THREE 4) (define factorial (lambda (n) (if (= n 0) 1 (* n (factorial (- n 1)))))) (factorial THREE)";
-		String toParse="(let ((x (lambda (n) (letrec ((odd-factor (lambda (i) (if (= 0 (remainder n i)) i (if (> (* i i) n) n (odd-factor (+ i 2))))))) (if (= 0 (remainder n 2)) 2 (odd-factor 3))))) (y (lambda (t) (= t (+ 1 t)))) (THREE 3) (z (lambda (m) (* m m)))) (z THREE)) (define THREE 3) (define square (lambda (x) (* x x))) (square THREE) (define sumSquares (lambda (a b) (+ (square a) (square b)))) (sumSquares THREE 4) (define factorial (lambda (n) (if (= n 0) 1 (* n (factorial (- n 1)))))) (factorial THREE)";
+		String toParse="(define THREE 3) (define square (lambda (x) (* x x))) (square THREE) (define sumSquares (lambda (a b) (+ (square a) (square b)))) (sumSquares THREE 4) (define factorial (lambda (n) (if (= n 0) 1 (* n (factorial (- n 1)))))) (factorial THREE)";
+//		String toParse="(if (< 3 2) \"yes\" \"no\")";
 		List<Token> tokens = Lexer.lex(toParse);
 		Program program0=Parser.parse(tokens);
 		String toParse1="(cond ((> 3 3) (+ 1 1)) ((< 3 3) (+ 1 1)) (else (+ 1 1)))";
