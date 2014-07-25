@@ -117,7 +117,7 @@ public class ShallowUnparser {
 	    	}
 	        else
 	        {
-	        	result+="(";
+	        	result+="(let ";
 	            result+=shallowBindings(((LetExpression)ast).getBindings(),depth-1)+" ";
 	            result+=shallowUnparse(((LetExpression)ast).getBody(),depth-1);
 	            result+=")";
@@ -129,7 +129,7 @@ public class ShallowUnparser {
 	    		result+="(letrec (...) body(...))";
 	    	else
 	    	{
-	        	result+="(";
+	        	result+="(letrec";
 	            result+=shallowBindings(((LetrecExpression)ast).getBindings(),depth-1)+" ";
 	            result+=shallowUnparse(((LetrecExpression)ast).getBody(),depth-1);
 	            result+=")";
@@ -141,7 +141,7 @@ public class ShallowUnparser {
 	    		result+="(let* (...) body(...))";
 	    	else
 	    	{
-	        	result+="(";
+	        	result+="(let* ";
 	            result+=shallowBindings(((LetStarExpression)ast).getBindings(),depth-1)+" ";
 	            result+=shallowUnparse(((LetStarExpression)ast).getBody(),depth-1);
 	            result+=")";
@@ -203,14 +203,36 @@ public class ShallowUnparser {
 	
 	public static void main(String args[])
 	{
-		String cons="(cons 0 (cons 1 2))";
-		List<Token> tokens1 = Lexer.lex(cons);
+		String odd = "(letrec " +
+			    "("
+			    + "(even " +
+			      "(lambda (n) " +
+			        "(if (= n 0) " +
+			            "1 " +
+			            "(if (= 1 (odd (- n 1))) " +
+			             "1 " +
+			             "0 )))) " +
+			     "(odd " +
+			      "(lambda (n) " +
+			        "(if (= n 1) " +
+			            "1 " +
+			            "(if (= 1 (even (- n 1))) " +
+			                 "1 " +
+			                  "0 )))) " +
+			     ")" +
+			  "(odd 51))";
+		//String cons="(cons 0 (cons 1 2))";
+		//String cons="(letrec ((fact (lambda (n) (if (= n 0) 1 (* n (fact (- n 1))))))) (fact 5))";
+		String andOr = "(or (> x 3) (< x 3))";
+		String bools="(boolean? #f)";
+		List<Token> tokens1 = Lexer.lex(andOr);
 		System.out.println(tokens1);
 		Program program1=Parser.parse(tokens1);
 		for(DefOrExp temp:program1.getProgram())
 		{
 			if(temp instanceof Expression)
-				System.out.println(ShallowUnparser.shallowUnparse((Expression)temp,0));
+				System.out.println("GOING TO PRINT!");
+				System.out.println(ShallowUnparser.shallowUnparse((Expression)temp,1));
 		}
 	}
 }
