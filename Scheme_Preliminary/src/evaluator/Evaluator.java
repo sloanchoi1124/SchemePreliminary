@@ -1,6 +1,7 @@
 package evaluator;
 
 import java.math.BigInteger;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -33,9 +34,6 @@ public class Evaluator {
 
 	private static Environment initializeEnv() {
 		Environment env = new Environment();
-		// we do not really need to use OperatorExpression any more;
-		// we can just map the id to an idExpression; or even leave it null as
-		// an encoding?
 		env.put("+", new OperatorExpression("+", true, 2), null);
 		env.put("*", new OperatorExpression("*", true, 2), null);
 		env.put("-", new OperatorExpression("-", false, 2), null);
@@ -62,6 +60,9 @@ public class Evaluator {
 		env.put("string3", new StringExpression("testing"), null);
 		env.put("read", new OperatorExpression("read", false, 0), null);
 		env.put("string->number", new OperatorExpression("string->number", false, 1), null);
+		env.put("append", new OperatorExpression("append", true, 2), null);
+		env.put("reverse", new OperatorExpression("reverse", false, 1), null);
+		env.put("length", new OperatorExpression("length", false, 1), null);
 		
 		return env;
 	}
@@ -78,28 +79,25 @@ public class Evaluator {
 				Expression top_eval = evaluate(((Definition) temp).getBody(), initializeEnv());
 				general_envr.put(((Definition) temp).getSymbol(),
 						top_eval, general_envr);
-				
-				System.out.println(((Definition) temp).getBody());
 			} else {
 				step_result = evaluate(((Expression) temp), general_envr);
 				list.add(step_result);
-				if (step_result instanceof IntExpression) {
+				/*if (step_result instanceof IntExpression) {
 					System.out
 							.println(((IntExpression) step_result).getValue());
 				} else if (step_result instanceof BoolExpression){
 					System.out.println(((BoolExpression) step_result)
 							.getValue());
-				} else {
-					//System.out.println(((ConsExpression) step_result)		.toString());
-					System.out.println(step_result);
-				}
+				} else if (step_result instanceof ConsExpression){
+					System.out.println("step-result:  " + ((ConsExpression) step_result)
+							.toString());
+				} else {				
+					System.out.println("step result is not cons, string, int, or boolean.");
+				}*/
 			}
 		}
 		return list.pop();
 	}
-
-	// integer, boolean, string, symbol
-	// temporary methods evaluate only one expression
 
 	public static Expression evaluate(Expression e) {
 		return evaluate(e, initializeEnv());
@@ -118,7 +116,6 @@ public class Evaluator {
 			return letEval((LetExpression) e, env);
 		} else if (e instanceof IdExpression) {
 			String id = ((IdExpression) e).getId();
-			// System.out.println(id);
 			return env.getExpression(id);
 		} else if (e instanceof LetStarExpression) {
 			return letStarEval((LetStarExpression) e, env);
@@ -130,12 +127,13 @@ public class Evaluator {
 			return orEval((OrExpression) e, env);
 		} else if (e instanceof NullExpression) {
 			return e;
+		} else if (e instanceof ConsExpression) {
+			return e;
 		} else if (e instanceof BoolExpression) {
 			return e;
 		} else if (e instanceof StringExpression) {
 			return e;
-		}
-		else {
+		} else {
 			return null; // error!!
 		}
 	}
@@ -192,10 +190,6 @@ public class Evaluator {
 		System.out.println(e.getSize());
 		for (int i = 0; i < e.getSize(); i++) {
 			BoolExpression checker = (BoolExpression) evaluate(e.getCond(i), env);
-			
-			System.out.println(e.getCond(i));
-			System.out.println(e.getBody(i));
-			System.out.println(checker);
 			if (checker.getValue()) {
 				return evaluate(e.getBody(i), env);
 			}
@@ -229,7 +223,6 @@ public class Evaluator {
 
 	private static Expression listEval(CallExpression e, Environment envr) {
 		String name = ((OperatorExpression) e.getOperator()).getName();
-		//System.out.println(name);
 		if (name.equals("null?")) {
 			boolean temp = e.getOperands().get(0) instanceof NullExpression;
 			if (temp) {
@@ -239,22 +232,25 @@ public class Evaluator {
 			}
 		} else if (name.equals("car")) {
 			if (!(e.getOperands().get(0) instanceof ConsExpression)) {
-				// error 
 				return null;
 			} else {
 				return ((ConsExpression) e.getOperands().get(0)).car();
 			}
 		} else if (name.equals("cdr")) {
 			if (!(e.getOperands().get(0) instanceof ConsExpression)) {
-				// error
 				return null;
 			} else {
 				return ((ConsExpression) e.getOperands().get(0)).cdr();
 			}
-		} else if (name.equals("cons")) {
-			//System.out.println("returning cosexpression");
+		} else if (name.equals("cons")) {			
 			return new ConsExpression(e.getOperands().get(0), e.getOperands()
 					.get(1));
+		} else if (name.equals("append")) {			
+			return ConsExpression.append((ConsExpression) e.getOperands().get(0), (ConsExpression) e.getOperands().get(1));
+		} else if (name.equals("length")) {
+			return new IntExpression(((ConsExpression) e.getOperands().get(0)).length());
+		} else if (name.equals("reverse")) {
+			return ((ConsExpression) e.getOperands().get(0)).reverse();
 		} else {
 			// error
 			return null;
@@ -326,7 +322,7 @@ public class Evaluator {
 				return null;
 			}
 			if (id.equals("null?") || id.equals("cdr") || id.equals("car")
-					|| id.equals("cons")) {
+					|| id.equals("cons") || id.equals("length") || id.equals("append") || id.equals("reverse")) {
 				List<Expression> operands = new ArrayList<Expression>(); 
 				for (Expression cons_item : items) {
 					Expression result = evaluate(cons_item, envr);
