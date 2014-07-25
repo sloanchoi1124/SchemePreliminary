@@ -1,17 +1,28 @@
 package unparser;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import parser.Lexer;
+import parser.Parser;
+import parser.token.Token;
+import scheme_ast.AndExpression;
 import scheme_ast.BoolExpression;
 import scheme_ast.CallExpression;
+import scheme_ast.CondExpression;
+import scheme_ast.ConsExpression;
+import scheme_ast.DefOrExp;
 import scheme_ast.Expression;
 import scheme_ast.IdExpression;
 import scheme_ast.IfExpression;
 import scheme_ast.IntExpression;
 import scheme_ast.LambdaExpression;
 import scheme_ast.LetExpression;
+import scheme_ast.LetStarExpression;
+import scheme_ast.LetrecExpression;
+import scheme_ast.NullExpression;
+import scheme_ast.OrExpression;
+import scheme_ast.Program;
+import scheme_ast.StringExpression;
 import util.Pair;
 
 public class ShallowUnparser {
@@ -29,7 +40,18 @@ public class ShallowUnparser {
 	    else if(ast instanceof BoolExpression)
 	    {
 	    	Boolean temp=((BoolExpression)ast).getValue();
-	    	result+=temp.toString();
+	    	if(temp==true)
+	    		result+="#t" ;
+	    	else
+	    		result+="#f ";
+	    }
+	    else if(ast instanceof StringExpression)
+	    {
+	    	result+=((StringExpression)ast).toString();
+	    }
+	    else if(ast instanceof NullExpression)
+	    {
+	    	result+="'()";
 	    }
 	    else if(ast instanceof CallExpression)
 	    {
@@ -48,15 +70,39 @@ public class ShallowUnparser {
 	        result+=")";
 	        }
 	    }
+	    else if(ast instanceof AndExpression)
+	    {
+	    	if(depth<1)
+	    		result+="(and...)";
+	    	else
+	    	{
+	    		result+="(and ";
+	    		for(Expression expression:((AndExpression) ast).getConditions())
+	    			result+=shallowUnparse(expression,depth-1)+" ";
+	    	}
+	    	result+=")";
+	    }
+	    else if(ast instanceof OrExpression)
+	    {
+	    	if(depth<1)
+	    		result+="(or...)";
+	    	else
+	    	{
+	    		result+="(and ";
+	    		for(Expression expression:((OrExpression) ast).getConditions())
+	    			result+=shallowUnparse(expression,depth-1)+" ";
+	    	}
+	    	result+=")";
+	    }
 	    else if(ast instanceof IfExpression)
 	    {
 	    	if(depth<1)
 	    	{
-	    		result+="(If(...) then(...) else(...))";
+	    		result+="(if(...) then(...) else(...))";
 	    	}
 	        else
 	        {
-	        	result+="(If ";
+	        	result+="(if ";
 	            result+=shallowUnparse(((IfExpression)ast).getCondition(),depth-1)+" ";
 	            result+=shallowUnparse(((IfExpression)ast).getThen(),depth-1)+" ";
 	            result+=shallowUnparse(((IfExpression)ast).getElse(),depth-1);
@@ -67,7 +113,7 @@ public class ShallowUnparser {
 	    {
 	    	if(depth<1)
 	    	{
-	    		result+="(Let (...) body(...))";
+	    		result+="(let (...) body(...))";
 	    	}
 	        else
 	        {
@@ -76,6 +122,30 @@ public class ShallowUnparser {
 	            result+=shallowUnparse(((LetExpression)ast).getBody(),depth-1);
 	            result+=")";
 	        }
+	    }
+	    else if(ast instanceof LetrecExpression)
+	    {
+	    	if(depth<1)
+	    		result+="(letrec (...) body(...))";
+	    	else
+	    	{
+	        	result+="(";
+	            result+=shallowBindings(((LetrecExpression)ast).getBindings(),depth-1)+" ";
+	            result+=shallowUnparse(((LetrecExpression)ast).getBody(),depth-1);
+	            result+=")";
+	    	}
+	    }
+	    else if(ast instanceof LetStarExpression)
+	    {
+	    	if(depth<1)
+	    		result+="(let* (...) body(...))";
+	    	else
+	    	{
+	        	result+="(";
+	            result+=shallowBindings(((LetStarExpression)ast).getBindings(),depth-1)+" ";
+	            result+=shallowUnparse(((LetStarExpression)ast).getBody(),depth-1);
+	            result+=")";
+	    	}
 	    }
 	    else if(ast instanceof LambdaExpression)
 	    {
@@ -96,8 +166,29 @@ public class ShallowUnparser {
 	    		result+=shallowUnparse(((LambdaExpression)ast).getBody(),depth-1);
 	    	}
 	    }
+	    else if(ast instanceof CondExpression)
+	    {
+	    	if(depth<1)
+	    		result+="(cond ...)";
+	    	else
+	    	{
+	    		result+="(cond ";
+	    		for(Pair<Expression,Expression> pair:((CondExpression) ast).getAllPairs())
+	    			result+="("+shallowUnparse(pair.first,depth-1)+" "+shallowUnparse(pair.second,depth-1)+")";
+	    		result+=")";
+	    	}
+	    }
+	    else if(ast instanceof ConsExpression)
+	    {
+	    	if(depth<1)
+	    		result+="(cons...)";
+	    	else
+	    		result+="(cons"+shallowUnparse(((ConsExpression) ast).car(),depth-1)+" "
+	    	            +shallowUnparse(((ConsExpression) ast).cdr(),depth-1)+")";
+	    }
 	    return result;
 	    }
+	
 	public static String shallowBindings(List<Pair<String, Expression>> list, int depth)
 	{
 		String result="";
@@ -108,5 +199,18 @@ public class ShallowUnparser {
 	    }
 	    result+=")";
 	    return result;
+	}
+	
+	public static void main(String args[])
+	{
+		String cons="(cons 0 (cons 1 2))";
+		List<Token> tokens1 = Lexer.lex(cons);
+		System.out.println(tokens1);
+		Program program1=Parser.parse(tokens1);
+		for(DefOrExp temp:program1.getProgram())
+		{
+			if(temp instanceof Expression)
+				System.out.println(ShallowUnparser.shallowUnparse((Expression)temp,0));
+		}
 	}
 }
