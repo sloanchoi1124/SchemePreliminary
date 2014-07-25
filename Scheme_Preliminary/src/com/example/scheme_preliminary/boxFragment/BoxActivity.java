@@ -282,9 +282,10 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 				{
 					currentProgram=(programList.get(position));
 					map=initializeMap(currentProgram.getProgram());
-					initializeRightSideDrawer();
 					clearCenterScreen();
 					clearTopSideBar();	
+					initializeRightSideDrawer();
+
 				}
 			}
 		});
@@ -321,7 +322,9 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 			public void onItemClick(AdapterView<?> parent, View view, int position,
 					long id) {
 				// TODO Auto-generated method stub
+				
 				String item=(String) parent.getItemAtPosition(position);
+				System.out.println("item="+item);
 				passTopLevelExpressionToCenterScreen(item);
 			}
 		});
@@ -346,8 +349,8 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 		{
 			System.out.println("CENTER SCREEN RE-INITIALIZATION");
 			//if the same top-level expression is pressed, ignore
-			if(currentExpressionTag.equals(s)==false)
-			{
+			
+				//System.out.println("currentexpression tag != item0");
 				if(map.get(s)!=null)
 				{
 					fragmentList.clear();
@@ -355,7 +358,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 					initializeTopSideBar();
 					currentExpressionTag=s;
 				}
-			}
+			
 		}
 	}
 	
@@ -396,7 +399,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 			{
 				currentFrag=new DefinitionBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				ft.addToBackStack(null);
+				//ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 			ft.commit();
@@ -413,7 +416,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 			{
 				currentFrag=new CallBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				ft.addToBackStack(null);
+				//ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 			ft.commit();
@@ -430,7 +433,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 			{
 				currentFrag=new AndOrBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				ft.addToBackStack(null);
+				//ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 		}
@@ -446,7 +449,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 			{
 				currentFrag=new IfBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				ft.addToBackStack(null);
+				//ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 			ft.commit();
@@ -463,7 +466,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 			{
 				currentFrag=new LetBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				ft.addToBackStack(null);
+				//ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 			ft.commit();
@@ -480,7 +483,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 			{
 				currentFrag=new LambdaBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				ft.addToBackStack(null);
+				//ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 			ft.commit();
@@ -498,7 +501,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 			{
 				currentFrag=new IntIdBoolStringConsBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				ft.addToBackStack(null);
+				//ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 			ft.commit();
@@ -515,7 +518,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 			{
 				currentFrag=new CondBox_Fragment();
 				ft.replace(R.id.center_screen_background, currentFrag);
-				ft.addToBackStack(null);
+				//ft.addToBackStack(null);
 				fragmentList.add(currentFrag);
 			}
 			ft.commit();
