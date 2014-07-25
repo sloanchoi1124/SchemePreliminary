@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.example.scheme_preliminary.R;
-
 import android.annotation.SuppressLint;
 import android.app.ListActivity;
 import android.content.Intent;
@@ -14,6 +12,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.ListView;
+
+import com.example.scheme_preliminary.R;
 
 public class FileChooser extends ListActivity {
     
@@ -23,13 +23,9 @@ public class FileChooser extends ListActivity {
     @SuppressLint("NewApi") @Override
     public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		String defaultPath = Environment.getExternalStorageDirectory().getPath();
-		if (! defaultPath.endsWith("/")) { // this is for testing
-			defaultPath += "/";
-			System.out.println("Environment method does NOT end with a slash");
-		}
+		String defaultPath = Environment.getExternalStorageDirectory().getPath() + "/";
 		defaultPath += "com.example.scheme_preliminary/";
-		String path = savedInstanceState.getString("absolutePath", defaultPath);
+		String path = getIntent().getStringExtra("absolutePath");
 		currentDir = new File(path);
 		if (! currentDir.exists()) currentDir.mkdirs();
 		fill(currentDir);
@@ -57,8 +53,8 @@ public class FileChooser extends ListActivity {
      	Collections.sort(dir);
      	Collections.sort(fls);
      	dir.addAll(0, fls);
-     	if (!f.getName().equalsIgnoreCase("sdcard"))
-     		dir.add(0, new Option("..","Parent Directory", f.getParent()));
+//     	if (!f.getName().equalsIgnoreCase("sdcard"))
+//     		dir.add(0, new Option("..","Parent Directory", f.getParent()));
      	adapter = new FileArrayAdapter(FileChooser.this, R.layout.file_view, dir);
      	this.setListAdapter(adapter);
     }

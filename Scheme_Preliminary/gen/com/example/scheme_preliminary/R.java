@@ -177,13 +177,12 @@ public final class R {
         public static final int navigation_=0x7f070010;
         public static final int navigation__box_=0x7f070011;
         public static final int or_box_=0x7f070012;
-        public static final int pair_generator=0x7f070013;
-        public static final int parameter_box_=0x7f070014;
-        public static final int right_side_bar_=0x7f070015;
-        public static final int scheme__creator=0x7f070016;
-        public static final int string__creator=0x7f070017;
-        public static final int top_side_bar_=0x7f070018;
-        public static final int viewing_=0x7f070019;
+        public static final int parameter_box_=0x7f070013;
+        public static final int right_side_bar_=0x7f070014;
+        public static final int scheme__creator=0x7f070015;
+        public static final int string__creator=0x7f070016;
+        public static final int top_side_bar_=0x7f070017;
+        public static final int viewing_=0x7f070018;
     }
     public static final class string {
         public static final int Clear=0x7f05001c;

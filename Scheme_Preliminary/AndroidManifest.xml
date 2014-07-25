@@ -4,6 +4,9 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    
     <uses-sdk
         android:minSdkVersion="11"
         android:targetSdkVersion="18" />
@@ -119,8 +122,8 @@
             android:label="@string/title_activity_and_or_box__fragment" >
         </activity>
 
-        <service android:name="file.io.ProjectFileSetup" >
-        </service>
+        <service android:name="file.io.ProjectFileSetup"></service>
+        <activity android:name="file.io.FileChooser"></activity>
 
         <activity
             android:name="com.example.scheme_preliminary.boxFragment.CondBox_Fragment"
@@ -130,6 +133,7 @@
             android:name="com.example.scheme_preliminary.boxFragment.PairGenerator"
             android:label="@string/title_activity_pair_generator" >
         </activity>
+>>>>>>> branch 'master' of https://github.com/slc-cs-summer-research/Scheme_Preliminary
     </application>
 
 </manifest>
