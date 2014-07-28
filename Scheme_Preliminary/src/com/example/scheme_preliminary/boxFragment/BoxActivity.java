@@ -41,6 +41,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.scheme_preliminary.R;
 import com.example.scheme_preliminary.boxFragment.TopSideBar_Fragment.TopSideBarActivityCommunicator;
@@ -50,7 +51,7 @@ import com.example.scheme_preliminary.calculator.Calculator_Fragment_Listener;
 
 public class BoxActivity extends Activity implements ActivityCommunicator,
           TopSideBarActivityCommunicator,Calculator_Fragment_Communicator,
-          Calculator_Fragment_Listener{
+          Calculator_Fragment_Listener,ProgramLevelCommunicator{
 
 	//these variables are used by ActivityCommunicator
 	private DefOrExp toReturnToFragment;//<=> the current expression for the current fragment
@@ -84,6 +85,8 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	private Expression pair_1st;
 	private Expression pair_2nd;
 	private Pair<Expression,Expression> newCondPair;
+	//----------------------------------------
+	private boolean addNewDefOrExpInViewingFlag;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +120,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 		// TODO Auto-generated method stub
 		MenuInflater inflater=getMenuInflater();
 		inflater.inflate(R.menu.box_activity_action, menu);
+		//return true;
 		return super.onCreateOptionsMenu(menu);
 	}
 	
@@ -131,29 +135,39 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 		    	builder.setItems(items, new DialogInterface.OnClickListener() {
 					
 					@Override
+					//hello
 					public void onClick(DialogInterface dialog, int item) {
 						// TODO Auto-generated method stub
 						switch(item){
 						case 0:
-							//go to the calculator fragment
-					    	System.out.println("GENERATE THE CALCULATOR FRAGMENT");
-					    	//generate a new interface to communicate between the activity and the calculator fragment
-					    	if (getFragmentManager().findFragmentByTag("calculator") == null) {
-						    		
-						    	getFragmentManager().beginTransaction()
-						    			.add(R.id.calculator_frame, new Calculator_Fragment(), "calculator")
-						    			.addToBackStack(null)
-				    					.commit();
-						    	//automatically passes in the list of function names within a certain program
-								
-								
-						    	((FrameLayout) findViewById(R.id.calculator_frame)).bringToFront();
-						    	addToProgram=true;
-
-								
-						    	//the new expression/definition should be added to the program
-						    	
-					    	}
+							//if the viewing fragment is currently popping up, then update it!
+							if(currentProgram!=null)
+							{
+							    addNewDefOrExpInViewingFlag=true;
+							    if(getFragmentManager().findFragmentByTag("evaluation_fragment")!=null)
+							    	getFragmentManager().popBackStackImmediate();
+								//go to the calculator fragment
+						    	System.out.println("GENERATE THE CALCULATOR FRAGMENT");
+						    	//generate a new interface to communicate between the activity and the calculator fragment
+						    	if (getFragmentManager().findFragmentByTag("calculator") == null) {
+							    		
+							    	getFragmentManager().beginTransaction()
+							    			.add(R.id.calculator_frame, new Calculator_Fragment(), "calculator")
+							    			.addToBackStack(null)
+					    					.commit();
+							    	//automatically passes in the list of function names within a certain program
+									
+									
+							    	((FrameLayout) findViewById(R.id.calculator_frame)).bringToFront();
+							    	addToProgram=true;	
+							    	//the new expression/definition should be added to the program
+							    	
+						    	}
+							}
+							else
+							{
+								Toast.makeText(getBaseContext(), "Please Choose A Program", Toast.LENGTH_SHORT).show();
+							}
 					    	
 					    	break;
 						case 1:
@@ -165,95 +179,134 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 							initilaizeCenterScreen();
 							break;
 						case 2:
-							if(toReturnToFragment instanceof CallExpression)
+							if(currentProgram!=null)
 							{
-								System.out.println("add a new operand to the call expression");
-								//pop up the calculator here
-						    	if (getFragmentManager().findFragmentByTag("calculator") == null) {
-						    		
-							    	getFragmentManager().beginTransaction()
-							    			.add(R.id.calculator_frame, new Calculator_Fragment(), "calculator")
-							    			.addToBackStack(null)
-					    					.commit();
-							    	//automatically passes in the list of function names within a certain program
-									
-									
-							    	((FrameLayout) findViewById(R.id.calculator_frame)).bringToFront();	
-							    	//the new expression/definition should be added to the program
-							    	//add a new operand to call expression, specify in the replacement tag as "call.newOperand"
-									replacementTag="call.newOperand";
-						    	}
+								if(toReturnToFragment instanceof CallExpression)
+								{
+									System.out.println("add a new operand to the call expression");
+									//pop up the calculator here
+							    	if (getFragmentManager().findFragmentByTag("calculator") == null) {
+							    		
+								    	getFragmentManager().beginTransaction()
+								    			.add(R.id.calculator_frame, new Calculator_Fragment(), "calculator")
+								    			.addToBackStack(null)
+						    					.commit();
+								    	//automatically passes in the list of function names within a certain program
+										
+										
+								    	((FrameLayout) findViewById(R.id.calculator_frame)).bringToFront();	
+								    	//the new expression/definition should be added to the program
+								    	//add a new operand to call expression, specify in the replacement tag as "call.newOperand"
+										replacementTag="call.newOperand";
+							    	}
+								}
+								else if(toReturnToFragment instanceof AndExpression)
+								{
+									System.out.println("add a new condition to the and expression");
+									//pop up the calculator here
+							    	if (getFragmentManager().findFragmentByTag("calculator") == null) {
+							    		
+								    	getFragmentManager().beginTransaction()
+								    			.add(R.id.calculator_frame, new Calculator_Fragment(), "calculator")
+								    			.addToBackStack(null)
+						    					.commit();
+								    	//automatically passes in the list of function names within a certain program
+										
+										
+								    	((FrameLayout) findViewById(R.id.calculator_frame)).bringToFront();	
+								    	//the new expression/definition should be added to the program
+								    	//add a new operand to call expression, specify in the replacement tag as "call.newOperand"
+										replacementTag="and.newCondition";
+							    	}
+								}
+								else if(toReturnToFragment instanceof OrExpression)
+								{
+									System.out.println("add a new condition to the or expression");
+									//pop up the calculator here
+							    	if (getFragmentManager().findFragmentByTag("calculator") == null) {
+							    		
+								    	getFragmentManager().beginTransaction()
+								    			.add(R.id.calculator_frame, new Calculator_Fragment(), "calculator")
+								    			.addToBackStack(null)
+						    					.commit();
+								    	//automatically passes in the list of function names within a certain program
+										
+										
+								    	((FrameLayout) findViewById(R.id.calculator_frame)).bringToFront();	
+								    	//the new expression/definition should be added to the program
+								    	//add a new operand to call expression, specify in the replacement tag as "call.newOperand"
+										replacementTag="or.newCondition";
+							    	}
+								}
+								else
+								{
+									Toast.makeText(getBaseContext(), "You're Not Supposed To Add New Operand/Condition Here.", Toast.LENGTH_SHORT).show();
+								}
 							}
-							else if(toReturnToFragment instanceof AndExpression)
+
+							else
 							{
-								System.out.println("add a new condition to the and expression");
-								//pop up the calculator here
-						    	if (getFragmentManager().findFragmentByTag("calculator") == null) {
-						    		
-							    	getFragmentManager().beginTransaction()
-							    			.add(R.id.calculator_frame, new Calculator_Fragment(), "calculator")
-							    			.addToBackStack(null)
-					    					.commit();
-							    	//automatically passes in the list of function names within a certain program
-									
-									
-							    	((FrameLayout) findViewById(R.id.calculator_frame)).bringToFront();	
-							    	//the new expression/definition should be added to the program
-							    	//add a new operand to call expression, specify in the replacement tag as "call.newOperand"
-									replacementTag="and.newCondition";
-						    	}
-							}
-							else if(toReturnToFragment instanceof OrExpression)
-							{
-								System.out.println("add a new condition to the or expression");
-								//pop up the calculator here
-						    	if (getFragmentManager().findFragmentByTag("calculator") == null) {
-						    		
-							    	getFragmentManager().beginTransaction()
-							    			.add(R.id.calculator_frame, new Calculator_Fragment(), "calculator")
-							    			.addToBackStack(null)
-					    					.commit();
-							    	//automatically passes in the list of function names within a certain program
-									
-									
-							    	((FrameLayout) findViewById(R.id.calculator_frame)).bringToFront();	
-							    	//the new expression/definition should be added to the program
-							    	//add a new operand to call expression, specify in the replacement tag as "call.newOperand"
-									replacementTag="or.newCondition";
-						    	}
+								Toast.makeText(getBaseContext(), "Please Choose A Program", Toast.LENGTH_SHORT).show();
 							}
 							break;
 						case 3:
-							System.out.println("going to generate a new pair(left)");
-							pairGenerator=true;
-							replacementTag="pair.first";
-							if (getFragmentManager().findFragmentByTag("calculator") == null) {
-					    		
-						    	getFragmentManager().beginTransaction()
-						    			.add(R.id.calculator_frame, new Calculator_Fragment(), "calculator")
-						    			.addToBackStack(null)
-				    					.commit();
-						    	//automatically passes in the list of function names within a certain program
-								
-								
-						    	((FrameLayout) findViewById(R.id.calculator_frame)).bringToFront();	
+							if(currentProgram!=null)
+							{
+								if(toReturnToFragment instanceof CondExpression)
+								{
+									System.out.println("going to generate a new pair(left)");
+									pairGenerator=true;
+									replacementTag="pair.first";
+									if (getFragmentManager().findFragmentByTag("calculator") == null) {
+							    		
+								    	getFragmentManager().beginTransaction()
+								    			.add(R.id.calculator_frame, new Calculator_Fragment(), "calculator")
+								    			.addToBackStack(null)
+						    					.commit();
+								    	//automatically passes in the list of function names within a certain program
+										
+										
+								    	((FrameLayout) findViewById(R.id.calculator_frame)).bringToFront();	
+									}
+									//pop up the calculator here
+								}
+								else
+								{
+									Toast.makeText(getBaseContext(), "You're Not Supposed To Add A Pair Here!", Toast.LENGTH_SHORT).show();
+								}
 							}
-							//pop up the calculator here
+							else
+							{
+								Toast.makeText(getBaseContext(), "Please Choose A Program", Toast.LENGTH_SHORT).show();
+							}
 							break;
 						case 4:
-							System.out.println("going to generate a new pair(right)");
-							pairGenerator=true;
-							replacementTag="pair.second";
-							if (getFragmentManager().findFragmentByTag("calculator") == null) {
-					    		
-						    	getFragmentManager().beginTransaction()
-						    			.add(R.id.calculator_frame, new Calculator_Fragment(), "calculator")
-						    			.addToBackStack(null)
-				    					.commit();
-						    	//automatically passes in the list of function names within a certain program
-								
-								
-						    	((FrameLayout) findViewById(R.id.calculator_frame)).bringToFront();	
+							if(currentProgram!=null)
+							{
+								if(toReturnToFragment instanceof CondExpression)
+								{
+									System.out.println("going to generate a new pair(right)");
+									pairGenerator=true;
+									replacementTag="pair.second";
+									if (getFragmentManager().findFragmentByTag("calculator") == null) {
+							    		
+								    	getFragmentManager().beginTransaction()
+								    			.add(R.id.calculator_frame, new Calculator_Fragment(), "calculator")
+								    			.addToBackStack(null)
+						    					.commit();
+								    	//automatically passes in the list of function names within a certain program
+								    	((FrameLayout) findViewById(R.id.calculator_frame)).bringToFront();	
+									}
+								}
+								else
+								{
+									Toast.makeText(getBaseContext(), "You're Not Supposed To Add A Pair Here!", Toast.LENGTH_SHORT).show();
+								}
+
+							}
+							else
+							{
+								Toast.makeText(getBaseContext(), "Please Choose A Program", Toast.LENGTH_SHORT).show();
 							}
 							break;
 						}
@@ -262,7 +315,44 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 		    	AlertDialog alert=builder.create();
 		    	alert.show();
 		    	break;
+		    case R.id.action_view:
+		    	if(this.currentProgram!=null)
+		    	{
+			    	System.out.println("going to view!");
+			    	if(getFragmentManager().findFragmentByTag("viewing_fragment")==null)
+			    	{
+			    		getFragmentManager().beginTransaction()
+			    		.add(R.id.viewing_frame, new Viewing_Fragment(), "viewing_fragment")
+			    		.addToBackStack(null)
+			    		.commit();
+			    		((FrameLayout)findViewById(R.id.viewing_frame)).bringToFront();
+			    	}
+		    	}
+		    	else
+		    	{
+		    		Toast.makeText(this, "Plase Chosse A Program", Toast.LENGTH_SHORT).show();
+		    	}
+		    	break;
+		    case R.id.action_evaluate:
+		    	if(this.currentProgram!=null)
+		    	{
+			    	System.out.println("going to evaluate");
+			    	if(getFragmentManager().findFragmentByTag("evaluation_fragment")==null)
+			    	{
+			    		getFragmentManager().beginTransaction()
+			    		.add(R.id.evaluating_frame, new Evaluation_Fragment(), "evaluation_fragment")
+			    		.addToBackStack(null)
+			    		.commit();
+			    		((FrameLayout)findViewById(R.id.evaluating_frame)).bringToFront();
+			    	}
+		    	}
+		    	else
+		    	{
+		    		Toast.makeText(this, "Plase Chosse A Program", Toast.LENGTH_SHORT).show();
+		    	}
+		    	break;
 		}
+		
 		return true;
 	}
 	
@@ -332,6 +422,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	
 	public void passTopLevelExpressionToCenterScreen(String s)
 	{
+		currentIndex=0;
 		System.out.println("THIS IS THE MESSAGE SENT FROM PASSTOPVELEXPRESSIONTOCENTERSCREEN");
 		if(currentExpressionTag==null)
 		{
@@ -616,11 +707,18 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	public void receiveDefOrExp(DefOrExp defOrExp) {
 		if(addToProgram==true)
 		{
+			System.out.println("ADD TO PROGRAM == TRUE");
 			this.currentProgram.getProgram().add(defOrExp);
 			getFragmentManager().popBackStackImmediate();
 			map=initializeMap(currentProgram.getProgram());
 			initializeRightSideDrawer();
 			addToProgram=false;
+			if(addNewDefOrExpInViewingFlag==true)
+			{
+				System.out.println("addnewdeforexpinviewing ==true");
+				updateViewingFragment();
+				addNewDefOrExpInViewingFlag=false;
+			}
 		}
 		else if(this.pairGenerator==true)
 		{
@@ -896,8 +994,9 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 		// TODO Auto-generated method stub
 		//look into the fragment list and get the corresponding fragment on the list
 		//need to deal with clicking the current 
-		if(currentIndex!=i)
+		if(currentFrag!=fragmentList.get(i))
 		{
+			System.out.printf("currentIndex=%d,i=%d,don't ignore\n",currentIndex,i);
 			currentIndex=i;
 			System.out.println(currentIndex);
 			FragmentTransaction ft=getFragmentManager().beginTransaction();
@@ -906,6 +1005,11 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 			setClickabilityToFragment();
 			ft.replace(R.id.center_screen_background, currentFrag);
 			ft.commit();
+			
+		}
+		else
+		{
+			System.out.println("should ignore here!!!!!!");
 		}
 
 	}
@@ -962,6 +1066,27 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 			ft.replace(R.id.top_side_bar_background,topSideBar);
 		}
 		ft.commit();
+	}
+
+	@Override
+	public Program getProgramFromActivity() {
+		// TODO Auto-generated method stub
+		return this.currentProgram;
+	}
+	
+	//this is used when the user is adding new deforexp while viewing!
+	@Override
+	public void updateViewingFragment() {
+		// TODO Auto-generated method stub
+		if(getFragmentManager().findFragmentByTag("viewing_fragment")!=null)
+    	{
+    		System.out.println("GOING TO HAVE A NEW VIEWING FRAGMENT!!");
+			getFragmentManager().beginTransaction()
+    		.replace(R.id.viewing_frame, new Viewing_Fragment(), "viewing_fragment")
+    		.addToBackStack(null)
+    		.commit();
+    		((FrameLayout)findViewById(R.id.viewing_frame)).bringToFront();
+    	}
 	}
 	
 }

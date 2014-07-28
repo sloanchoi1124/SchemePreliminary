@@ -1,7 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-     <item android:id="@+id/action_add"
-          android:icon="@drawable/round_plus"
-          android:title="@string/action_dd"
-          android:showAsAction="ifRoom" />
-</menu>
+    <group android:id="@+id/group1">
+            <item 
+                android:id="@+id/menu_more_button"
+                android:icon="@drawable/more"
+                android:title="@string/action_dd"
+                android:showAsAction="always">
+                 <menu>
+                   <item 
+                       android:id="@+id/action_add"
+                       android:icon="@drawable/round_plus"
+                       android:title="@string/action_dd"
+                       android:showAsAction="ifRoom" />
+                   <item 
+                       android:id="@+id/action_view"
+                       android:icon="@drawable/view_icon"
+                       android:title="@string/view_activity"
+                       android:showAsAction="ifRoom"/>
+                   <item 
+                       android:id="@+id/action_evaluate"
+                       android:icon="@drawable/evaluate"
+                       android:title="@string/evaluate_actiivty"
+                       android:showAsAction="ifRoom"/>
+                   <item 
+                       android:id="@+id/action_save"
+                       android:icon="@drawable/save_icon"
+                       android:title="@string/save_activity"
+                       android:showAsAction="ifRoom"/> 
+            
+                  </menu>
+                  
+                  </item>
+    </group>
+
+        
+         </menu>

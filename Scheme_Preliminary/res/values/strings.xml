@@ -60,5 +60,10 @@
     <string name="action_dd">Add</string>
     <string name="title_activity_cond_box__fragment">CondBox_Fragment</string>
     <string name="title_activity_pair_generator">PairGenerator</string>
+    <string name="title_activity_viewing__fragment">Viewing_Fragment</string>
+    <string name="title_activity_evaluation__fragment">Evaluation_Fragment</string>
+    <string name="view_activity">View</string>
+    <string name="evaluate_actiivty">Evaluate</string>
+    <string name="save_activity">Save</string>
 
 </resources>

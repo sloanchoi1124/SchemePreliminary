@@ -1,0 +1,17 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Evaluation_Fragment" 
+    android:background="#000000">
+
+    <TextView
+        android:id="@+id/evaluationfragment_text"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" 
+        android:background="#000000"
+        android:textColor="#11f02b"/>
+
+</RelativeLayout>
