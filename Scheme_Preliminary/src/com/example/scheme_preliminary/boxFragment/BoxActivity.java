@@ -565,9 +565,15 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	public boolean setClickabilityToFragment() {
 		// TODO Auto-generated method stub
 		if(currentIndex<fragmentList.size()-1)
+		{
+			System.out.printf("currentIndex=%d,fragment.size()=%d\n",currentIndex,fragmentList.size());
 			return false;
+		}
 		else
+		{
+			System.out.printf("currentIndex=%d,fragment.size()=%d\n",currentIndex,fragmentList.size());
 			return true;
+		}
 	}
 
 	@Override
@@ -889,12 +895,19 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	public void passIndexToActivity(int i) {
 		// TODO Auto-generated method stub
 		//look into the fragment list and get the corresponding fragment on the list
-		currentIndex=i;
-		FragmentTransaction ft=getFragmentManager().beginTransaction();
-		currentFrag=fragmentList.get(currentIndex);
-		setClickabilityToFragment();
-		ft.replace(R.id.center_screen_background, currentFrag);
-		ft.commit();
+		//need to deal with clicking the current 
+		if(currentIndex!=i)
+		{
+			currentIndex=i;
+			System.out.println(currentIndex);
+			FragmentTransaction ft=getFragmentManager().beginTransaction();
+			currentFrag=fragmentList.get(currentIndex);
+			System.out.println("GOING TO PRINT INFORMATION FROM SET CLICKABILITY TO FRAGMENT!");
+			setClickabilityToFragment();
+			ft.replace(R.id.center_screen_background, currentFrag);
+			ft.commit();
+		}
+
 	}
 	
 	@Override
