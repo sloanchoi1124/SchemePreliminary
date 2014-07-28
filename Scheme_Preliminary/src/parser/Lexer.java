@@ -86,6 +86,7 @@ public class Lexer {
 			token = in.findWithinHorizon(pattern, 0);
 		}
 		in.close();
+//		System.out.println("Returning tokenList:\n" + tokenList.toString());
 		return tokenList;
 	}
 

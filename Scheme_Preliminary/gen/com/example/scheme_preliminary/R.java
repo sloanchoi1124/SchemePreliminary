@@ -85,7 +85,7 @@ public final class R {
         public static final int definition_symbol=0x7f080041;
         public static final int drawer=0x7f080015;
         public static final int drawer_layout=0x7f08000d;
-        public static final int drawer_left=0x7f080016;
+        public static final int drawer_left_list=0x7f080016;
         public static final int editText1=0x7f08005f;
         public static final int editText2=0x7f08001c;
         public static final int evaluating_frame=0x7f080012;

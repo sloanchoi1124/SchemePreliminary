@@ -1,0 +1,7 @@
+(define THREE 3)
+(define square (lambda (x) (* x x)))
+(square THREE)
+(define sumSquares (lambda (a b) (+ (square a) (square b))))
+(sumSquares THREE 4)
+(define factorial (lambda (n) (if (= n 0) 1 (* n (factorial (- n 1))))))
+(factorial THREE)

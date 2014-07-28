@@ -94,11 +94,9 @@ public class Parser {
         switch (kind) {
 	        case AND:
 	        	List<Expression> andConditions = parseOperands(iter);
-	        	System.out.println("andConditions");
 	        	return new AndExpression(andConditions);
 	        case OR:
 	        	List<Expression> orConditions = parseOperands(iter);
-	        	System.out.println("orConditions");
 	        	return new OrExpression(orConditions);
             case ID:
                 IdExpression operator = new IdExpression(token.toString());
@@ -229,7 +227,6 @@ public class Parser {
             else if (kind.equals(TokenKind.RPAREN))
                 parenBalance--;
         }
-        System.out.println(listOfLists.size());
         return listOfLists;
     }
     
@@ -240,13 +237,12 @@ public class Parser {
         for (List<Token> list : defOrExps) {
             if (isDefinition(list)) {
                 programList.add(parseDefinition(list));
-                System.out.println("Def");
             }
             else { // is expression
                 programList.add(parseExpression(list));
-                System.out.println("Exp");
             }
         }
+//        System.out.println(programList);
         return new Program(programList);
     }
 
