@@ -1,13 +1,11 @@
 package com.example.scheme_preliminary.boxFragment;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import parser.Lexer;
-import parser.Parser;
-import parser.token.Token;
 import scheme_ast.AbstractLetExpression;
 import scheme_ast.AndExpression;
 import scheme_ast.BoolExpression;
@@ -25,13 +23,13 @@ import scheme_ast.LetExpression;
 import scheme_ast.OrExpression;
 import scheme_ast.Program;
 import scheme_ast.StringExpression;
+import unparser.Unparser;
 import util.Pair;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -55,7 +53,7 @@ import file.io.FileUtils;
 public class BoxActivity extends Activity implements ActivityCommunicator,
           TopSideBarActivityCommunicator,Calculator_Fragment_Communicator,
           Calculator_Fragment_Listener,ProgramLevelCommunicator{
-
+	
 	//these variables are used by ActivityCommunicator
 	private DefOrExp toReturnToFragment;//<=> the current expression for the current fragment
 	private List<Pair<String, Expression>> toReturnBindings;
@@ -124,7 +122,6 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	//		List<Token> tokens1 = Lexer.lex(toParse1);
 	//		Program program1=Parser.parse(tokens1);
 			//---------------------------------------
-			this.programNameList = FileUtils.getFileNames(getAssets());
 //			this.programList.add(program0);
 //			this.programList.add(program1);
 	
@@ -195,11 +192,10 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 					    	break;
 						case 1:
 							System.out.println("BUILD A NEW PROGRAM");
-							Program temp=new Program(new ArrayList<DefOrExp>());
-							programNameList.add("temp");
-							currentProgramName = "temp";
-							currentProgram = temp;
-							System.out.println(programNameList);
+							if (FileUtils.externalStorageWritable())
+								FileUtils.createNewFile();
+							else
+								System.out.println("Error creating new file.");
 							initializeLeftSideDrawer();
 							initializeCenterScreen();
 							break;
@@ -373,9 +369,11 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 		    	}
 		    	else
 		    	{
-		    		Toast.makeText(this, "Plase Chosse A Program", Toast.LENGTH_SHORT).show();
+		    		Toast.makeText(this, "Plase Choose A Program", Toast.LENGTH_SHORT).show();
 		    	}
 		    	break;
+		    case R.id.action_save:
+		    	FileUtils.save(currentProgramName, Unparser.unparse(currentProgram));
 		}
 		
 		return true;
@@ -385,25 +383,32 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	public void initializeLeftSideDrawer(){
 		this.currentProgramName = null;
 		this.currentProgram=null;
-		this.programNameList = FileUtils.getFileNames(getAssets());
+		if (FileUtils.externalStorageWritable())
+			FileUtils.createNewFile();
+		else
+			System.out.println("Error creating new file.");
+		this.programNameList = FileUtils.getFileNames();
 		this.left_drawer_background.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, this.programNameList));
 		this.left_drawer_background.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position,
-					long id) {
-				if(currentProgramName == null || ! currentProgramName.equals(programNameList.get(position)))
-				{
-					currentProgramName=(programNameList.get(position));
-					currentProgram = FileUtils.getProgram(currentProgramName);
-					map=initializeMap(currentProgram.getProgram());
-					clearCenterScreen();
-					clearTopSideBar();	
-					initializeRightSideDrawer();
-
-				}
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				leftDrawerClickAction(position);
 			}
 		});
+	}
+	
+	private void leftDrawerClickAction(int position) {
+		if(currentProgramName == null || ! currentProgramName.equals(programNameList.get(position)))
+		{
+			currentProgramName=(programNameList.get(position));
+			currentProgram = FileUtils.getProgramFromName(currentProgramName);
+			map=initializeMap(currentProgram.getProgram());
+			clearCenterScreen();
+			clearTopSideBar();	
+			initializeRightSideDrawer();
+
+		}
 	}
 
 	public HashMap<String,DefOrExp> initializeMap(List<DefOrExp> programList)
