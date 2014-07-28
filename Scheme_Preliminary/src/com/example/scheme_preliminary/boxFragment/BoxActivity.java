@@ -31,6 +31,7 @@ import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -48,6 +49,8 @@ import com.example.scheme_preliminary.calculator.Calculator_Fragment;
 import com.example.scheme_preliminary.calculator.Calculator_Fragment.Calculator_Fragment_Communicator;
 import com.example.scheme_preliminary.calculator.Calculator_Fragment_Listener;
 
+import file.io.FileUtils;
+
 public class BoxActivity extends Activity implements ActivityCommunicator,
           TopSideBarActivityCommunicator,Calculator_Fragment_Communicator,
           Calculator_Fragment_Listener{
@@ -61,7 +64,8 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	private Fragment currentFrag;
 	private TopSideBar_Fragment topSideBar;
 	//----------------------------------------
-	private List<Program> programList;//stores all the testing programs right now
+	private List<String> programNameList;//stores all the testing programs right now
+	private String currentProgramName;
 	private Program currentProgram;
 	private Map<String, DefOrExp> map;//stores the map name->def/exp for the current program
 	//----------------------------------------
@@ -89,26 +93,45 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_box);
-		//String toParse="(define THREE 3) (define square (lambda (x) (* x x))) (square THREE) (define sumSquares (lambda (a b) (+ (square a) (square b)))) (sumSquares THREE 4) (define factorial (lambda (n) (if (= n 0) 1 (* n (factorial (- n 1)))))) (factorial THREE)";
-		String toParse="(define THREE 3) (define square (lambda (x) (* x x))) (square THREE) (define sumSquares (lambda (a b) (+ (square a) (square b)))) (sumSquares THREE 4) (define factorial (lambda (n) (if (= n 0) 1 (* n (factorial (- n 1)))))) (factorial THREE)";
-//		String toParse="(if (< 3 2) \"yes\" \"no\")";
-		List<Token> tokens = Lexer.lex(toParse);
-		Program program0=Parser.parse(tokens);
-		String toParse1="(cond ((> 3 3) (+ 1 1)) ((< 3 3) (+ 1 1)) (else (+ 1 1)))";
-		List<Token> tokens1 = Lexer.lex(toParse1);
-		Program program1=Parser.parse(tokens1);
-		//---------------------------------------
-		this.programList=new ArrayList<Program>();
-		this.programList.add(program0);
-		this.programList.add(program1);
-
-		//INITIALIZE DRAWERS BACKGROUND FROM BOTH SIDE-----
-		this.left_drawer_background=(ListView) findViewById(R.id.drawer_left);
-		this.right_drawer_background=(ListView) findViewById(R.id.drawer);
-		//-------------------------------------
-		initializeLeftSideDrawer();	
-		initilaizeCenterScreen();
 		
+		if (savedInstanceState == null) {
+
+			//------------------SD card interaction---------------------
+//			Intent fileService = new Intent(this, ProjectFileSetup.class);
+			
+			
+//			final BoxActivity ba = this;
+//			Thread t = new Thread() {
+//				public void run() {
+//					startService(new Intent(ba, ProjectFileSetup.class)); // stops itself
+//				}
+//			};
+//			t.start();
+			
+			FileUtils.fileTreeSetup(getAssets());
+			
+			
+			//---------------------------------------
+			//String toParse="(define THREE 3) (define square (lambda (x) (* x x))) (square THREE) (define sumSquares (lambda (a b) (+ (square a) (square b)))) (sumSquares THREE 4) (define factorial (lambda (n) (if (= n 0) 1 (* n (factorial (- n 1)))))) (factorial THREE)";
+	//		String toParse="(define THREE 3) (define square (lambda (x) (* x x))) (square THREE) (define sumSquares (lambda (a b) (+ (square a) (square b)))) (sumSquares THREE 4) (define factorial (lambda (n) (if (= n 0) 1 (* n (factorial (- n 1)))))) (factorial THREE)";
+	//		String toParse="(if (< 3 2) \"yes\" \"no\")";
+	//		List<Token> tokens = Lexer.lex(toParse);
+	//		Program program0=Parser.parse(tokens);
+	//		String toParse1="(cond ((> 3 3) (+ 1 1)) ((< 3 3) (+ 1 1)) (else (+ 1 1)))";
+	//		List<Token> tokens1 = Lexer.lex(toParse1);
+	//		Program program1=Parser.parse(tokens1);
+			//---------------------------------------
+			this.programNameList = FileUtils.getFileNames(getAssets());
+//			this.programList.add(program0);
+//			this.programList.add(program1);
+	
+			//INITIALIZE DRAWERS BACKGROUND FROM BOTH SIDE-----
+			this.left_drawer_background=(ListView) findViewById(R.id.drawer_left_list);
+			this.right_drawer_background=(ListView) findViewById(R.id.drawer);
+			//-------------------------------------
+			initializeLeftSideDrawer();	
+			initializeCenterScreen();
+		}
 	}
 	
 	//--------THE ACTION BAR---------------------------
@@ -159,10 +182,12 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 						case 1:
 							System.out.println("BUILD A NEW PROGRAM");
 							Program temp=new Program(new ArrayList<DefOrExp>());
-							programList.add(temp);
-							System.out.println(programList);
+							programNameList.add("temp");
+							currentProgramName = "temp";
+							currentProgram = temp;
+							System.out.println(programNameList);
 							initializeLeftSideDrawer();
-							initilaizeCenterScreen();
+							initializeCenterScreen();
 							break;
 						case 2:
 							if(toReturnToFragment instanceof CallExpression)
@@ -268,19 +293,19 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	
 	//----------------METHODS FOR LEFT SIDE DRAWER--------------------------
 	public void initializeLeftSideDrawer(){
+		this.currentProgramName = null;
 		this.currentProgram=null;
-		List<String> tags=new ArrayList<String>();
-		for(int i=0;i<this.programList.size();i++)
-			tags.add("Program"+((Integer)i).toString());
-		this.left_drawer_background.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,tags));
+		this.programNameList = FileUtils.getFileNames(getAssets());
+		this.left_drawer_background.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, this.programNameList));
 		this.left_drawer_background.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position,
 					long id) {
-				if(currentProgram!=programList.get(position))
+				if(currentProgramName == null || ! currentProgramName.equals(programNameList.get(position)))
 				{
-					currentProgram=(programList.get(position));
+					currentProgramName=(programNameList.get(position));
+					currentProgram = FileUtils.getProgram(currentProgramName);
 					map=initializeMap(currentProgram.getProgram());
 					clearCenterScreen();
 					clearTopSideBar();	
@@ -363,7 +388,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	}
 	
 	//----------------THESE METHODS ARE FOR CENTER SCREEN ADJUSTMENT--------------
-	public void initilaizeCenterScreen()
+	public void initializeCenterScreen()
 	{
 		this.fragmentList=new ArrayList<Fragment>();
 		this.currentIndex=-1;
