@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/programnameedit"
+        android:title="@string/action_program_name"
+        android:showAsAction="always"
+        android:actionLayout="@layout/edit_program_name"/>
+    
     <group android:id="@+id/group1">
             <item 
                 android:id="@+id/menu_more_button"

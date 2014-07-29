@@ -31,6 +31,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -38,8 +39,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.example.scheme_preliminary.R;
@@ -52,7 +56,7 @@ import file.io.FileUtils;
 
 public class BoxActivity extends Activity implements ActivityCommunicator,
           TopSideBarActivityCommunicator,Calculator_Fragment_Communicator,
-          Calculator_Fragment_Listener,ProgramLevelCommunicator{
+          Calculator_Fragment_Listener,ProgramLevelCommunicator, OnEditorActionListener{
 	
 	//these variables are used by ActivityCommunicator
 	private DefOrExp toReturnToFragment;//<=> the current expression for the current fragment
@@ -89,6 +93,9 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	private Pair<Expression,Expression> newCondPair;
 	//----------------------------------------
 	private boolean addNewDefOrExpInViewingFlag;
+	//----------------------------------------
+	private EditText myActionEditText;
+	private MenuItem myActionMenuItem;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -140,8 +147,36 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 		// TODO Auto-generated method stub
 		MenuInflater inflater=getMenuInflater();
 		inflater.inflate(R.menu.box_activity_action, menu);
-		//return true;
+		this.myActionMenuItem=menu.findItem(R.id.programnameedit);
+		View actionView=myActionMenuItem.getActionView();
+		if(actionView!=null)
+		{
+			this.myActionEditText=(EditText) actionView.findViewById(R.id.action_bar_edit_text);
+			if(this.myActionEditText!=null)
+			{
+				System.out.println("successfully find the edit text");
+				this.myActionEditText.setOnEditorActionListener(this);
+			}
+				
+		}
 		return super.onCreateOptionsMenu(menu);
+	}
+	
+	@Override
+	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+		// TODO Auto-generated method stub
+		CharSequence textInput;
+		if(event!=null)
+		{
+			//if the back button is clicked
+			if(event.getAction()==KeyEvent.ACTION_DOWN&&event.getKeyCode()==KeyEvent.KEYCODE_ENTER)
+			{
+				textInput=v.getText();
+				System.out.println(textInput);
+			}
+				
+		}
+		return false;
 	}
 	
 	@Override
@@ -401,6 +436,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	private void leftDrawerClickAction(int position) {
 		if(currentProgramName == null || ! currentProgramName.equals(programNameList.get(position)))
 		{
+			this.myActionEditText.setText(this.currentProgramName);
 			currentProgramName=(programNameList.get(position));
 			currentProgram = FileUtils.getProgramFromName(currentProgramName);
 			map=initializeMap(currentProgram.getProgram());
@@ -1118,6 +1154,8 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
     		((FrameLayout)findViewById(R.id.viewing_frame)).bringToFront();
     	}
 	}
+
+
 	
 }
 
