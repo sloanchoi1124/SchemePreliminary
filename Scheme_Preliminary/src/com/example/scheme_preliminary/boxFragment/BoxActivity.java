@@ -1052,7 +1052,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 		if(fragmentList.size()<=1)
 		{
 			toReturnLabels=new ArrayList<String>();
-			toReturnLabels.add("root");
+			toReturnLabels.add(this.currentProgramName+"/");
 		}
 		//re-initialize the top-side-bar
 		else
