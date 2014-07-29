@@ -92,6 +92,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		FileUtils.fileTreeSetup(getAssets());
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_box);
 		
@@ -109,7 +110,6 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 //			};
 //			t.start();
 			
-			FileUtils.fileTreeSetup(getAssets());
 			
 			
 			//---------------------------------------
