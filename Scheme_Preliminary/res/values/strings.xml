@@ -65,5 +65,6 @@
     <string name="view_activity">View</string>
     <string name="evaluate_actiivty">Evaluate</string>
     <string name="save_activity">Save</string>
+    <string name="action_program_name">Name Your Program</string>
 
 </resources>

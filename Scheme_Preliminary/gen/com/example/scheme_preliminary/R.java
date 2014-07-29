@@ -51,14 +51,15 @@ public final class R {
         public static final int MinusButton=0x7f080038;
         public static final int PlusButton=0x7f080035;
         public static final int RelativeLayout1=0x7f080017;
-        public static final int TextView01=0x7f080064;
-        public static final int TextView02=0x7f080065;
+        public static final int TextView01=0x7f080065;
+        public static final int TextView02=0x7f080066;
         public static final int TimesButton=0x7f080036;
-        public static final int action_add=0x7f080069;
-        public static final int action_evaluate=0x7f08006b;
-        public static final int action_save=0x7f08006c;
-        public static final int action_settings=0x7f080066;
-        public static final int action_view=0x7f08006a;
+        public static final int action_add=0x7f08006b;
+        public static final int action_bar_edit_text=0x7f080064;
+        public static final int action_evaluate=0x7f08006d;
+        public static final int action_save=0x7f08006e;
+        public static final int action_settings=0x7f080067;
+        public static final int action_view=0x7f08006c;
         public static final int activity_evaluation=0x7f080043;
         public static final int activity_viewing=0x7f080062;
         public static final int args=0x7f08005c;
@@ -94,7 +95,7 @@ public final class R {
         public static final int fragment_container=0x7f080056;
         public static final int frame_container=0x7f08000e;
         public static final int goButton=0x7f08001d;
-        public static final int group1=0x7f080067;
+        public static final int group1=0x7f080069;
         public static final int head=0x7f080047;
         public static final int head_and_or=0x7f080004;
         public static final int head_call=0x7f08003a;
@@ -113,7 +114,7 @@ public final class R {
         public static final int keyrow5=0x7f08002f;
         public static final int keysbackground=0x7f08000c;
         public static final int ll_base=0x7f080059;
-        public static final int menu_more_button=0x7f080068;
+        public static final int menu_more_button=0x7f08006a;
         public static final int nav_path=0x7f080055;
         public static final int opSelectButton=0x7f080022;
         public static final int operands=0x7f08003b;
@@ -126,6 +127,7 @@ public final class R {
         public static final int pair_head_2=0x7f08003d;
         public static final int parameters=0x7f08004c;
         public static final int part=0x7f08005a;
+        public static final int programnameedit=0x7f080068;
         public static final int rightsidebar_background=0x7f08005d;
         public static final int scrollView1=0x7f080058;
         public static final int string_creator_done=0x7f080060;
@@ -170,7 +172,8 @@ public final class R {
         public static final int activity_top_side_bar__fragment=0x7f030019;
         public static final int activity_viewing_=0x7f03001a;
         public static final int activity_viewing__fragment=0x7f03001b;
-        public static final int file_view=0x7f03001c;
+        public static final int edit_program_name=0x7f03001c;
+        public static final int file_view=0x7f03001d;
     }
     public static final class menu {
         public static final int activity__selector=0x7f070000;
@@ -225,6 +228,7 @@ public final class R {
         public static final int Times=0x7f050017;
         public static final int Unknown=0x7f050014;
         public static final int action_dd=0x7f050038;
+        public static final int action_program_name=0x7f050040;
         public static final int action_settings=0x7f050001;
         public static final int app_name=0x7f050000;
         public static final int evaluate_actiivty=0x7f05003e;
