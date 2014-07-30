@@ -31,11 +31,16 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
+import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
@@ -44,6 +49,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
@@ -75,7 +81,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	private Map<String, DefOrExp> map;//stores the map name->def/exp for the current program
 	//----------------------------------------
 	private List<Fragment> fragmentList;//keeps track of the fragments 
-	private int currentIndex;
+	private int currentIndex;//keep track of the index of the current fragment
 	//----------------------------------------
 	private String currentExpressionTag;//can be used to track the current TOP-LEVEL expression in map
 	//----------------------------------------
@@ -98,6 +104,13 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	//----------------------------------------
 	private EditText myActionEditText;
 	private MenuItem myActionMenuItem;
+	//----------------------------------------
+	private DrawerLayout drawer;
+	//----------------------------------------
+	private GestureDetector gestureDetector;
+	private View.OnTouchListener gestureListener;
+	private int indexOfCurrentExpOrDef;//used to keep the index of the item being clicked on the right side drawer
+	private String itemAtCurrentPosition;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -117,10 +130,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 //					startService(new Intent(ba, ProjectFileSetup.class)); // stops itself
 //				}
 //			};
-//			t.start();
-			
-			
-			
+//			t.start();		
 			//---------------------------------------
 			//String toParse="(define THREE 3) (define square (lambda (x) (* x x))) (square THREE) (define sumSquares (lambda (a b) (+ (square a) (square b)))) (sumSquares THREE 4) (define factorial (lambda (n) (if (= n 0) 1 (* n (factorial (- n 1)))))) (factorial THREE)";
 	//		String toParse="(define THREE 3) (define square (lambda (x) (* x x))) (square THREE) (define sumSquares (lambda (a b) (+ (square a) (square b)))) (sumSquares THREE 4) (define factorial (lambda (n) (if (= n 0) 1 (* n (factorial (- n 1)))))) (factorial THREE)";
@@ -135,12 +145,79 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 //			this.programList.add(program1);
 	
 			//INITIALIZE DRAWERS BACKGROUND FROM BOTH SIDE-----
+			this.drawer=(DrawerLayout) findViewById(R.id.drawer_layout);
 			this.left_drawer_background=(ListView) findViewById(R.id.drawer_left_list);
 			this.right_drawer_background=(ListView) findViewById(R.id.drawer);
 			//-------------------------------------
 			initializeLeftSideDrawer();	
 			initializeCenterScreen();
 			getActionBar().setDisplayShowTitleEnabled(false);
+			gestureDetector=new GestureDetector(this, new MyGestureDetector());
+			gestureListener=new View.OnTouchListener() {
+				
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					// TODO Auto-generated method stub
+					return gestureDetector.onTouchEvent(event);
+				}
+			};
+			RelativeLayout background=(RelativeLayout) findViewById(R.id.background);
+			background.setOnTouchListener(gestureListener);
+			
+		}
+	}
+	
+	private class MyGestureDetector extends SimpleOnGestureListener{
+
+		private static final int SWIPE_MIN_DISTANCE=120;
+		private static final int SWIPE_MAX_OFF_PATH=100;
+		private static final int SWIPE_THRESHOLD_VELOCITY=300;
+		@Override
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
+				float velocityY) {
+			// TODO Auto-generated method stub
+			try
+			{
+				if(Math.abs(e1.getX()-e2.getX())>SWIPE_MAX_OFF_PATH)
+					return false;
+				if(e1.getY()-e2.getY()>SWIPE_MIN_DISTANCE&&Math.abs(velocityY)>SWIPE_THRESHOLD_VELOCITY)
+				{
+					System.out.println("SWIPE UP!");
+					if(toReturnKeys!=null)
+					{
+						if(indexOfCurrentExpOrDef>0)
+						{
+							indexOfCurrentExpOrDef--;
+							System.out.println("after swiping, the current item is"+toReturnKeys.get(indexOfCurrentExpOrDef));
+							passTopLevelExpressionToCenterScreen(toReturnKeys.get(indexOfCurrentExpOrDef));
+						}
+					}
+				}	
+				else if(e2.getY()-e1.getY()>SWIPE_MIN_DISTANCE&&Math.abs(velocityY)>SWIPE_THRESHOLD_VELOCITY)
+				{
+					System.out.println("SWIPE DOWN!");
+					if(toReturnKeys!=null)
+					{
+						if(indexOfCurrentExpOrDef<toReturnKeys.size())
+						{
+							indexOfCurrentExpOrDef++;
+							System.out.println("after swiping, the current item is"+toReturnKeys.get(indexOfCurrentExpOrDef));
+							passTopLevelExpressionToCenterScreen(toReturnKeys.get(indexOfCurrentExpOrDef));
+						}
+					}
+				}
+					
+			} 
+			catch (Exception e)
+			{
+				//blank
+			}
+			return false;
+		}
+		@Override
+		public boolean onDown(MotionEvent e) {
+			// TODO Auto-generated method stub
+			return true;
 		}
 	}
 	
@@ -455,6 +532,9 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 		    	break;
 		    case R.id.action_save:
 		    	FileUtils.save(currentProgramName, Unparser.unparse(currentProgram));
+		    	break;
+		    case R.id.action_copy:
+		    	break;
 		}
 		
 		return true;
@@ -471,10 +551,11 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 		this.programNameList = FileUtils.getFileNames();
 		this.left_drawer_background.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, this.programNameList));
 		this.left_drawer_background.setOnItemClickListener(new OnItemClickListener() {
-
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				drawer.closeDrawer(left_drawer_background);
 				leftDrawerClickAction(position);
+				
 			}
 		});
 	}
@@ -523,7 +604,9 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position,
 					long id) {
-				rightDrawerClickAction(parent, position);
+				drawer.closeDrawer(right_drawer_background);
+				indexOfCurrentExpOrDef=position;
+				rightDrawerClickAction(parent, indexOfCurrentExpOrDef);
 			}
 		});
 	}

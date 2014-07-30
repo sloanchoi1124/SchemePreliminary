@@ -33,8 +33,12 @@
                        android:icon="@drawable/save_icon"
                        android:title="@string/save_activity"
                        android:showAsAction="ifRoom"/> 
-            
-                  </menu>
+                   <item
+                       android:id="@+id/action_copy"
+                       android:icon="@drawable/copy_icon"
+                       android:title="@string/action_copy"
+                       android:showAsAction="ifRoom" />                
+             </menu>
                   
                   </item>
     </group>

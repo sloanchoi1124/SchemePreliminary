@@ -23,12 +23,13 @@ public final class R {
     public static final class drawable {
         public static final int add_icon=0x7f020000;
         public static final int blackframe=0x7f020001;
-        public static final int evaluate=0x7f020002;
-        public static final int ic_launcher=0x7f020003;
-        public static final int more=0x7f020004;
-        public static final int round_plus=0x7f020005;
-        public static final int save_icon=0x7f020006;
-        public static final int view_icon=0x7f020007;
+        public static final int copy_icon=0x7f020002;
+        public static final int evaluate=0x7f020003;
+        public static final int ic_launcher=0x7f020004;
+        public static final int more=0x7f020005;
+        public static final int round_plus=0x7f020006;
+        public static final int save_icon=0x7f020007;
+        public static final int view_icon=0x7f020008;
     }
     public static final class id {
         public static final int Button0=0x7f080030;
@@ -56,6 +57,7 @@ public final class R {
         public static final int TimesButton=0x7f080036;
         public static final int action_add=0x7f08006b;
         public static final int action_bar_edit_text=0x7f080064;
+        public static final int action_copy=0x7f08006f;
         public static final int action_evaluate=0x7f08006d;
         public static final int action_save=0x7f08006e;
         public static final int action_settings=0x7f080067;
@@ -227,6 +229,7 @@ public final class R {
         public static final int Semicolon=0x7f05001e;
         public static final int Times=0x7f050017;
         public static final int Unknown=0x7f050014;
+        public static final int action_copy=0x7f050041;
         public static final int action_dd=0x7f050038;
         public static final int action_program_name=0x7f050040;
         public static final int action_settings=0x7f050001;
