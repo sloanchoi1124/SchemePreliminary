@@ -20,7 +20,7 @@ public class FileUtils {
 
 	static String rootPath = Environment.getExternalStorageDirectory().getPath();
 	static String appPath = rootPath + "/com.example.scheme_preliminary";
-	public static final String NEW_FILE_NAME = ".new";
+	public static final String NEW_FILE_NAME = "TEMP";
 	
 	public static boolean fileTreeSetup(AssetManager am) {
 //		System.out.println("ProjectFileSetup started");

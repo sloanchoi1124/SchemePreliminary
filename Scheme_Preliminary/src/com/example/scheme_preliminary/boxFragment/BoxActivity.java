@@ -36,6 +36,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -96,7 +98,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	//----------------------------------------
 	private EditText myActionEditText;
 	private MenuItem myActionMenuItem;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		FileUtils.fileTreeSetup(getAssets());
@@ -138,6 +140,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 			//-------------------------------------
 			initializeLeftSideDrawer();	
 			initializeCenterScreen();
+			getActionBar().setDisplayShowTitleEnabled(false);
 		}
 	}
 	
@@ -156,27 +159,75 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 			{
 				System.out.println("successfully find the edit text");
 				this.myActionEditText.setOnEditorActionListener(this);
+				this.myActionEditText.setSelectAllOnFocus(true);
+				this.myActionEditText.setOnFocusChangeListener(new OnFocusChangeListener() {
+					@Override
+					public void onFocusChange(View v, boolean hasFocus) {
+						if (hasFocus)
+							myActionEditText.setCursorVisible(true);
+						else
+							myActionEditText.setCursorVisible(false);
+					}
+				});
+				this.myActionEditText.clearFocus();
 			}
 				
 		}
-		return super.onCreateOptionsMenu(menu);
+		createAndSelectProgram();
+		boolean ans = super.onCreateOptionsMenu(menu);
+		this.myActionEditText.setSelected(false);
+		this.myActionEditText.clearFocus();
+		return ans;
+	}
+	
+	@Override
+	public void onBackPressed() {
+		this.myActionEditText.clearFocus();
+		super.onBackPressed();
 	}
 	
 	@Override
 	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 		// TODO Auto-generated method stub
-		CharSequence textInput;
-		if(event!=null)
-		{
-			//if the back button is clicked
-			if(event.getAction()==KeyEvent.ACTION_DOWN&&event.getKeyCode()==KeyEvent.KEYCODE_ENTER)
-			{
-				textInput=v.getText();
-				System.out.println(textInput);
-			}
-				
-		}
+//		System.out.println("actiondId: " + actionId + "\nKeyEvent: " + event);
+//		CharSequence textInput;
+//		if(event!=null)
+//		{
+//			System.out.println(event.getKeyCode());
+//			//if the back button is clicked
+//			if(event.getAction()==KeyEvent.ACTION_DOWN&&event.getKeyCode()==KeyEvent.KEYCODE_ENTER)
+//			{
+//				textInput=v.getText();
+//				System.out.println(textInput);
+//				((EditText) v).setSelected(false);
+//				((EditText) v).setCursorVisible(false);
+//			}
+//				
+//		}
+		if (actionId == 6) // Done button?
+			this.myActionEditText.clearFocus();
 		return false;
+	}
+	
+	private boolean createAndSelectProgram() {
+		System.out.println("BUILD A NEW PROGRAM");
+		if (FileUtils.externalStorageWritable())
+			FileUtils.createNewFile();
+		else {
+			System.out.println("Error creating new file.");
+			return false;
+		}
+		initializeLeftSideDrawer();
+		initializeCenterScreen();
+		
+		currentProgramName=FileUtils.NEW_FILE_NAME;
+		myActionEditText.setText(currentProgramName);
+		currentProgram = FileUtils.getProgramFromName(currentProgramName);
+		map=initializeMap(currentProgram.getProgram());
+		clearCenterScreen();
+		clearTopSideBar();	
+		initializeRightSideDrawer();
+		return true;
 	}
 	
 	@Override
@@ -227,12 +278,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 					    	break;
 						case 1:
 							System.out.println("BUILD A NEW PROGRAM");
-							if (FileUtils.externalStorageWritable())
-								FileUtils.createNewFile();
-							else
-								System.out.println("Error creating new file.");
-							initializeLeftSideDrawer();
-							initializeCenterScreen();
+							createAndSelectProgram();
 							break;
 						case 2:
 							if(currentProgram!=null)
@@ -436,8 +482,8 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	private void leftDrawerClickAction(int position) {
 		if(currentProgramName == null || ! currentProgramName.equals(programNameList.get(position)))
 		{
-			this.myActionEditText.setText(this.currentProgramName);
 			currentProgramName=(programNameList.get(position));
+			this.myActionEditText.setText(this.currentProgramName);
 			currentProgram = FileUtils.getProgramFromName(currentProgramName);
 			map=initializeMap(currentProgram.getProgram());
 			clearCenterScreen();
@@ -477,13 +523,15 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position,
 					long id) {
-				// TODO Auto-generated method stub
-				
-				String item=(String) parent.getItemAtPosition(position);
-				System.out.println("item="+item);
-				passTopLevelExpressionToCenterScreen(item);
+				rightDrawerClickAction(parent, position);
 			}
 		});
+	}
+	
+	private void rightDrawerClickAction(AdapterView<?> parent, int position) {
+		String item=(String) parent.getItemAtPosition(position);
+		System.out.println("item="+item);
+		passTopLevelExpressionToCenterScreen(item);
 	}
 	
 	public void passTopLevelExpressionToCenterScreen(String s)
