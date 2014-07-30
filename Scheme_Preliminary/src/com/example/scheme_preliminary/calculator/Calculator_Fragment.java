@@ -38,6 +38,7 @@ public class Calculator_Fragment extends Fragment implements Calculator_Fragment
 		public void receiveDefOrExp(DefOrExp defOrExp);
 		public List<String> getBindings();
 		public Object getSystemService(String name);
+		public List<DefOrExp> getBuffer();
 	}
 	
 	private enum Mode {

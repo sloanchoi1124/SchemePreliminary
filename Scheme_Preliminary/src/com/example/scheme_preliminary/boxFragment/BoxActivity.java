@@ -111,6 +111,8 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	private View.OnTouchListener gestureListener;
 	private int indexOfCurrentExpOrDef;//used to keep the index of the item being clicked on the right side drawer
 	private String itemAtCurrentPosition;
+	//---------------------------------------
+	private List<DefOrExp> calculatorBuffer;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -219,6 +221,26 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 			// TODO Auto-generated method stub
 			return true;
 		}
+	}
+	//--------THE CALCULATOR BUFFER--------------------
+	//the buffer only stores 5 items
+	public void addToBuffer(DefOrExp temp)
+	{
+		if(this.calculatorBuffer==null)
+			this.calculatorBuffer=new ArrayList<DefOrExp>();
+		if(this.calculatorBuffer.size()<5)
+			this.calculatorBuffer.add(temp);
+		else if(this.calculatorBuffer.size()==5)
+		{
+			this.calculatorBuffer.remove(0);
+			this.calculatorBuffer.add(4,temp);
+		}
+	}
+	
+	@Override
+	public List<DefOrExp> getBuffer() {
+		// TODO Auto-generated method stub
+		return this.calculatorBuffer;
 	}
 	
 	//--------THE ACTION BAR---------------------------
@@ -534,6 +556,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 		    	FileUtils.save(currentProgramName, Unparser.unparse(currentProgram));
 		    	break;
 		    case R.id.action_copy:
+		    	addToBuffer(toReturnToFragment);//put the current expression/definition to the buffer
 		    	break;
 		}
 		
@@ -1286,7 +1309,5 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
     	}
 	}
 
-
-	
 }
 
