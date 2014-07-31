@@ -55,6 +55,7 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.example.scheme_preliminary.R;
+import com.example.scheme_preliminary.boxFragment.StringInput_Fragment.StringInputCommunicator;
 import com.example.scheme_preliminary.boxFragment.TopSideBar_Fragment.TopSideBarActivityCommunicator;
 import com.example.scheme_preliminary.calculator.Calculator_Fragment;
 import com.example.scheme_preliminary.calculator.Calculator_Fragment.Calculator_Fragment_Communicator;
@@ -64,7 +65,8 @@ import file.io.FileUtils;
 
 public class BoxActivity extends Activity implements ActivityCommunicator,
           TopSideBarActivityCommunicator,Calculator_Fragment_Communicator,
-          Calculator_Fragment_Listener,ProgramLevelCommunicator, OnEditorActionListener{
+          Calculator_Fragment_Listener,ProgramLevelCommunicator, OnEditorActionListener,
+          StringInputCommunicator{
 	
 	//these variables are used by ActivityCommunicator
 	private DefOrExp toReturnToFragment;//<=> the current expression for the current fragment
@@ -113,6 +115,8 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	private String itemAtCurrentPosition;
 	//---------------------------------------
 	private List<DefOrExp> calculatorBuffer;
+	//---------------------------------------
+	private String newDefSymbol;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -288,21 +292,6 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	@Override
 	public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 		// TODO Auto-generated method stub
-//		System.out.println("actiondId: " + actionId + "\nKeyEvent: " + event);
-//		CharSequence textInput;
-//		if(event!=null)
-//		{
-//			System.out.println(event.getKeyCode());
-//			//if the back button is clicked
-//			if(event.getAction()==KeyEvent.ACTION_DOWN&&event.getKeyCode()==KeyEvent.KEYCODE_ENTER)
-//			{
-//				textInput=v.getText();
-//				System.out.println(textInput);
-//				((EditText) v).setSelected(false);
-//				((EditText) v).setCursorVisible(false);
-//			}
-//				
-//		}
 		if (actionId == 6) // Done button?
 			this.myActionEditText.clearFocus();
 		return false;
@@ -335,7 +324,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 		switch(item.getItemId()){
 		    case R.id.action_add:
 		    	//-----EXPERIMENTAL-----
-		    	final CharSequence[] items={"New DefOrExp","New Program","New Operand/Condition","New Pair_1st","New Pair_2nd"};
+		    	final CharSequence[] items={"New Definition","New Expression","New Program","New Operand/Condition","New Pair_1st","New Pair_2nd"};
 		    	AlertDialog.Builder builder=new AlertDialog.Builder(this);
 		    	builder.setItems(items, new DialogInterface.OnClickListener() {
 					
@@ -345,6 +334,27 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 						// TODO Auto-generated method stub
 						switch(item){
 						case 0:
+							//generate a definition here
+							if(currentProgram!=null)
+							{
+								addNewDefOrExpInViewingFlag=true;
+								//if the evaluation fragment is popped up, then let it go immediately
+								if(getFragmentManager().findFragmentByTag("evaluation_fragment")!=null)
+							    	getFragmentManager().popBackStackImmediate();
+								System.out.println("generate a fragment to type in definition name");
+								if(getFragmentManager().findFragmentByTag("string_input")==null)
+								{
+									getFragmentManager().beginTransaction()
+									.add(R.id.stringinput_frame, new StringInput_Fragment(), "string_input")
+									.addToBackStack(null)
+									.commit();
+								}
+								((FrameLayout) findViewById(R.id.stringinput_frame)).bringToFront();
+						    	addToProgram=true;
+									
+							}
+							break;
+						case 1:
 							//if the viewing fragment is currently popping up, then update it!
 							if(currentProgram!=null)
 							{
@@ -375,11 +385,11 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 							}
 					    	
 					    	break;
-						case 1:
+						case 2:
 							System.out.println("BUILD A NEW PROGRAM");
 							createAndSelectProgram();
 							break;
-						case 2:
+						case 3:
 							if(currentProgram!=null)
 							{
 								if(toReturnToFragment instanceof CallExpression)
@@ -450,7 +460,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 								Toast.makeText(getBaseContext(), "Please Choose A Program", Toast.LENGTH_SHORT).show();
 							}
 							break;
-						case 3:
+						case 4:
 							if(currentProgram!=null)
 							{
 								if(toReturnToFragment instanceof CondExpression)
@@ -481,7 +491,7 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 								Toast.makeText(getBaseContext(), "Please Choose A Program", Toast.LENGTH_SHORT).show();
 							}
 							break;
-						case 4:
+						case 5:
 							if(currentProgram!=null)
 							{
 								if(toReturnToFragment instanceof CondExpression)
@@ -928,7 +938,16 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 		if(addToProgram==true)
 		{
 			System.out.println("ADD TO PROGRAM == TRUE");
-			this.currentProgram.getProgram().add(defOrExp);
+			if(this.replacementTag.equals("newDef"))
+			{
+				Definition temp=new Definition(this.newDefSymbol,(Expression) defOrExp);
+				this.currentProgram.getProgram().add(temp);
+			}
+			else
+			{
+				this.currentProgram.getProgram().add(defOrExp);
+			}
+	
 			getFragmentManager().popBackStackImmediate();
 			map=initializeMap(currentProgram.getProgram());
 			initializeRightSideDrawer();
@@ -1307,6 +1326,22 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
     		.commit();
     		((FrameLayout)findViewById(R.id.viewing_frame)).bringToFront();
     	}
+	}
+
+	//----MEHTOD FROM STRINGINPUT COMMUNICATOR--------
+	@Override
+	public void passStringToActivity(String s) {
+		// TODO Auto-generated method stub
+		this.newDefSymbol=s;
+		//then pop up the calculator here
+		this.replacementTag="newDef";
+		getFragmentManager().popBackStackImmediate();
+		getFragmentManager().beginTransaction()
+		.add(R.id.calculator_frame, new Calculator_Fragment(), "calculator")
+		.addToBackStack(null)
+		.commit();
+		((FrameLayout) findViewById(R.id.calculator_frame)).bringToFront();
+		//then pass a tag to receivedeforexp
 	}
 
 }

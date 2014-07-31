@@ -67,5 +67,6 @@
     <string name="save_activity">Save</string>
     <string name="action_program_name">Name Your Program</string>
     <string name="action_copy">Copy</string>
+    <string name="title_activity_string_input__fragment">StringInput_Fragment</string>
 
 </resources>
