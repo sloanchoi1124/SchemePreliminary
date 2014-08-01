@@ -76,7 +76,7 @@ public class Evaluator {
 		while (itr.hasNext()) {
 			temp = itr.next();
 			if (temp instanceof Definition) {
-				Expression top_eval = evaluate(((Definition) temp).getBody(), initializeEnv());
+				Expression top_eval = evaluate(((Definition) temp).getBody(), general_envr);
 				general_envr.put(((Definition) temp).getSymbol(),
 						top_eval, general_envr);
 			} else {

@@ -100,8 +100,7 @@ public class TailRecOp {
 		if (e.getOperator() instanceof IdExpression) {
 			String name = ((IdExpression) e.getOperator()).getId();
 			if ((name.equals(s)) && isTail) {
-				String unparsed = Unparser.unparse(e);
-				System.out.println("tail recursion found: " + unparsed);
+				e.setAsTailCall();
 			}
 		}
 		for (Expression i : e.getOperands()) {

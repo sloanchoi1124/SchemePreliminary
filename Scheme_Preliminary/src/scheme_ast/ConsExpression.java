@@ -29,18 +29,16 @@ public class ConsExpression extends Expression{
 	}
 	
 	public BigInteger length() {
-		BigInteger result = BigInteger.valueOf(length(this, 0));
+		BigInteger result = BigInteger.valueOf(length(this, 1));
 		return result;
 	}
 	
 	private static int length(ConsExpression c, int helper) {
-		if (c == null) {
-			return helper;
-		} else if (! (c.cdr() instanceof ConsExpression)){
-			return helper + 1;
-		} else {
-			return length( (ConsExpression)c.cdr(), helper + 1);
+		while (! (c.cdr() instanceof NullExpression)) {
+			helper ++;
+			c = (ConsExpression) c.cdr();
 		}
+		return helper;
 	}
 	
 	public ConsExpression reverse() {

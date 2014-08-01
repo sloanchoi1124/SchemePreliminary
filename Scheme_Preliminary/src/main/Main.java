@@ -22,6 +22,7 @@ import unparser.Unparser;
 import util.Uid;
 import evaluator.Evaluator;
 import evaluator.Mapper;
+import evaluator.TailRecOp;
 
 public class Main {
 	
@@ -60,8 +61,8 @@ public class Main {
 		//String test = "(let ((f (lambda ( x ) (+ x 1 ))) (f 5))";
 		//stringTest(test);
 		
-		String andor = "(letrec ((even  (lambda (n) (or (= n 0) (odd (- n 1))))) (odd (lambda (n) (or (= n 1) (even (- n 1)))))) (odd 51))";
-		stringTest(andor);
+		//String andor = "(letrec ((even  (lambda (n) (or (= n 0) (odd (- n 1))))) (odd (lambda (n) (or (= n 1) (even (- n 1)))))) (odd 51))";
+		//stringTest(andor);
 		
 		String prime_extended = "(define find-smallest-factor (lambda (n) (letrec ((odd-factor (lambda (i) (if (= 0 (remainder n i)) i (if (> (* i i) n) n (odd-factor (+ i 2))))))) (if (= 0 (remainder n 2)) 2 (odd-factor 3)))))" +
 
@@ -72,13 +73,13 @@ public class Main {
 "(define likely-prime? (lambda (n) (= (mod-exp 2 (- n 1) n) 1)))" +
 
 "(define primes-less-n (lambda (n) (letrec ((iterate (lambda (i primes) (if (< i 2) primes (if (definitely-prime? i) (iterate (- i 1) (cons i primes)) (iterate (- i 1) primes)))))) (iterate (- n 1) '()))))"
-+ "(definitely-prime? 20) (primes-less-n 50)";
++ "(define mylist (primes-less-n 25000)) (length mylist)";
 		
 		stringTest(prime_extended);
-		String testings = "(cons 4 (cons 5 (cons 5 (read))))";
-		stringTest(testings);
-		String program = fileToString();
-		stringTest(program);
+		//String testings = "(cons 4 (cons 5 (cons 5 (read))))";
+		//stringTest(testings);
+		//String program = fileToString();
+		//stringTest(program);
 	}
 		
 	public static void stringTest(String s) {
@@ -87,6 +88,7 @@ public class Main {
 		Program ast = Parser.parse(tokens);
 		String unparsed = Unparser.unparse(ast);
 		System.out.println(unparsed);
+		TailRecOp.checker(ast);
 		Expression v = Evaluator.evaluate(ast);
 		if (v instanceof IntExpression) {
 			System.out.println("Evaluates to: " + ((IntExpression)v).getValue());
