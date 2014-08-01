@@ -148,9 +148,6 @@ public class Clipboard_Fragment extends Fragment {
 		
 	}
 	
-	public interface ClipboardCommunicator{
-		public List<DefOrExp> passBufferToClipboard();
-		public void chooseFromBuffer(DefOrExp deforexp);
-	}
+
 
 }

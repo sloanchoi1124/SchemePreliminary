@@ -3,14 +3,12 @@ package com.example.scheme_preliminary.boxFragment;
 import java.util.Stack;
 
 import com.example.scheme_preliminary.R;
-
 import scheme_ast.DefOrExp;
 import unparser.Unparser;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -38,11 +36,20 @@ public class Popup_Viewing extends Fragment {
 		this.tv=(TextView) v.findViewById(R.id.popupview_text);
 		this.send=(Button) v.findViewById(R.id.popupview_send);
 		tv.setText(Unparser.unparse(deforexp, new Stack<Integer>()));
+		send.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				myActivityCommunicator.passClipboardItemToCalculator(deforexp);
+			}
+		});
 		return v;
 	}
 	
 	public interface PrivateClipboardSimpleCommunicator{
 		public DefOrExp getDefOrExpFromSimpleClip();
+		public void passClipboardItemToCalculator(DefOrExp deforexp);
 	}
 
 

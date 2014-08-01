@@ -8,7 +8,6 @@ import scheme_ast.Expression;
 import unparser.ShallowUnparser;
 
 import com.example.scheme_preliminary.R;
-import com.example.scheme_preliminary.boxFragment.Clipboard_Fragment.ClipboardCommunicator;
 import com.example.scheme_preliminary.boxFragment.Popup_Viewing.PrivateClipboardSimpleCommunicator;
 
 import android.os.Bundle;
@@ -31,7 +30,6 @@ public class ClipboardSimple_Fragment extends Fragment{
 	private ClipboardCommunicator myActivityCommunicator;
 	private List<DefOrExp> buffer;
 	private ListView lv;
-	private ClipboardSimple_Fragment context;
 	
 	@Override
 	public void onAttach(Activity activity) {

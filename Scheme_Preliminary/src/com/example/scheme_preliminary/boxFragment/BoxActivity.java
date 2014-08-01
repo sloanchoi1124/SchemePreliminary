@@ -55,7 +55,6 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.example.scheme_preliminary.R;
-import com.example.scheme_preliminary.boxFragment.Clipboard_Fragment.ClipboardCommunicator;
 import com.example.scheme_preliminary.boxFragment.Popup_Viewing.PrivateClipboardSimpleCommunicator;
 import com.example.scheme_preliminary.boxFragment.StringInput_Fragment.StringInputCommunicator;
 import com.example.scheme_preliminary.boxFragment.TopSideBar_Fragment.TopSideBarActivityCommunicator;
@@ -1380,6 +1379,12 @@ public class BoxActivity extends Activity implements ClipboardCommunicator,Activ
 	public DefOrExp getDefOrExpFromSimpleClip() {
 		// TODO Auto-generated method stub
 		return this.clipDefOrExp;
+	}
+
+	@Override
+	public void passClipboardItemToCalculator(DefOrExp deforexp) {
+		// TODO Auto-generated method stub
+		//pass deforexp to the calculator
 	}
 
 }
