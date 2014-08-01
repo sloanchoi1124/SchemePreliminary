@@ -55,6 +55,8 @@ import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 
 import com.example.scheme_preliminary.R;
+import com.example.scheme_preliminary.boxFragment.Clipboard_Fragment.ClipboardCommunicator;
+import com.example.scheme_preliminary.boxFragment.Popup_Viewing.PrivateClipboardSimpleCommunicator;
 import com.example.scheme_preliminary.boxFragment.StringInput_Fragment.StringInputCommunicator;
 import com.example.scheme_preliminary.boxFragment.TopSideBar_Fragment.TopSideBarActivityCommunicator;
 import com.example.scheme_preliminary.calculator.Calculator_Fragment;
@@ -63,10 +65,10 @@ import com.example.scheme_preliminary.calculator.Calculator_Fragment_Listener;
 
 import file.io.FileUtils;
 
-public class BoxActivity extends Activity implements ActivityCommunicator,
+public class BoxActivity extends Activity implements ClipboardCommunicator,ActivityCommunicator,
           TopSideBarActivityCommunicator,Calculator_Fragment_Communicator,
           Calculator_Fragment_Listener,ProgramLevelCommunicator, OnEditorActionListener,
-          StringInputCommunicator{
+          StringInputCommunicator,PrivateClipboardSimpleCommunicator{
 	
 	//these variables are used by ActivityCommunicator
 	private DefOrExp toReturnToFragment;//<=> the current expression for the current fragment
@@ -117,6 +119,8 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 	private List<DefOrExp> calculatorBuffer;
 	//---------------------------------------
 	private String newDefSymbol;
+	//---------------------------------------
+	private DefOrExp clipDefOrExp;//this is what is chosen currently in the clipboard
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -566,10 +570,24 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 		    	FileUtils.save(currentProgramName, Unparser.unparse(currentProgram));
 		    	break;
 		    case R.id.action_copy:
-		    	addToBuffer(toReturnToFragment);//put the current expression/definition to the buffer
+		    	if(toReturnToFragment!=null)
+		    		addToBuffer(toReturnToFragment);//put the current expression/definition to the buffer
+		    	else
+		    		Toast.makeText(this, "Please Choose An Expression Or Definition", Toast.LENGTH_SHORT).show();
+		    	break;
+		    case R.id.android_clipboard:
+			    		System.out.println("going to popup the clipboard");
+				    	if(getFragmentManager().findFragmentByTag("clipboard_fragment")==null)
+				    	{
+				    		getFragmentManager().beginTransaction()
+				    		.add(R.id.clipboard_frame, new ClipboardSimple_Fragment(), "clipboard_fragment")
+				    		.addToBackStack(null)
+				    		.commit();
+				    		((FrameLayout)findViewById(R.id.clipboard_frame)).bringToFront();
+				    	}
+
 		    	break;
 		}
-		
 		return true;
 	}
 	
@@ -938,14 +956,13 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 		if(addToProgram==true)
 		{
 			System.out.println("ADD TO PROGRAM == TRUE");
-			if(this.replacementTag.equals("newDef"))
+			if(this.replacementTag==null)
+				this.currentProgram.getProgram().add(defOrExp);
+			else if(this.replacementTag.equals("newDef"))
 			{
 				Definition temp=new Definition(this.newDefSymbol,(Expression) defOrExp);
 				this.currentProgram.getProgram().add(temp);
-			}
-			else
-			{
-				this.currentProgram.getProgram().add(defOrExp);
+				this.replacementTag=null;
 			}
 	
 			getFragmentManager().popBackStackImmediate();
@@ -1342,6 +1359,27 @@ public class BoxActivity extends Activity implements ActivityCommunicator,
 		.commit();
 		((FrameLayout) findViewById(R.id.calculator_frame)).bringToFront();
 		//then pass a tag to receivedeforexp
+	}
+	
+    //------METHOD FROM CLIPBOARD COMMUNICATOR----------
+	@Override
+	public List<DefOrExp> passBufferToClipboard() {
+		// TODO Auto-generated method stub
+		return this.calculatorBuffer;
+	}
+    
+	@Override
+	public void chooseFromBuffer(DefOrExp deforexp) {
+		// TODO Auto-generated method stub
+		System.out.println("just choose"+deforexp);
+		this.clipDefOrExp=deforexp;
+		//then pass deforexp to the calculator
+	}
+
+	@Override
+	public DefOrExp getDefOrExpFromSimpleClip() {
+		// TODO Auto-generated method stub
+		return this.clipDefOrExp;
 	}
 
 }

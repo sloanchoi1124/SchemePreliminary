@@ -45,6 +45,14 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true" >
             </FrameLayout>
+            
+		    <FrameLayout
+                android:id="@+id/clipboard_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true" >
+            </FrameLayout>
 
             <FrameLayout
                 android:id="@+id/top_side_bar_background"
@@ -76,6 +84,7 @@
         android:layout_gravity="right"    
         android:background="#ccff88">
    </ListView>
+
 <!--    <LinearLayout 
        	android:id="@+id/drawer_left"
        	android:orientation="vertical"

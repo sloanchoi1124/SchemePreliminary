@@ -13,6 +13,7 @@
                 android:title="@string/action_dd"
                 android:showAsAction="always">
                  <menu>
+                  
                    <item 
                        android:id="@+id/action_add"
                        android:icon="@drawable/round_plus"
@@ -37,7 +38,13 @@
                        android:id="@+id/action_copy"
                        android:icon="@drawable/copy_icon"
                        android:title="@string/action_copy"
-                       android:showAsAction="ifRoom" />                
+                       android:showAsAction="ifRoom" />
+                   <item
+                       android:id="@+id/android_clipboard"
+                       android:title="@string/action_clipboard"
+                       android:icon="@drawable/clipboard_cut"
+                       android:showAsAction="ifRoom"/> 
+              
              </menu>
                   
                   </item>

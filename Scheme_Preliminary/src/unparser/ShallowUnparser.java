@@ -11,6 +11,7 @@ import scheme_ast.CallExpression;
 import scheme_ast.CondExpression;
 import scheme_ast.ConsExpression;
 import scheme_ast.DefOrExp;
+import scheme_ast.Definition;
 import scheme_ast.Expression;
 import scheme_ast.IdExpression;
 import scheme_ast.IfExpression;
@@ -26,10 +27,17 @@ import scheme_ast.StringExpression;
 import util.Pair;
 
 public class ShallowUnparser {
-	public static String shallowUnparse(Expression ast, int depth)
+	public static String shallowUnparse(DefOrExp ast, int depth)
 	{
 		String result="";
-	    if(ast instanceof IntExpression)
+		if(ast instanceof Definition)
+		{
+			if(depth<1)
+				result+="(define...)";
+			else
+				result+="(define "+((Definition)ast).getSymbol()+" "+shallowUnparse(((Definition) ast).getBody(),depth-1)+" )"; 
+		}
+		else if(ast instanceof IntExpression)
 	    {
 	    	result+=((IntExpression)ast).getValue().toString()+" ";
 	    }
