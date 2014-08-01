@@ -288,6 +288,8 @@ public class Evaluator {
 	}
 
 	private static Expression callEval(CallExpression e, Environment envr) {
+		if (e.isTailCall()) { return e; }
+		
 		if (e.getOperator() instanceof IdExpression
 				&& evaluate(e.getOperator(), envr) instanceof LambdaExpression) {
 			LambdaExpression operator = (LambdaExpression) evaluate(
@@ -295,7 +297,8 @@ public class Evaluator {
 			Environment origin = envr.getEnvironment(((IdExpression) e
 					.getOperator()).getId());
 			List<Expression> numbers = e.getOperands();
-			if (operator.getParameters().size() != numbers.size()) {
+			List<String> parameters = operator.getParameters();
+			if (parameters.size() != numbers.size()) {
 				// error
 				return null;
 			}
@@ -306,13 +309,32 @@ public class Evaluator {
 				copy.put(para, value, envr);
 				i++;
 			}
+			
+			// NEW: we make use of tail calls to avoid recursion
 			Expression result = evaluate(operator.getBody(), copy);
+			while (result instanceof CallExpression &&
+						((CallExpression)result).isTailCall()) {
+				CallExpression tailCall = (CallExpression)result;
+				// evaluate operands and then set their values as this recursive functions arguments
+				List<Expression> newArguments = new ArrayList<Expression>();
+				for (Expression argument : tailCall.getOperands()) {
+					newArguments.add(evaluate(argument, copy)); // ??? which environment ???
+				}
+				// we need to do this in two steps because new values of arguments can only be assigned after all arguments evaluated
+				for (int j = 0; j < parameters.size(); j++) {
+					copy.put(parameters.get(j), newArguments.get(j), envr); //??? and environment to set and use here???
+				}
+				
+				
+				result = evaluate(operator.getBody(), copy);
+			}
 			return result;
 		}
-		Expression operator = evaluate(e.getOperator(), envr);
-		if (operator instanceof OperatorExpression) {
+		
+		Expression operator1 = evaluate(e.getOperator(), envr);
+		if (operator1 instanceof OperatorExpression) {
 			List<Expression> items = e.getOperands();
-			OperatorExpression oprt = (OperatorExpression) operator;
+			OperatorExpression oprt = (OperatorExpression) operator1;
 			String id = oprt.getName();
 
 			if ((!oprt.acceptsLists()) && items.size() != oprt.getArity()) {
@@ -328,7 +350,7 @@ public class Evaluator {
 					Expression result = evaluate(cons_item, envr);
 					operands.add(result);
 				}
-				CallExpression temp = new CallExpression(operator, operands);
+				CallExpression temp = new CallExpression(operator1, operands);
 				return listEval(temp, envr); // list evaluation
 			}
 			
@@ -351,7 +373,7 @@ public class Evaluator {
 					Expression result = evaluate(cons_item, envr);
 					operands.add(result);
 				}
-				CallExpression temp = new CallExpression(operator, operands);
+				CallExpression temp = new CallExpression(operator1, operands);
 				displayEval(temp, envr);
 				return new NullExpression();
 			}
@@ -360,8 +382,8 @@ public class Evaluator {
 			BoolExpression f = new BoolExpression(false);
 
 			if (id.equals("odd?")) {
-				IntExpression i = (IntExpression) evaluate(items.get(0), envr);
-				BigInteger temp = i.getValue();
+				IntExpression i1 = (IntExpression) evaluate(items.get(0), envr);
+				BigInteger temp = i1.getValue();
 				BigInteger two = BigInteger.valueOf(2);
 				if (temp.remainder(two) == BigInteger.valueOf(0)) {
 					return f;
@@ -369,31 +391,43 @@ public class Evaluator {
 				return t;
 			}
 
-			Expression i1 = evaluate(items.get(0), envr);
-			Expression i2 = evaluate(items.get(1), envr);
-			BigInteger item1 = ((IntExpression) i1).getValue();
-			BigInteger item2 = ((IntExpression) i2).getValue();
-			BigInteger result = BigInteger.valueOf(0);
+			BigInteger result1 = BigInteger.valueOf(0);
 			
 			// operator: remainder
 			if (id.equals("remainder")) {
+				Expression i1 = evaluate(items.get(0), envr);
+				Expression i2 = evaluate(items.get(1), envr);
+				BigInteger item1 = ((IntExpression) i1).getValue();
+				BigInteger item2 = ((IntExpression) i2).getValue();
 				return new IntExpression(item1.remainder(item2));
 			}
 
 			// operators: <, >, =, return 1 for true, 0 for false
 			else if (id.equals("=")) {
+				Expression i1 = evaluate(items.get(0), envr);
+				Expression i2 = evaluate(items.get(1), envr);
+				BigInteger item1 = ((IntExpression) i1).getValue();
+				BigInteger item2 = ((IntExpression) i2).getValue();
 				if (item1.compareTo(item2) == 0) {
 					return t;
 				} else {
 					return f;
 				}
 			} else if (id.equals("<")) {
+				Expression i1 = evaluate(items.get(0), envr);
+				Expression i2 = evaluate(items.get(1), envr);
+				BigInteger item1 = ((IntExpression) i1).getValue();
+				BigInteger item2 = ((IntExpression) i2).getValue();
 				if (item1.compareTo(item2) == -1) {
 					return t;
 				} else {
 					return f;
 				}
 			} else if (id.equals(">")) {
+				Expression i1 = evaluate(items.get(0), envr);
+				Expression i2 = evaluate(items.get(1), envr);
+				BigInteger item1 = ((IntExpression) i1).getValue();
+				BigInteger item2 = ((IntExpression) i2).getValue();
 				if (item1.compareTo(item2) == 1) {
 					return t;
 				} else {
@@ -404,36 +438,37 @@ public class Evaluator {
 			// operators: +, -, * /
 			else if (id.equals("+")) {
 				for (Expression item : items) {
-					result = result.add(((IntExpression) evaluate(item, envr)).getValue());
+					result1 = result1.add(((IntExpression) evaluate(item, envr)).getValue());
 				}
 			}
 			else if (id.equals("-")) {
-				result = ((IntExpression) evaluate(items.get(0), envr))
+				result1 = ((IntExpression) evaluate(items.get(0), envr))
 						.getValue();
-				for (int i = 1; i < items.size(); i++) {
-					Expression item = items.get(i);
-					result = result.subtract(((IntExpression) evaluate(item, envr)).getValue());
+				for (int j = 1; j < items.size(); j++) {
+					Expression item = items.get(j);
+					result1 = result1.subtract(((IntExpression) evaluate(item, envr)).getValue());
 				}
 			} else if (id.equals("*")) {
-				result = BigInteger.valueOf(1);
+				result1 = BigInteger.valueOf(1);
 				for (Expression item : items) {
-					result = result.multiply(((IntExpression) evaluate(item, envr)).getValue());
+					result1 = result1.multiply(((IntExpression) evaluate(item, envr)).getValue());
 				}
 			} else if (id.equals("quotient")) {
-				result = ((IntExpression) evaluate(items.get(0), envr))
+				result1 = ((IntExpression) evaluate(items.get(0), envr))
 						.getValue();
-				for (int i = 1; i < items.size(); i++) {
-					Expression item = items.get(i);
-					result = result.divide(((IntExpression) evaluate(item, envr)).getValue());
+				for (int j = 1; j < items.size(); j++) {
+					Expression item = items.get(j);
+					result1 = result1.divide(((IntExpression) evaluate(item, envr)).getValue());
 				}
 			} else {
 				// error: operator not defined;
 				return null;
 			}
-			return new IntExpression(result);
+			return new IntExpression(result1);
 		} else {
 			// error: operator neither Lambda nor Operator
 			return null;
 		}
 	}
 }
+

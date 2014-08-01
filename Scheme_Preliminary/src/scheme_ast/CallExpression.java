@@ -5,11 +5,21 @@ import java.util.List;
 public class CallExpression extends Expression {
 	private Expression mOperator;
 	private List<Expression> mOperands;
+	private boolean mIsTailCall;
 	
 	public CallExpression(Expression operator, List<Expression> operands) {
 		super();
 		mOperator = operator;
 		mOperands = operands;
+		mIsTailCall = false;
+	}
+	
+	public boolean isTailCall() {
+		return mIsTailCall;
+	}
+	
+	public void setAsTailCall() {
+		mIsTailCall = true;
 	}
 	
 	public Expression getOperator() {
