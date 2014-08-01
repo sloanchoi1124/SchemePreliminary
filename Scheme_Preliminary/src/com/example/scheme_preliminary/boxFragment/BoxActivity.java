@@ -45,6 +45,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -608,6 +609,7 @@ public class BoxActivity extends Activity implements ClipboardCommunicator,Activ
 				
 			}
 		});
+
 	}
 	
 	private void leftDrawerClickAction(int position) {
@@ -657,6 +659,24 @@ public class BoxActivity extends Activity implements ClipboardCommunicator,Activ
 				drawer.closeDrawer(right_drawer_background);
 				indexOfCurrentExpOrDef=position;
 				rightDrawerClickAction(parent, indexOfCurrentExpOrDef);
+			}
+		});
+		this.right_drawer_background.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view,int position, long id) 
+			{
+				// TODO Auto-generated method stub
+				drawer.closeDrawer(right_drawer_background);
+				System.out.println("going to delete current deforexp");
+				System.out.println(currentProgram.getProgram().size());
+				currentProgram.getProgram().remove(position-1);
+				System.out.println(currentProgram.getProgram().size());
+				map=initializeMap(currentProgram.getProgram());
+				System.out.println(map);
+				initializeRightSideDrawer();
+				
+				return true;
 			}
 		});
 	}
@@ -792,7 +812,7 @@ public class BoxActivity extends Activity implements ClipboardCommunicator,Activ
 			}
 			ft.commit();
 		}
-		else if(ast instanceof LetExpression)
+		else if(ast instanceof AbstractLetExpression)
 		{
 			if(currentFrag==null)
 			{
